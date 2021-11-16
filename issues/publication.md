@@ -1,0 +1,21 @@
+Not all of these need to be completed, but check if available/possible
+
+  - [ ] Assign depositor to project
+  - [ ] Review metadata entry
+  - [ ] Enter QDR vocabulary (ICPSR Thesaurus)
+  - [ ] Upload files
+  - [ ] Tag Data/Documentation
+  - [ ] Restrict files for registered users as required
+  - [ ] Authorize file access to registered users
+  - [ ] Add terms in both terms of use and terms of access
+  - [ ] Enable Access Request
+  - [ ] Select thumbnail image
+  - [ ] Deposit agreement received from depositor
+  - [ ] Depositor Final Review
+  - [ ] Curators' Final Review (two sets of eyes, special attention to README and terms fo use/access conditions)
+  - [ ] Add Distribution Date
+  - [ ] Publish
+  - [ ] Super User (SK) verified that archiving was sucessful
+  - [ ] Tweet about data project
+  - [ ] Set Google Scholar Alert (to qualitativedatarepository@gmail.com)
+  - [ ] Enter total time in [tracking spreadsheet](https://docs.google.com/spreadsheets/d/1WUEO9QQg6Vw0H2yFPlhKXmJc-zHkudiuNpIPut45bHo/edit#gid=1857006720)"
