@@ -1,0 +1,7 @@
+[default]
+host = data.qdr.syr.edu
+repo = QualitativeDataRepository/testing-demos
+dropbox = /home/michael/temp
+dataverse_token = 
+github_token = 
+

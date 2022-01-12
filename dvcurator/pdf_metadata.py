@@ -4,6 +4,7 @@
 
 def pdf_metadata(edit_path, author):
 	from pdfrw import PdfReader, PdfWriter, PdfDict
+	import os, re
 	
 	pdfs = []
 	for f in os.listdir(edit_path):
