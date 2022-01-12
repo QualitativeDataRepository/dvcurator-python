@@ -6,13 +6,12 @@
 #  Copyright 2021 Michael McCall <mimccall@syr.edu>
 #
 
-def main(args):
-	from api import dataverse
-	from api import github
-	from files import pdf_metadata
+def main(args=None):
+	import sys, os, re
+	if args is None:
+		args=sys.argv
 	
 	from glob import glob
-	import configparser
 	#from pkg_resources import resource_listdir
 	
 	import getopt
@@ -27,6 +26,7 @@ def main(args):
 		elif opt in('-d', '--doi'):
 			doi = val
 
+	import configparser
 	config = configparser.ConfigParser()
 	config.read(config_file)
 	host = config['default']['host']
@@ -34,8 +34,9 @@ def main(args):
 	dv_token = config['default']['dataverse_token']
 	gh_token = config['default']['github_token']
 	dropbox = config['default']['dropbox']
-	
-	citation=get_citation(host, doi, dv_token)
+
+	import dvcurator.dataverse
+	citation=dvcurator.dataverse.get_citation(host, doi, dv_token)
 	last_name = citation['depositor'].split(', ')[0]
 	
 	short_title = citation['title']
@@ -45,10 +46,13 @@ def main(args):
 	short_title = re.sub(":.+", '', short_title)
 	folder_name = last_name + " - " + short_title
 
-	edit_path = download_dataset(host, doi, dv_token, folder_name, dropbox)
-	# pdf_metadata(edit_path, citation['depositor']) 
+	edit_path = dvcurator.dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
 
-	project = create_project(citation, folder_name, gh_repo, gh_token)
+	# import dvcurator.pdf_metadata
+	# dvcurator.pdf_metadata(edit_path, citation['depositor']) 
+
+	import dvcurator.github
+	project = dvcurator.github.create_project(citation, folder_name, gh_repo, gh_token)
 
 	# for now, args is the internal issues directory
 	#args = pkg_resources.resource_listdir("dvcurator", "issues") 
@@ -59,7 +63,7 @@ def main(args):
 		args = glob(args)	
 
 	for issue in args:
-		add_issue(folder_name, issue, gh_repo, project, gh_token)
+		dvcurator.github.add_issue(folder_name, issue, gh_repo, project, gh_token)
 
 	print("Finished!")
 	

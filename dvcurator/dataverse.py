@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-import requests
-import os
 
 def get_citation(host, doi, token):
+	import requests
+	
 	# Scrape data and metadata from dataverse
 	key = {'X-Dataverse-Key': token}
 	dataset_url = 'https://' + host 
@@ -19,8 +19,7 @@ def get_citation(host, doi, token):
 	return dict(zip(fields, values)) 
 
 def download_dataset(host, doi, token, folder_name, dropbox):
-	import urllib.request
-	import zipfile
+	import urllib.request, zipfile, os
 
 	folder_path = 'QDR Project - ' + folder_name
 	folder_path = os.path.join(dropbox, folder_path)

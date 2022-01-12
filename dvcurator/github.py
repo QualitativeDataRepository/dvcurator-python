@@ -2,12 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 
-import json
-import requests
-import os
-import re
-
 def create_project(metadata, folder_name, repo, key):
+	import json, requests, os, re
+
 	github='https://api.github.com'
 	key = {'Authorization': "token " + key}
 	workflow='main'
@@ -35,6 +32,8 @@ def create_project(metadata, folder_name, repo, key):
 	return columns[0] # This is the ID of the todo column, for assigning issue cards
 
 def add_issue(project_name, template, repo, project, key):
+	import os, json, requests, re
+	
 	github='https://api.github.com'
 	key = {'Authorization': "token " + key}
 
