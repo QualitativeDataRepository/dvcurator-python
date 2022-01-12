@@ -5,19 +5,16 @@
 #  
 #  Copyright 2021 Michael McCall <mimccall@syr.edu>
 #
-from dataverse import *
-from github import *
-from pdf_metadata import *
-	
+
 def main(args):
+	from api import dataverse
+	from api import github
+	from files import pdf_metadata
+	
 	from glob import glob
 	import configparser
 	#from pkg_resources import resource_listdir
-
-	#host="data.qdr.syr.edu"
-	#gh_repo="QualitativeDataRepository/Project-Curation"
-	#gh_repo="QualitativeDataRepository/testing-demos"
-
+	
 	import getopt
 	args = args[1:]
 	shortopts = "c:d:"
