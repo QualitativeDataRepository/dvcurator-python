@@ -1,24 +1,29 @@
 
-def find_dropbox():
+def find_config():
 	from tkinter import filedialog
-	dropbox = filedialog.askdirectory()
-	dropbox_label.configure(text="Dropbox: " + dropbox)
+	config = filedialog.askopenfilename()
+	config_label.configure(text="Config file: " + config)
 
 
 import tkinter as tk
 root=tk.Tk()
-#root.geometry('600x400')
-dv_token=tk.StringVar()
-dropbox=tk.StringVar()
+#root.geometry('300x50')
+root.title("dvcurator")
 
-dv_label = tk.Label(root, text="Dataverse token")
-dv_entry = tk.Entry(root, textvariable=dv_token)
-dropbox_label = tk.Label(root, text="Dropbox folder")
-dropbox_entry = tk.Button(root, text="Select folder", command=find_dropbox)
+doi=tk.StringVar()
+config=tk.StringVar()
 
-dropbox_label.grid(column=2, row=1)
-dropbox_entry.grid(column=1, row=1)
-dv_label.grid(column=2, row=2)
-dv_entry.grid(column=1, row=2)
+doi_label = tk.Label(root, text="Persistent ID (DOI)")
+doi_entry = tk.Entry(root, textvariable=doi)
+config_label = tk.Label(root, text="Config file")
+config_entry = tk.Button(root, text="Select folder", command=find_config)
+
+config_label.grid(column=2, row=1)
+config_entry.grid(column=1, row=1)
+doi_label.grid(column=2, row=2)
+doi_entry.grid(column=1, row=2)
+
+quit = tk.Button(root, text="Exit", command=root.quit)
+quit.grid(column=2, row=3)
 
 root.mainloop()
