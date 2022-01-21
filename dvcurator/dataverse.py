@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 #
 
-def get_citation(host, doi, token):
+def get_citation(host, doi, token=""):
 	import requests
 	
 	# Scrape data and metadata from dataverse
-	key = {'X-Dataverse-Key': token}
 	dataset_url = 'https://' + host 
 	dataset_url += '/api/datasets/:persistentId/?persistentId=' + doi
-	dataset = requests.get(dataset_url, headers=key)
+	if (not token):
+		dataset = requests.get(dataset_url)
+	else:
+		dataset = requests.get(dataset_url, headers=key)
 	citation=dataset.json()['data']['latestVersion']['metadataBlocks']['citation']['fields']
 	fields = [] # Make an index of all the metadata fields
 	values = []
@@ -19,7 +21,7 @@ def get_citation(host, doi, token):
 	return dict(zip(fields, values)) 
 
 def download_dataset(host, doi, token, folder_name, dropbox):
-	import urllib.request, zipfile, os
+	import zipfile, os, requests #, urllib.request
 
 	folder_path = 'QDR Project - ' + folder_name
 	folder_path = os.path.join(dropbox, folder_path)
@@ -31,14 +33,24 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
-	zip_url += '&key=' + token
+	if token.strip():
+		zip_url += '&key=' + token
+	#print(zip_url)
+
 	zip_path = os.path.join(folder_path, "Original Deposit.zip")
-	zip_return = urllib.request.urlretrieve(zip_url, zip_path)
+	r = requests.get(zip_url)
+	with open(zip_path, 'wb') as outfile:
+		outfile.write(r.content)
+		
+	#zip_return = urllib.request.urlretrieve(zip_url, zip_path)
 	print("Original archive downloaded to '%s'" %zip_path)
 
 	with zipfile.ZipFile(zip_path, 'r') as zip_ref:
 		zip_ref.extractall(edit_path)
 		print("Archive files extracted to '%s'" %edit_path)
+
+	manifest = os.path.join(edit_path, 'MANIFEST.TXT')
+	if (os.path.exists(manifest)):
+		os.remove(manifest)
 		
-	os.remove(os.path.join(edit_path, 'MANIFEST.TXT'))
 	return edit_path
