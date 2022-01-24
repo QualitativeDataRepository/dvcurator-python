@@ -1,3 +1,5 @@
+[![codecov.io](https://codecov.io/gh/QualitativeDataRepository/dvcurator-python/branch/master/graphs/badge.svg?branch=master)](https://app.codecov.io/gh/QualitativeDataRepository/dvcurator-python)
+
 # dvcurator -- A set of common Dataverse Curation tasks
 
 The tool is based on QDR's curation practices and will likely require modifications for other repositories.
