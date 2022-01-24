@@ -1,14 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#  dvcurator.py
+#  
+#  Copyright 2021 Michael McCall <mimccall@syr.edu>
+#
+
 
 def find_config():
 	from tkinter import filedialog
 	config = filedialog.askopenfilename()
-	config_label.configure(text="Config file: " + config)
-
 
 import tkinter as tk
 root=tk.Tk()
 #root.geometry('300x50')
 root.title("dvcurator")
+
+top = tk.Frame(root)
+checklist = tk.Frame(root)
 
 doi=tk.StringVar()
 config=tk.StringVar()
@@ -27,7 +36,6 @@ doi_label.pack(side=tk.LEFT)
 #doi_label.grid(column=2, row=2)
 #doi_entry.grid(column=1, row=2)
 
-issues = ["foo.md", "bar.md"]
 for issue in issues:
     l = tk.Checkbutton(root, text=issue)
     l.pack()

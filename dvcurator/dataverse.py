@@ -11,6 +11,7 @@ def get_citation(host, doi, token=""):
 	if (not token):
 		dataset = requests.get(dataset_url)
 	else:
+		key = {'X-Dataverse-Key': token}
 		dataset = requests.get(dataset_url, headers=key)
 	citation=dataset.json()['data']['latestVersion']['metadataBlocks']['citation']['fields']
 	fields = [] # Make an index of all the metadata fields

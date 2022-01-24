@@ -11,8 +11,7 @@ def main(args=None):
 	if args is None:
 		args=sys.argv
 	
-	from glob import glob
-	#from pkg_resources import resource_listdir
+	from pkg_resources import resource_filename, resource_listdir
 
 	config_file = ""
 	doi = ""
@@ -43,7 +42,8 @@ def main(args=None):
 
 	if not doi:
 		doi = raw_input('DOI? (e.g. "doi:10.xxx/xxxx"): ')
-	
+
+	# Get metadata from dataverse
 	import dvcurator.dataverse
 	citation=dvcurator.dataverse.get_citation(host, doi, dv_token)
 	last_name = citation['depositor'].split(', ')[0]
@@ -58,21 +58,18 @@ def main(args=None):
 	print("Downloading dataset from dataverse, this may take a while...")
 	edit_path = dvcurator.dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
 
+	# Edit PDF metadata
 	# import dvcurator.pdf_metadata
 	# dvcurator.pdf_metadata(edit_path, citation['depositor']) 
 
+	# Create github tickets
 	import dvcurator.github
 	project = dvcurator.github.create_project(citation, folder_name, gh_repo, gh_token)
 
-	# for now, args is the internal issues directory
-	#args = pkg_resources.resource_listdir("dvcurator", "issues") 
-
-	# If we only specify a directory, use all the files in it as issue templates
-	if os.path.isdir(args[0]):
-		args = os.path.join(args[0], '*.md')
-		args = glob(args)	
-
-	for issue in args:
+	# Get internal issue templates
+	issues = resource_listdir("dvcurator", "issues/")
+	for issue in issues:
+		issue = resource_filename("dvcurator", "issues/" + issue)
 		dvcurator.github.add_issue(folder_name, issue, gh_repo, project, gh_token)
 
 	print("Finished!")

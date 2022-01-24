@@ -2,6 +2,29 @@
 # -*- coding: utf-8 -*-
 #
 
+def search_existing(project_name, repo, key):
+	import json, requests
+	github='https://api.github.com'
+	key = {'Authorization': "token " + key}
+	workflow='main'
+
+	project_url = github + "/repos/" + repo + "/projects"
+	projects = requests.get(project_url + "?per_page=100", headers=key)
+
+	project_name = ' '.join(project_name.split()[:3])
+
+	for project in projects.json():
+		name = project['name']
+		search_token = ' '.join(name.split()[:3])
+		if (project_name == search_token):
+			project_id = project['id']
+			columns_url = github + "/projects/%d/columns" % (project_id)
+			print(columns_url)
+			return requests.get(columns_url, headers=key)
+
+	# Return none if nothing was found
+	return None
+
 def create_project(metadata, folder_name, repo, key):
 	import json, requests, os, re
 

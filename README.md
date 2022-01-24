@@ -1,15 +1,18 @@
-[![codecov.io](https://codecov.io/gh/QualitativeDataRepository/dvcurator-python/branch/master/graphs/badge.svg?branch=master)](https://app.codecov.io/gh/QualitativeDataRepository/dvcurator-python)
-
 # dvcurator -- A set of common Dataverse Curation tasks
+[![codecov.io](https://codecov.io/gh/QualitativeDataRepository/dvcurator-python/branch/master/graphs/badge.svg?branch=master)](https://app.codecov.io/gh/QualitativeDataRepository/dvcurator-python)
 
 The tool is based on QDR's curation practices and will likely require modifications for other repositories.
 
+Because the default distribution of python on Syracuse University campus computers is stuck at version 3.4, this package is designed with backward compatibility in mind and minimal reliance on complex dependencies.
+
 # Functionality
 
-1. Creating github issues for standard curation tasks and associating them with a github Project for the curation of the data project.
-2. Creating a local curation folder with subfolders for Original Deposit and QDR Prepared (this should typically be in Dropbox)
-3. Downloading the .zip file for the full data project to the Original Deposit folder and an unzipped version to QDR Prepared for further Curation
-4. Automatically setting metadata for PDF files
+This program executes four main tasks:
+
+1. Creating a local curation folder (ideally synced elsewhere, like dropbox) to edit the data, with subfolders for Original Deposit and Prepared 
+2. Downloading the .zip file for the full data project to the Original Deposit folder and an unzipped version to QDR Prepared for further Curation
+3. Automatically setting metadata for PDF files based on dataverse metadata
+4. Creating github issues for standard curation tasks and associating them with a github Project for the curation of the data project.
 
 # Installing
 
@@ -23,11 +26,12 @@ Otherwise, this package can be installed from a zip file:
 
 `pip install dvcurator-python-master.zip`
 
+
 # Executing
 
 Three run-time parameters must be specified: a config file, and a dataverse persistent ID for the project to curate.
 
-`dvcurator -c <config.ini> -d <doi:xxxxxx/xxxxxx> issues/`
+`dvcurator -c <config.ini> -d <doi:xxxxxx/xxxxxx>`
 
 # Requirements
 
