@@ -1,4 +1,4 @@
-name: Workflow for Codecov example-python
+name: Coverage
 on: [push, pull_request]
 jobs:
   run:
@@ -11,10 +11,12 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install coverage
       - name: Run tests and collect coverage
         run: |
-          coverage run tests.py
+          coverage run -m unittest
           coverage xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
