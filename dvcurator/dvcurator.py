@@ -13,6 +13,9 @@ def main(args=None):
 	
 	from glob import glob
 	#from pkg_resources import resource_listdir
+
+	config_file = ""
+	doi = ""
 	
 	import getopt
 	args = args[1:]
@@ -26,6 +29,9 @@ def main(args=None):
 		elif opt in('-d', '--doi'):
 			doi = val
 
+	if not config_file:
+		sys.exit()
+
 	import configparser
 	config = configparser.ConfigParser()
 	config.read(config_file)
@@ -35,6 +41,9 @@ def main(args=None):
 	gh_token = config['default']['github_token']
 	dropbox = config['default']['dropbox']
 
+	if not doi:
+		doi = raw_input('DOI? (e.g. "doi:10.xxx/xxxx"): ')
+	
 	import dvcurator.dataverse
 	citation=dvcurator.dataverse.get_citation(host, doi, dv_token)
 	last_name = citation['depositor'].split(', ')[0]
@@ -46,6 +55,7 @@ def main(args=None):
 	short_title = re.sub(":.+", '', short_title)
 	folder_name = last_name + " - " + short_title
 
+	print("Downloading dataset from dataverse, this may take a while...")
 	edit_path = dvcurator.dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
 
 	# import dvcurator.pdf_metadata

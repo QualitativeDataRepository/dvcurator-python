@@ -1,5 +1,5 @@
 import unittest, tempfile, os
-from dvcurator import dataverse
+from dvcurator import dataverse, github, pdf_metadata
 
 host = "dataverse.harvard.edu"
 doi = "doi:10.7910/DVN/CZYY1N"
