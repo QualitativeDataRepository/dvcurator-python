@@ -6,13 +6,19 @@
 #  Copyright 2021 Michael McCall <mimccall@syr.edu>
 #
 
+def project_name(last_name, title):
+	title = re.sub("(Replication )?[Dd]ata for ", '', title)
+	title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
+	title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
+	title = re.sub(":.+", '', title)
+	folder_name = last_name + " - " + title
+	return folder_name
+
 def main(args=None):
 	import sys, os, re
 	if args is None:
 		args=sys.argv
 	
-	from pkg_resources import resource_filename, resource_listdir
-
 	config_file = ""
 	doi = ""
 	
@@ -28,7 +34,9 @@ def main(args=None):
 		elif opt in('-d', '--doi'):
 			doi = val
 
+	# Import config file
 	if not config_file:
+		print("Needs config file!")
 		sys.exit()
 
 	import configparser
@@ -40,43 +48,37 @@ def main(args=None):
 	gh_token = config['default']['github_token']
 	dropbox = config['default']['dropbox']
 
-	if not doi:
-		doi = raw_input('DOI? (e.g. "doi:10.xxx/xxxx"): ')
-
 	# Get metadata from dataverse
-	import dvcurator.dataverse
-	citation=dvcurator.dataverse.get_citation(host, doi, dv_token)
+	from dvcurator import dataverse
+	citation=dataverse.get_citation(host, doi, dv_token)
 	last_name = citation['depositor'].split(', ')[0]
 	
-	short_title = citation['title']
-	short_title = re.sub("(Replication )?[Dd]ata for ", '', short_title)
-	short_title = re.match("^(.+?\\s){1,5}", short_title).group(0).rstrip()
-	short_title = re.sub("^[^a-zA-Z]?", "", short_title) # get rid of any beginning non-letter chars
-	short_title = re.sub(":.+", '', short_title)
-	folder_name = last_name + " - " + short_title
+	folder_name = project_name(last_name, citation['title'])
 
-	import dvcurator.github
+	from dvcurator import github
 	# Search for an existing github project. If there isn't one, create one
-	existing = dvcurator.github.search_existing(folder_name, gh_repo, gh_token)
+	existing = github.search_existing(folder_name, gh_repo, gh_token)
 	if (existing):
 		print("Looks like a github project already exists for this. Might want to check on that.")
 		return
 
+	# Download and extract
 	print("Downloading dataset from dataverse, this may take a while...")
-	edit_path = dvcurator.dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
+	edit_path = dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
 	print("Files downloaded and extracted to: " + edit_path)
 
 	# Edit PDF metadata
-	# import dvcurator.pdf_metadata
-	# dvcurator.pdf_metadata(edit_path, citation['depositor']) 
+	# from dvcurator import pdf_metadata
+	# pdf_metadata(edit_path, citation['depositor']) 
 
+	from pkg_resources import resource_filename, resource_listdir
 	# Create github project + issues
-	project = dvcurator.github.create_project(doi, citation, folder_name, gh_repo, gh_token)
+	project = github.create_project(doi, citation, folder_name, gh_repo, gh_token)
 	# Get internal issue templates
 	issues = resource_listdir("dvcurator", "issues/")
 	for issue in issues:
 		issue = resource_filename("dvcurator", "issues/" + issue)
-		dvcurator.github.add_issue(folder_name, issue, gh_repo, project, gh_token)
+		github.add_issue(folder_name, issue, gh_repo, project, gh_token)
 
 	print("Finished!")
 	return

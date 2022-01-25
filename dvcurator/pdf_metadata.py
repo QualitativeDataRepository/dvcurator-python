@@ -17,4 +17,4 @@ def pdf_metadata(edit_path, author):
 		metadata = PdfDict(Author=author, Title=path, Subject="-")
 		pdf.Info.update(metadata)
 		PdfWriter().write(path, pdf)
-		print("Metadata written to '%s'" %path)
+		#print("Metadata written to '%s'" %path)

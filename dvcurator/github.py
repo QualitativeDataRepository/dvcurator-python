@@ -25,11 +25,6 @@ def search_existing(project_name, repo, key=None):
 		search_token = ' '.join(name.split()[:3])
 		if (project_name == search_token): # Return column ID if found
 			return True
-			#project_id = project['id']
-			#columns_url = github + "/projects/%d/columns" % (project_id)
-			#columns = requests.get(columns_url, headers=key)
-			# Return ID of first column if found
-			#return columns.json()[0]['id']
 			
 	# Return false if nothing was found
 	return False
