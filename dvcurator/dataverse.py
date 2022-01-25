@@ -30,13 +30,12 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 	edit_path = os.path.join(folder_path, "QDR Prepared")
 	if not os.path.exists(folder_path):
 		os.makedirs(edit_path) # Creates parents as well
-		print("Directory '%s' created" %folder_path)
+		#print("Directory '%s' created" %folder_path)
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	if token.strip():
 		zip_url += '&key=' + token
-	#print(zip_url)
 
 	zip_path = os.path.join(folder_path, "Original Deposit.zip")
 	r = requests.get(zip_url)
@@ -44,11 +43,11 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 		outfile.write(r.content)
 		
 	#zip_return = urllib.request.urlretrieve(zip_url, zip_path)
-	print("Original archive downloaded to '%s'" %zip_path)
+	#print("Original archive downloaded to '%s'" %zip_path)
 
 	with zipfile.ZipFile(zip_path, 'r') as zip_ref:
 		zip_ref.extractall(edit_path)
-		print("Archive files extracted to '%s'" %edit_path)
+		#print("Archive files extracted to '%s'" %edit_path)
 
 	manifest = os.path.join(edit_path, 'MANIFEST.TXT')
 	if (os.path.exists(manifest)):

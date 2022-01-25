@@ -55,17 +55,23 @@ def main(args=None):
 	short_title = re.sub(":.+", '', short_title)
 	folder_name = last_name + " - " + short_title
 
+	import dvcurator.github
+	# Search for an existing github project. If there isn't one, create one
+	existing = dvcurator.github.search_existing(folder_name, gh_repo, gh_token)
+	if (existing):
+		print("Looks like a github project already exists for this. Might want to check on that.")
+		return
+
 	print("Downloading dataset from dataverse, this may take a while...")
 	edit_path = dvcurator.dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
+	print("Files downloaded and extracted to: " + edit_path)
 
 	# Edit PDF metadata
 	# import dvcurator.pdf_metadata
 	# dvcurator.pdf_metadata(edit_path, citation['depositor']) 
 
-	# Create github tickets
-	import dvcurator.github
-	project = dvcurator.github.create_project(citation, folder_name, gh_repo, gh_token)
-
+	# Create github project + issues
+	project = dvcurator.github.create_project(doi, citation, folder_name, gh_repo, gh_token)
 	# Get internal issue templates
 	issues = resource_listdir("dvcurator", "issues/")
 	for issue in issues:
@@ -73,6 +79,7 @@ def main(args=None):
 		dvcurator.github.add_issue(folder_name, issue, gh_repo, project, gh_token)
 
 	print("Finished!")
+	return
 	
 #if __name__ == '__main__':
 #	import requests

@@ -2,30 +2,39 @@
 # -*- coding: utf-8 -*-
 #
 
-def search_existing(project_name, repo, key):
+def search_existing(project_name, repo, key=None):
 	import json, requests
 	github='https://api.github.com'
-	key = {'Authorization': "token " + key}
-	workflow='main'
 
-	project_url = github + "/repos/" + repo + "/projects"
-	projects = requests.get(project_url + "?per_page=100", headers=key)
-
+	# Ideally we would use the project API endpoint here.
+	# We can't, because it requires an OAuth token for all calls
+	# even on public repositories. So we go directly to the issues
+	project_url = github + "/repos/" + repo + "/issues"
+	if (not key):
+		projects = requests.get(project_url + "?per_page=100")
+	else:
+		key = {'Authorization': "token " + key}
+		projects = requests.get(project_url + "?per_page=100", headers=key)
+		
+	# Take the first three words ("lastname - first-of-title") to search
 	project_name = ' '.join(project_name.split()[:3])
 
 	for project in projects.json():
-		name = project['name']
+		name = project['title']
+		# Tokenize all the project names the same way (first 3 words)
 		search_token = ' '.join(name.split()[:3])
-		if (project_name == search_token):
-			project_id = project['id']
-			columns_url = github + "/projects/%d/columns" % (project_id)
-			print(columns_url)
-			return requests.get(columns_url, headers=key)
+		if (project_name == search_token): # Return column ID if found
+			return True
+			#project_id = project['id']
+			#columns_url = github + "/projects/%d/columns" % (project_id)
+			#columns = requests.get(columns_url, headers=key)
+			# Return ID of first column if found
+			#return columns.json()[0]['id']
+			
+	# Return false if nothing was found
+	return False
 
-	# Return none if nothing was found
-	return None
-
-def create_project(metadata, folder_name, repo, key):
+def create_project(doi, metadata, folder_name, repo, key):
 	import json, requests, os, re
 
 	github='https://api.github.com'
@@ -33,11 +42,9 @@ def create_project(metadata, folder_name, repo, key):
 	workflow='main'
 
 	project_url = github + "/repos/" + repo + "/projects"
-	#existing_projects = requests.get(project_url, headers=key)
-	#for project in existing_projects:
 
 	contact_info = 'Name:' + metadata['depositor'] + '\n'
-	contact_info += 'DV link: https://data.qdr.syr.edu/dataset.xhtml?persistentId=' + "doi"
+	contact_info += 'DV link: https://data.qdr.syr.edu/dataset.xhtml?persistentId=' + doi
 
 	metadata = { 'name': folder_name, 'body': contact_info }
 	project = requests.post(project_url, json.dumps(metadata), headers=key)

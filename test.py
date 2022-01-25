@@ -21,6 +21,11 @@ class TestDataverseAPI(unittest.TestCase):
 		self.assertTrue(os.path.exists(os.path.join(path, "readme_CrosasEtal.txt")))
 		
 		f.cleanup()
+
+class TestGithubAPI(unittest.TestCase):
+	
+	def test_search(self):
+		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", "QualitativeDataRepository/testing-demos"))
 		
 if __name__ == '__main__':
 	unittest.main()
