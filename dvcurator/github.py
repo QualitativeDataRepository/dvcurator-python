@@ -44,7 +44,7 @@ def create_project(doi, metadata, folder_name, repo, key):
 	metadata = { 'name': folder_name, 'body': contact_info }
 	project = requests.post(project_url, json.dumps(metadata), headers=key)
 	project_id = project.json()['id']
-	print("Created github project: " + folder_name)
+	#print("Created github project: " + folder_name)
 	
 	# Make a Todo, in progress and done column
 	column_url = github + "/projects/%d/columns" % (project_id)
@@ -79,4 +79,4 @@ def add_issue(project_name, template, repo, project, key):
 	card_url = github + "/projects/columns/%d/cards" % (project)
 	resp = requests.post(card_url, json.dumps(metadata), headers=key)
 
-	print("Issue created: " + project_name + " _ " + issue_name)
+	#print("Issue created: " + project_name + " _ " + issue_name)

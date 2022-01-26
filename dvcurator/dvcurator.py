@@ -6,7 +6,12 @@
 #  Copyright 2021 Michael McCall <mimccall@syr.edu>
 #
 
+import tkinter as tk
+import sys
+
 def project_name(last_name, title):
+	import re
+	title = re.sub("Data for: ", '', title)
 	title = re.sub("(Replication )?[Dd]ata for ", '', title)
 	title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
 	title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
@@ -14,78 +19,182 @@ def project_name(last_name, title):
 	folder_name = last_name + " - " + title
 	return folder_name
 
-def main(args=None):
-	import sys, os, re
-	if args is None:
-		args=sys.argv
+class redirect_text(object):
+	def __init__(self, text_ctrl):
+		self.output = text_ctrl        
+	def write(self, string):
+		self.output.insert(tk.END, string)
+	def flush(self):
+		pass
+
+class MainApp(tk.Frame):
+	def load_config(self):
+		from tkinter import filedialog
+		import os.path
+		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
+		config_file = filedialog.askopenfilename(filetypes=file_type)
+		import configparser
+		config = configparser.ConfigParser()
+		config.read(config_file)
+		self.host.set(config['default']['host'])
+		self.repo.set(config['default']['repo'])
+		self.dv_token.set(config['default']['dataverse_token'])
+		self.gh_token.set(config['default']['github_token'])
+		self.dropbox.set(config['default']['dropbox'])
+		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
+		print("Loaded: " + config_file)
+
+	def set_dropbox(self):
+		from tkinter import filedialog
+		import os.path
+		dropbox = filedialog.askdirectory()
+		if (dropbox):
+			self.dropbox.set(dropbox)
+			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
+			print("Dropbox folder: " + self.dropbox.get())
+		
+	def load_citation(self):
+		if (not self.doi.get()):
+			print("Error: No persistent ID specified")
+			return
+		if (not self.host.get()):
+			print("Error: No dataverse host specified")
+			return
+			
+		from dvcurator import dataverse
+		self.citation = dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
+		# citation['depositor'].split(', ')[0] is the last name of the depositor
+		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
+		print(self.folder_name)
+		print("Dataverse project metadata loaded")
+		# Enable the next step buttons
+		self.download_button.config(state="normal")
+		self.makeproject_button.config(state="normal")
+		self.pdfmetadata_button.config(state="normal")
+
+	def download_extract(self):
+		from dvcurator import dataverse
+		print("Downloading project, please wait...")
+		self.path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
+		print("Extracted to: " + self.path)
+
+	def make_github(self):
+		from dvcurator import github
+		existing = github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
+		if (existing):
+			print("Error: existing github issues!!")
+			return
+		if (not self.gh_token.get()):
+			print("Error: no github token specified")
+			return
+
+		from pkg_resources import resource_filename
+		# Create github project + issues
+		self.project = github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
+		print("Created project: " + self.folder_name)
+		# Get internal issue templates from selected checkboxes
+		for issue in self.issues_selected:
+			path = issue.get()
+			if (path != "0"):
+				path = resource_filename("dvcurator", "issues/" + path)
+				github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
+				print(issue.get() + " added to project")
+
+	def reset_all(self):
+		self.doi.set("")
+		self.download_button.config(state="disabled")
+		self.makeproject_button.config(state="disabled")
+		self.pdfmetadata_button.config(state="disabled")
 	
-	config_file = ""
-	doi = ""
-	
-	import getopt
-	args = args[1:]
-	shortopts = "c:d:"
-	longopts = ['config', 'doi']
-	options, args = getopt.getopt(args, shortopts, longopts)
+	def __init__(self, parent, *args, **kwargs):
+		tk.Frame.__init__(self, parent, args, **kwargs)
+		self.parent = parent
 
-	for opt, val in options:
-		if opt in ('-c', '--config'):
-			config_file = val
-		elif opt in('-d', '--doi'):
-			doi = val
+		checklist = tk.Frame(self)
+		from pkg_resources import resource_listdir
+		self.issues = resource_listdir("dvcurator", "issues/")
+		self.issues_selected = []
+		for n, issue in enumerate(self.issues):
+			self.issues_selected.append(tk.StringVar(value=issue))
+			i = tk.Checkbutton(checklist, text=issue, onvalue=issue, offvalue=None, variable=self.issues_selected[n])
+			i.pack()
+		
+		# Settings
+		settings = tk.Frame(self)
+		config_file=tk.StringVar()
+		config_label = tk.Label(settings, text="Config file: ")
+		config_options = tk.Frame(settings)
+		config_entry = tk.Button(config_options, text="Open", command=self.load_config)
+		config_save = tk.Button(config_options, text="Save")
 
-	# Import config file
-	if not config_file:
-		print("Needs config file!")
-		sys.exit()
+		config_label.grid(column=1, row=1)
+		config_entry.grid(column=1, row=1)
+		config_save.grid(column=2, row=1)
+		config_options.grid(column=2, row=1)
+		
+		self.doi=tk.StringVar()
+		doi_label = tk.Label(settings, text="Persistent ID (DOI): ")
+		doi_entry = tk.Entry(settings, textvariable=self.doi)
+		doi_label.grid(column=1, row=2)
+		doi_entry.grid(column=2, row=2)
+		
+		self.host = tk.StringVar()
+		host_label = tk.Label(settings, text="Dataverse host: ")
+		host_entry = tk.Entry(settings, textvariable=self.host)
+		host_label.grid(column=1, row=3)
+		host_entry.grid(column=2, row=3)
+		
+		self.dv_token = tk.StringVar()
+		dv_label = tk.Label(settings, text="Dataverse token: ")
+		dv_entry = tk.Entry(settings, textvariable=self.dv_token)
+		dv_label.grid(column=1, row=4)
+		dv_entry.grid(column=2, row=4)
+		
+		self.repo = tk.StringVar()
+		repo_label = tk.Label(settings, text="Github repository: ")
+		repo_entry = tk.Entry(settings, textvariable=self.repo)
+		repo_label.grid(column=1, row=5)
+		repo_entry.grid(column=2, row=5)
+		
+		self.gh_token = tk.StringVar()
+		gh_label = tk.Label(settings, text="Github token: ")
+		gh_entry = tk.Entry(settings, textvariable=self.gh_token)
+		gh_label.grid(column=1, row=6)
+		gh_entry.grid(column=2, row=6)
+		
+		self.dropbox=tk.StringVar()
+		dropbox_label = tk.Label(settings, text="Dropbox folder: ")
+		self.dropbox_entry = tk.Button(settings, text="Select folder", command=self.set_dropbox)
+		dropbox_label.grid(column=1, row=7)
+		self.dropbox_entry.grid(column=2, row=7)
+		
+		process = tk.Frame(self)
+		self.cite_button = tk.Button(process, text="Load metadata", command=self.load_citation)
+		self.cite_button.pack()
+		self.download_button = tk.Button(process, text="Download and extract", state="disabled", command=self.download_extract)
+		self.download_button.pack()
+		self.makeproject_button = tk.Button(process, text="Make github project", state="disabled", command=self.make_github)
+		self.makeproject_button.pack()
+		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files")
+		self.pdfmetadata_button.pack()
+		reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
+		reset_button.pack()
+		
+		settings.grid(column=1, row=1)
+		checklist.grid(column=2, row=2)
+		process.grid(column=2, row=1)
+		
+		from tkinter import scrolledtext
+		out = scrolledtext.ScrolledText(self, width=40, height=20)
+		redir = redirect_text(out)
+		sys.stdout = redir
+		out.grid(column=1, row=2)
 
-	import configparser
-	config = configparser.ConfigParser()
-	config.read(config_file)
-	host = config['default']['host']
-	gh_repo = config['default']['repo']
-	dv_token = config['default']['dataverse_token']
-	gh_token = config['default']['github_token']
-	dropbox = config['default']['dropbox']
+def main():
+	root=tk.Tk()
+	root.title("dvcurator")
+	MainApp(root).pack(side="top", fill="both", expand=True)
+	root.mainloop()
 
-	# Get metadata from dataverse
-	from dvcurator import dataverse
-	citation=dataverse.get_citation(host, doi, dv_token)
-	last_name = citation['depositor'].split(', ')[0]
-	
-	folder_name = project_name(last_name, citation['title'])
-
-	from dvcurator import github
-	# Search for an existing github project. If there isn't one, create one
-	existing = github.search_existing(folder_name, gh_repo, gh_token)
-	if (existing):
-		print("Looks like a github project already exists for this. Might want to check on that.")
-		return
-
-	# Download and extract
-	print("Downloading dataset from dataverse, this may take a while...")
-	edit_path = dataverse.download_dataset(host, doi, dv_token, folder_name, dropbox)
-	print("Files downloaded and extracted to: " + edit_path)
-
-	# Edit PDF metadata
-	# from dvcurator import pdf_metadata
-	# pdf_metadata(edit_path, citation['depositor']) 
-
-	from pkg_resources import resource_filename, resource_listdir
-	# Create github project + issues
-	project = github.create_project(doi, citation, folder_name, gh_repo, gh_token)
-	# Get internal issue templates
-	issues = resource_listdir("dvcurator", "issues/")
-	for issue in issues:
-		issue = resource_filename("dvcurator", "issues/" + issue)
-		github.add_issue(folder_name, issue, gh_repo, project, gh_token)
-
-	print("Finished!")
-	return
-	
-#if __name__ == '__main__':
-#	import requests
-#	import re
-#	import os
-#	import sys
-#	sys.exit(main(sys.argv))
+if __name__ == "__main__":
+	main()
