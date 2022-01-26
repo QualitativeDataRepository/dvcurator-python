@@ -68,6 +68,7 @@ class MainApp(tk.Frame):
 		print(self.folder_name)
 		print("Dataverse project metadata loaded")
 		# Enable the next step buttons
+		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
 		self.pdfmetadata_button.config(state="normal")
@@ -79,13 +80,17 @@ class MainApp(tk.Frame):
 		print("Extracted to: " + self.path)
 
 	def make_github(self):
+		if (not self.gh_token.get()):
+			print("Error: no github token specified")
+			return
+		if (not self.repo.get()):
+			print("Error: no github repository specified")
+			return
+			
 		from dvcurator import github
 		existing = github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
 		if (existing):
 			print("Error: existing github issues!!")
-			return
-		if (not self.gh_token.get()):
-			print("Error: no github token specified")
 			return
 
 		from pkg_resources import resource_filename
@@ -102,6 +107,7 @@ class MainApp(tk.Frame):
 
 	def reset_all(self):
 		self.doi.set("")
+		self.doi_entry.config(state="normal")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
 		self.pdfmetadata_button.config(state="disabled")
@@ -134,9 +140,9 @@ class MainApp(tk.Frame):
 		
 		self.doi=tk.StringVar()
 		doi_label = tk.Label(settings, text="Persistent ID (DOI): ")
-		doi_entry = tk.Entry(settings, textvariable=self.doi)
+		self.doi_entry = tk.Entry(settings, textvariable=self.doi)
 		doi_label.grid(column=1, row=2)
-		doi_entry.grid(column=2, row=2)
+		self.doi_entry.grid(column=2, row=2)
 		
 		self.host = tk.StringVar()
 		host_label = tk.Label(settings, text="Dataverse host: ")

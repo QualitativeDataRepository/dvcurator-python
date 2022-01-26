@@ -10,7 +10,7 @@ setup(
 	name='dvcurator',
 	packages= ["dvcurator"],
 	entry_points = {
-		"console_scripts": ['dvcurator = dvcurator.dvcurator:main']
+		"console_scripts": ['dvcurator = dvcurator.cli:main']
 	},
 	version='0.1.0',
 	author='Michael C. McCall',
