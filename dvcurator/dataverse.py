@@ -4,7 +4,7 @@
 
 def get_citation(host, doi, token=""):
 	import requests
-	
+
 	# Scrape data and metadata from dataverse
 	dataset_url = 'https://' + host 
 	dataset_url += '/api/datasets/:persistentId/?persistentId=' + doi
@@ -38,9 +38,13 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 		zip_url += '&key=' + token
 
 	zip_path = os.path.join(folder_path, "Original Deposit.zip")
-	r = requests.get(zip_url)
+	r = requests.get(zip_url, allow_redirects=True, stream=True)
+	#print(zip_url)
 	with open(zip_path, 'wb') as outfile:
-		outfile.write(r.content)
+		for chunk in r.iter_content(chunk_size = 1024):
+			#print("Downloading...")
+			if(chunk):
+				outfile.write(chunk)
 		
 	#zip_return = urllib.request.urlretrieve(zip_url, zip_path)
 	#print("Original archive downloaded to '%s'" %zip_path)
