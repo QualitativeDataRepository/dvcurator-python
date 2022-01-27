@@ -1,4 +1,3 @@
-from dvcurator.gui import main
 import sys
-sys.exit(main())
-
+from . import gui
+sys.exit(gui.main())

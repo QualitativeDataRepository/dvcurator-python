@@ -33,17 +33,34 @@ class MainApp(tk.Frame):
 		import os.path
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
 		config_file = filedialog.askopenfilename(filetypes=file_type)
-		import configparser
-		config = configparser.ConfigParser()
-		config.read(config_file)
-		self.host.set(config['default']['host'])
-		self.repo.set(config['default']['repo'])
-		self.dv_token.set(config['default']['dataverse_token'])
-		self.gh_token.set(config['default']['github_token'])
-		self.dropbox.set(config['default']['dropbox'])
-		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-		print("Loaded: " + config_file)
+		if config_file:
+			import configparser
+			config = configparser.ConfigParser()
+			config.read(config_file)
+			self.host.set(config['default']['host'])
+			self.repo.set(config['default']['repo'])
+			self.dv_token.set(config['default']['dataverse_token'])
+			self.gh_token.set(config['default']['github_token'])
+			self.dropbox.set(config['default']['dropbox'])
+			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
+			print("Loaded: " + config_file)
 
+	def save_config(self):
+		from tkinter.filedialog import asksaveasfilename
+		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
+		f = asksaveasfilename(filetypes=file_type)
+		if f:
+			import configparser
+			config = configparser.ConfigParser()
+			config['default'] = {"host": self.host.get(),
+								"repo": self.repo.get(),
+								"dataverse_token": self.dv_token.get(),
+								"github_token": self.gh_token.get(),
+							"dropbox": self.dropbox.get()}
+			with open(f, 'w') as config_file:
+				config.write(config_file)
+			print("Written: " + config_file)
+			
 	def set_dropbox(self):
 		from tkinter import filedialog
 		import os.path
@@ -61,12 +78,12 @@ class MainApp(tk.Frame):
 			print("Error: No dataverse host specified")
 			return
 			
-		from dvcurator import dataverse
+		import dataverse
 		self.citation = dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
 		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
 		print(self.folder_name)
-		print("Dataverse project metadata loaded")
+		
 		# Enable the next step buttons
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
@@ -74,10 +91,10 @@ class MainApp(tk.Frame):
 		self.pdfmetadata_button.config(state="normal")
 
 	def download_extract(self):
-		from dvcurator import dataverse
+		import dataverse
 		print("Downloading project, please wait...")
-		self.path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
-		print("Extracted to: " + self.path)
+		extracted_path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
+		print("Extracted to: " + extracted_path)
 
 	def make_github(self):
 		if (not self.gh_token.get()):
@@ -87,7 +104,7 @@ class MainApp(tk.Frame):
 			print("Error: no github repository specified")
 			return
 			
-		from dvcurator import github
+		import github
 		existing = github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
 		if (existing):
 			print("Error: existing github issues!!")
@@ -105,12 +122,26 @@ class MainApp(tk.Frame):
 				github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
 				print(issue.get() + " added to project")
 
+	def set_metadata(self):
+		import pdf_metadata
+		import os.path 
+		if (os.path.isdir(self.dropbox.get())):
+			metadata_path = pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
+			if (not metadata_path):
+				print("Error: couldn't find #_rename folder")
+				return
+			pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
+			print("PDF metadata updated in new folder")
+		else:
+			print("Error: Dropbox folder invalid")
+
 	def reset_all(self):
 		self.doi.set("")
 		self.doi_entry.config(state="normal")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
 		self.pdfmetadata_button.config(state="disabled")
+		self.out.delete('1.0', tk.END)
 	
 	def __init__(self, parent, *args, **kwargs):
 		tk.Frame.__init__(self, parent, args, **kwargs)
@@ -118,7 +149,7 @@ class MainApp(tk.Frame):
 
 		checklist = tk.Frame(self)
 		from pkg_resources import resource_listdir
-		self.issues = resource_listdir("dvcurator", "issues/")
+		self.issues = resource_listdir(__name__, "issues/")
 		self.issues_selected = []
 		for n, issue in enumerate(self.issues):
 			self.issues_selected.append(tk.StringVar(value=issue))
@@ -131,7 +162,7 @@ class MainApp(tk.Frame):
 		config_label = tk.Label(settings, text="Config file: ")
 		config_options = tk.Frame(settings)
 		config_entry = tk.Button(config_options, text="Open", command=self.load_config)
-		config_save = tk.Button(config_options, text="Save")
+		config_save = tk.Button(config_options, text="Save", command=self.save_config)
 
 		config_label.grid(column=1, row=1)
 		config_entry.grid(column=1, row=1)
@@ -181,7 +212,7 @@ class MainApp(tk.Frame):
 		self.download_button.pack()
 		self.makeproject_button = tk.Button(process, text="Make github project", state="disabled", command=self.make_github)
 		self.makeproject_button.pack()
-		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files")
+		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files", command=self.set_metadata)
 		self.pdfmetadata_button.pack()
 		reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
 		reset_button.pack()
@@ -191,10 +222,10 @@ class MainApp(tk.Frame):
 		process.grid(column=2, row=1)
 		
 		from tkinter import scrolledtext
-		out = scrolledtext.ScrolledText(self, width=40, height=20)
-		redir = redirect_text(out)
+		self.out = scrolledtext.ScrolledText(self, width=40, height=20)
+		redir = redirect_text(self.out)
 		sys.stdout = redir
-		out.grid(column=1, row=2)
+		self.out.grid(column=1, row=2)
 
 def main():
 	root=tk.Tk()

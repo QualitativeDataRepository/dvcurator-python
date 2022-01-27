@@ -1,2 +1,4 @@
 pdfrw
 requests
+typing
+simplejson
