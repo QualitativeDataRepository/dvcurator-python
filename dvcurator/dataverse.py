@@ -22,7 +22,7 @@ def get_citation(host, doi, token=""):
 	return dict(zip(fields, values)) 
 
 def download_dataset(host, doi, token, folder_name, dropbox):
-	import zipfile, os, requests #, urllib.request
+	import zipfile, os, requests, urllib.request
 
 	folder_path = 'QDR Project - ' + folder_name
 	folder_path = os.path.join(dropbox, folder_path)
@@ -34,11 +34,15 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
-	if token.strip():
-		zip_url += '&key=' + token
+	if token:
+		key = {'X-Dataverse-Key': token}
+		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
+	else:
+		r = requests.get(zip_url, allow_redirects=True, stream=True)
 
+	#if token.strip():
+	#	zip_url += '&key=' + token
 	zip_path = os.path.join(folder_path, "Original Deposit.zip")
-	r = requests.get(zip_url, allow_redirects=True, stream=True)
 	#print(zip_url)
 	with open(zip_path, 'wb') as outfile:
 		for chunk in r.iter_content(chunk_size = 1024):
