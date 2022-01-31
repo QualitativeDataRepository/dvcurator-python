@@ -59,7 +59,7 @@ class MainApp(tk.Frame):
 							"dropbox": self.dropbox.get()}
 			with open(f, 'w') as config_file:
 				config.write(config_file)
-			print("Written: " + config_file)
+			print("Written: " + f)
 			
 	def set_dropbox(self):
 		from tkinter import filedialog
