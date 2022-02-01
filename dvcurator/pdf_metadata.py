@@ -6,8 +6,8 @@ def make_metadata_folder(dropbox, folder_name):
 	from glob import glob
 	from shutil import copytree
 	import os
-	edit_path = dropbox + "/" + 'QDR Project - ' + folder_name + "/QDR Prepared"
-	candidates = glob(edit_path + "/" + "[0-9]_[Rr]ename")
+	edit_path = os.path.normpath(os.path.join(dropbox, 'QDR Project - ' + folder_name, "QDR Prepared"))
+	candidates = glob(os.path.join(edit_path, "[0-9]_[Rr]ename"))
 	if (not candidates):
 		return None
 	if (len(candidates) > 1):
