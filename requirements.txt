@@ -2,3 +2,4 @@ pdfrw
 requests
 typing
 simplejson
+pyinstaller
