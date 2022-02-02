@@ -8,6 +8,7 @@
 
 import tkinter as tk
 import sys
+import github, dataverse, pdf_metadata
 
 def project_name(last_name, title):
 	import re
@@ -78,7 +79,7 @@ class MainApp(tk.Frame):
 			print("Error: No dataverse host specified")
 			return
 			
-		from . import dataverse
+		#from . import dataverse
 		self.citation = dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
 		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
@@ -91,7 +92,7 @@ class MainApp(tk.Frame):
 		self.pdfmetadata_button.config(state="normal")
 
 	def download_extract(self):
-		from . import dataverse
+		#from . import dataverse
 		print("Downloading project, please wait...")
 		extracted_path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
 		print("Extracted to: " + extracted_path)
@@ -104,7 +105,7 @@ class MainApp(tk.Frame):
 			print("Error: no github repository specified")
 			return
 			
-		from . import github
+		#from . import github
 		existing = github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
 		if (existing):
 			print("Error: existing github issues!!")
@@ -123,7 +124,7 @@ class MainApp(tk.Frame):
 				print(issue.get() + " added to project")
 
 	def set_metadata(self):
-		from . import pdf_metadata
+		#from . import pdf_metadata
 		import os.path 
 		if (os.path.isdir(self.dropbox.get())):
 			metadata_path = pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
