@@ -1,3 +1,2 @@
-import sys
-from . import gui
+import sys, gui
 sys.exit(gui.main())
