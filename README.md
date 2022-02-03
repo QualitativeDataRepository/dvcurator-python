@@ -1,9 +1,7 @@
-# dvcurator -- A set of common Dataverse Curation tasks
+# dvcurator -- Automating common Dataverse Curation tasks
 [![codecov.io](https://codecov.io/gh/QualitativeDataRepository/dvcurator-python/branch/master/graphs/badge.svg?branch=master)](https://app.codecov.io/gh/QualitativeDataRepository/dvcurator-python)
 
 The tool is based on QDR's curation practices and will likely require modifications for other repositories.
-
-Because the default distribution of python on Syracuse University campus computers is stuck at version 3.4, this package is designed with backward compatibility in mind and minimal reliance on complex dependencies.
 
 # Functionality
 
@@ -16,9 +14,9 @@ This program executes four main tasks:
 
 # Installing
 
-This package can be installed with pip. 
+Most users will likely prefer the single- applications available in the [release section](releases/). These are self-contained binaries for Windows (.exe) annd Mac (.zip) and require no additional dependencies to run.
 
-If you have both pip and git installed, this package can be downloaded and installed directly with:
+The more adventurous can install this package directly through pip. If you have both pip and git installed, this package can be downloaded and installed directly with:
 
 `pip install git+https://github.com/QualitativeDataRepository/dvcurator-python`
 
@@ -29,17 +27,17 @@ Otherwise, this package can be installed from a zip file:
 
 # Executing
 
-Three run-time parameters must be specified: a config file, and a dataverse persistent ID for the project to curate.
+This program is operated primarily through the GUI. If you downloaded the self-contained binaries, just double-click and run.
 
-`dvcurator -c <config.ini> -d <doi:xxxxxx/xxxxxx>`
+Installations through pip can be run directly, e.g.
+
+`python3 -m dvcurator`
 
 # Requirements
 
-Two packages are required: `requests` and `pdfrw`.
+An .ini file is used to configure program parameters. The included file `config.ini.default` can be used as a template, or one can be created and saved in the program itself. Some functions, like downloading public datasets, will operate without keys, but expect potential bugs.
 
-An .ini file is used to configure program parameters. This config file must be specificed on the command line with the `-c` or `--config` options. The included file `config.ini.default` can be used as a template.
-
-To be fully functional, the following parameters must be set in the config file:
+To be fully functional, the following parameters must be set:
 * A **github token**
   * To create a github token, go to your github developer settings/personal access tokens at https://github.com/settings/tokens
   * Click on "Generate New Token"
@@ -55,4 +53,4 @@ To be fully functional, the following parameters must be set in the config file:
 Other parameters are:
 - Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox.
 - Repo: Which github repository to post the issues
-- Host: Where the dataverse instance is hosted.
+- Host: Where the dataverse instance is hosted (For QDR: data.qdr.syr.edu)
