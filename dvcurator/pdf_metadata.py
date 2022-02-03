@@ -42,7 +42,7 @@ def standard_metadata(edit_path, author):
 		return None
 		
 	for path in pdfs:
-		pdf = pikepdf.open(path)
+		pdf = pikepdf.open(path, allow_overwriting_input=True)
 		# Clean out all existing metadata
 		#del pdf.Root.Metadata
 		#def pdf.docinfo
