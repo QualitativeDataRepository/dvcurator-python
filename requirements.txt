@@ -1,4 +1,4 @@
-pdfrw
+pikepdf
 requests
 simplejson
 pyinstaller

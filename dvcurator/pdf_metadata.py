@@ -24,23 +24,37 @@ def make_metadata_folder(dropbox, folder_name):
 	
 	return write_path
 
-def standard_metadata(edit_path, author):
-	from pdfrw import PdfReader, PdfWriter, PdfDict
+def find_pdfs(path):
 	import os, re
-
 	pdfs = []
-	for root, dirs, files in os.walk(edit_path):
+	for root, dirs, files in os.walk(path):
 		for name in files:
 			if re.search('\.(pdf|PDF)', name):
 				pdfs += [os.path.join(root, name)]
 
+	return pdfs
+	
+def standard_metadata(edit_path, author):
+	import pikepdf, os
+
+	pdfs = find_pdfs(edit_path)
 	if not pdfs:
 		return None
 		
 	for path in pdfs:
-		title = os.path.basename(path)
-		pdf = PdfReader(path)
-		metadata = PdfDict(Author=author, Title=title, Keywords="-")
-		pdf.Info.update(metadata)
-		PdfWriter().write(path, pdf)
+		pdf = pikepdf.open(path)
+		# Clean out all existing metadata
+		#del pdf.Root.Metadata
+		#def pdf.docinfo
+
+		with pdf.open_metadata() as meta:
+			meta['dc:title'] = os.path.basename(path)
+			meta['dc:creator'] = author
+			meta['pdf:Author'] = author
+			meta['dc:description'] = "QDR Data Project"
+			meta['pdf:Subject'] = "QDR Data Project"
+			meta['pdf:Keywords'] = "-"
+		
+		pdf.save(path)
+		return True
 		#print("Metadata written to '%s'" %path)

@@ -39,14 +39,15 @@ class TestPDFMetadata(unittest.TestCase):
 		f.cleanup()
 
 	def test_pdfmetadata(self):
+		from pikepdf import Pdf
 		d = tempfile.TemporaryDirectory()
+		empty_pdf = Pdf.new()
 
 		for i in range(1, 11):
-			# This doesn't actually trigger the PDF writing, should implement
-			with open(os.path.join(d.name, f'test{i}.xyz'), 'w'):
-				pass
+			empty_pdf.save(os.path.join(d.name, f'test{i}.pdf'))
 
-		self.assertFalse(pdf_metadata.standard_metadata(d.name, "Test"))
+		self.assertTrue(pdf_metadata.standard_metadata(d.name, "Test"))
+
 		d.cleanup()
 		
 if __name__ == '__main__':

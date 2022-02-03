@@ -98,6 +98,9 @@ class MainApp(tk.Frame):
 		print("Extracted to: " + extracted_path)
 
 	def make_github(self):
+		from pkg_resources import resource_filename
+		import os.path
+		
 		if (not self.gh_token.get()):
 			print("Error: no github token specified")
 			return
@@ -111,7 +114,7 @@ class MainApp(tk.Frame):
 			print("Error: existing github issues!!")
 			return
 
-		from pkg_resources import resource_filename
+
 		# Create github project + issues
 		self.project = github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
 		print("Created project: " + self.folder_name)
@@ -119,7 +122,10 @@ class MainApp(tk.Frame):
 		for issue in self.issues_selected:
 			path = issue.get()
 			if (path != "0"):
-				path = resource_filename("dvcurator", "issues/" + path)
+				if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+					path = os.path.join(sys._MEIPASS, "issues", path)
+				else:
+					path = resource_filename("dvcurator", "issues/" + path)
 				github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
 				print(issue.get() + " added to project")
 
