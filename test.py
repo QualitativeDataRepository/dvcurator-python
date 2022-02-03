@@ -39,14 +39,20 @@ class TestPDFMetadata(unittest.TestCase):
 		f.cleanup()
 
 	def test_pdfmetadata(self):
-		from pikepdf import Pdf
+		# This test is to make sure test_string gets written
+		# We read it back out from one of the files
+		import pikepdf
+		test_string = "Unit Test"
 		d = tempfile.TemporaryDirectory()
-		empty_pdf = Pdf.new()
+		empty_pdf = pikepdf.Pdf.new()
 
 		for i in range(1, 11):
 			empty_pdf.save(os.path.join(d.name, f'test{i}.pdf'))
 
-		self.assertTrue(pdf_metadata.standard_metadata(d.name, "Test"))
+		self.assertTrue(pdf_metadata.standard_metadata(d.name, test_string))
+		example = pikepdf.open(os.path.join(d.name, os.listdir(d.name)[0]))
+		meta = example.open_metadata()
+		self.assertEqual(meta['dc:creator'], test_string)
 
 		d.cleanup()
 		

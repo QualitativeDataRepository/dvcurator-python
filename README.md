@@ -35,6 +35,10 @@ Installations through pip can be run directly, e.g.
 
 # Requirements
 
+Running the self-contained binaries from the release page requires *no additional software*.
+
+If you want to run `dvcurator` as an interpreted program, the python library requrirements are listed in `requirements.txt`.
+
 An .ini file is used to configure program parameters. The included file `config.ini.default` can be used as a template, or one can be created and saved in the program itself. Some functions, like downloading public datasets, will operate without keys, but expect potential bugs.
 
 To be fully functional, the following parameters must be set:

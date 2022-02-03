@@ -31,6 +31,8 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 	if not os.path.exists(folder_path):
 		os.makedirs(edit_path) # Creates parents as well
 		#print("Directory '%s' created" %folder_path)
+	else: # If the folder already exists, don't overwrite!!
+		return None
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi

@@ -93,9 +93,11 @@ class MainApp(tk.Frame):
 
 	def download_extract(self):
 		#from . import dataverse
-		print("Downloading project, please wait...")
 		extracted_path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
-		print("Extracted to: " + extracted_path)
+		if not extracted_path:
+			print("Error: folder may already exist")
+		else:
+			print("Extracted to: " + extracted_path)
 
 	def make_github(self):
 		from pkg_resources import resource_filename
@@ -134,8 +136,7 @@ class MainApp(tk.Frame):
 		import os.path 
 		if (os.path.isdir(self.dropbox.get())):
 			metadata_path = pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
-			if (not metadata_path):
-				print("Error: couldn't find #_rename folder")
+			if (not metadata_path): # Errors are outputted by pdf_metadata
 				return
 			pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
 			print("PDF metadata updated in new folder")

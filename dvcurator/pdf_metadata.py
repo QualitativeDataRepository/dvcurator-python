@@ -9,6 +9,7 @@ def make_metadata_folder(dropbox, folder_name):
 	edit_path = os.path.normpath(os.path.join(dropbox, 'QDR Project - ' + folder_name, "QDR Prepared"))
 	candidates = glob(os.path.join(edit_path, "[0-9]_[Rr]ename"))
 	if (not candidates):
+		print("Error: couldn't find #_rename folder")
 		return None
 	if (len(candidates) > 1):
 		print("Error: multiple '#_rename' folders")
@@ -18,6 +19,10 @@ def make_metadata_folder(dropbox, folder_name):
 	folder_number = os.path.split(import_path)[1]
 	folder_number = int(folder_number[0]) + 1
 	write_path = edit_path + "/%d_metadata" %folder_number
+
+	if os.path.exists(write_path): # Don't overwrite
+		print("Error: metadata folder already exists")
+		return None
 
 	# copy files to new folder
 	copytree(import_path, write_path)
@@ -48,7 +53,9 @@ def standard_metadata(edit_path, author):
 		#def pdf.docinfo
 
 		with pdf.open_metadata() as meta:
-			meta['dc:title'] = os.path.basename(path)
+			if meta.pdfa_status:
+				print("Warning: Edited PDF claims PDF/A")
+			#meta['dc:title'] = os.path.basename(path)
 			meta['dc:creator'] = author
 			meta['pdf:Author'] = author
 			meta['dc:description'] = "QDR Data Project"
