@@ -149,8 +149,12 @@ class MainApp(tk.Frame):
 		self.parent = parent
 
 		checklist = tk.Frame(self)
-		from pkg_resources import resource_listdir
-		self.issues = resource_listdir(__name__, "issues/")
+		if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+				self.issues = os.listdir(os.path.join(sys._MEIPASS, "issues"))
+		else:
+			from pkg_resources import resource_listdir
+			self.issues = resource_listdir(__name__, "issues/")
+
 		self.issues_selected = []
 		for n, issue in enumerate(self.issues):
 			self.issues_selected.append(tk.StringVar(value=issue))
