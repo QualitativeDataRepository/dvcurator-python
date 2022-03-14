@@ -14,7 +14,7 @@ This program executes four main tasks:
 
 # Installing
 
-Most users will likely prefer the single- applications available in the [release section](releases/). These are self-contained binaries for Windows (.exe) annd Mac (.zip) and require no additional dependencies to run.
+Most users will likely prefer the single- applications available in the [release section](/releases/tag/refs%2Fheads%2Fmaster). These are self-contained binaries for Windows (.exe) annd Mac (.zip) and require no additional dependencies to run.
 
 The more adventurous can install this package directly through pip. If you have both pip and git installed, this package can be downloaded and installed directly with:
 
