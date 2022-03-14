@@ -42,6 +42,7 @@ If you want to run `dvcurator` as an interpreted program, the python library req
 An .ini file is used to configure program parameters. The included file `config.ini.default` can be used as a template, or one can be created and saved in the program itself. Some functions, like downloading public datasets, will operate without keys, but expect potential bugs.
 
 To be fully functional, the following parameters must be set:
+* A **project DOI** in the form `doi:10.1234/abcdef`. Once metadata is loaded for that DOI, use the "Reset dvcurator" button to input a different DOI.  
 * A **github token**
   * To create a github token, go to your github developer settings/personal access tokens at https://github.com/settings/tokens
   * Click on "Generate New Token"
