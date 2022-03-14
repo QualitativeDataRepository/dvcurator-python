@@ -52,7 +52,7 @@ To be fully functional, the following parameters must be set:
     * write:discussion
   * Click "Generate Token" at the bottom of the screen. Make sure to note down your token and keep it safe (you won't be able to access this later)
 * A **dataverse API key** -- this must be for the dataverse installation you will work with.
-  * Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=dataRelatedToMe (substitute the domain if not using QDR) --> API Token
+  * Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=apiTokenTab (substitute the domain if not using QDR)
 
 Other parameters are:
 - Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox.
