@@ -56,5 +56,5 @@ To be fully functional, the following parameters must be set:
 
 Other parameters are:
 - Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox.
-- Repo: Which github repository to post the issues
+- Repo: Which github repository to post the issues. This should be provided without the domain, i.e. in the form `organization|user/repository`, e.g., `QualitativeDataRepository/test-demos`
 - Host: Where the dataverse instance is hosted (For QDR: data.qdr.syr.edu)
