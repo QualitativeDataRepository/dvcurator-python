@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys
-import github, dataverse, pdf_metadata
+from dvcurator import github, dataverse, pdf_metadata
 
 def project_name(last_name, title):
 	import re
@@ -81,8 +81,16 @@ class MainApp(tk.Frame):
 			
 		#from . import dataverse
 		self.citation = dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
+		if (not self.citation):
+			return
+			
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
 		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
+		
+		special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
+		for i in special_characters:
+			self.folder_name = self.folder_name.replace(i,'')
+			
 		print(self.folder_name)
 		
 		# Enable the next step buttons
@@ -108,6 +116,10 @@ class MainApp(tk.Frame):
 			return
 		if (not self.repo.get()):
 			print("Error: no github repository specified")
+			return
+			
+		if (not github.check_repo(self.repo.get())):
+			print("Error: github repository doesn't exist")
 			return
 			
 		#from . import github
