@@ -45,7 +45,7 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
-	zip_url += '?format=original'
+	zip_url += '&format=original'
 	if token:
 		key = {'X-Dataverse-Key': token}
 		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
