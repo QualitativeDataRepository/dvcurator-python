@@ -50,7 +50,7 @@ def standard_metadata(edit_path, author):
 		pdf = pikepdf.open(path, allow_overwriting_input=True)
 		# Clean out all existing metadata
 		del pdf.Root.Metadata
-		def pdf.docinfo
+		del pdf.docinfo
 
 		with pdf.open_metadata() as meta:
 			if meta.pdfa_status:
