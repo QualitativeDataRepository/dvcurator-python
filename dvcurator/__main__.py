@@ -1,2 +1,2 @@
-import sys, gui
-sys.exit(gui.main())
+import sys, dvcurator.gui
+sys.exit(dvcurator.gui.main())

@@ -2,6 +2,21 @@
 # -*- coding: utf-8 -*-
 #
 
+def check_repo(repo, key=None):
+	import requests
+	github='https://api.github.com'
+	project_url = github + "/repos/" + repo + "/issues"
+	if (not key):
+		projects = requests.get(project_url + "?per_page=100")
+	else:
+		key = {'Authorization': "token " + key}
+		projects = requests.get(project_url + "?per_page=100", headers=key)
+
+	if (projects.status_code==404):
+		return False
+	else:
+		return True
+
 def search_existing(project_name, repo, key=None):
 	import json, requests
 	github='https://api.github.com'
@@ -15,7 +30,7 @@ def search_existing(project_name, repo, key=None):
 	else:
 		key = {'Authorization': "token " + key}
 		projects = requests.get(project_url + "?per_page=100", headers=key)
-		
+				
 	# Take the first three words ("lastname - first-of-title") to search
 	project_name = ' '.join(project_name.split()[:3])
 

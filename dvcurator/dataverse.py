@@ -5,6 +5,10 @@
 def get_citation(host, doi, token=""):
 	import requests
 
+	if not doi.startswith("doi:"):
+		print("Error: DOIs should start with \"doi:\"")
+		return None
+	
 	# Scrape data and metadata from dataverse
 	dataset_url = 'https://' + host 
 	dataset_url += '/api/datasets/:persistentId/?persistentId=' + doi
@@ -13,6 +17,11 @@ def get_citation(host, doi, token=""):
 	else:
 		key = {'X-Dataverse-Key': token}
 		dataset = requests.get(dataset_url, headers=key)
+		
+	if (dataset.json()['status']=="ERROR"):
+		print("Error: " + dataset.json()['message'])
+		return None
+		
 	citation=dataset.json()['data']['latestVersion']['metadataBlocks']['citation']['fields']
 	fields = [] # Make an index of all the metadata fields
 	values = []
@@ -36,6 +45,7 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
+	zip_url += '&format=original'
 	if token:
 		key = {'X-Dataverse-Key': token}
 		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)

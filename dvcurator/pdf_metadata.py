@@ -49,13 +49,18 @@ def standard_metadata(edit_path, author):
 	for path in pdfs:
 		pdf = pikepdf.open(path, allow_overwriting_input=True)
 		# Clean out all existing metadata
-		#del pdf.Root.Metadata
-		#def pdf.docinfo
+		try:
+			del pdf.Root.Metadata
+		except:
+			pass
+			
+		del pdf.docinfo
 
+		# Write new metadata
 		with pdf.open_metadata() as meta:
 			if meta.pdfa_status:
 				print("Warning: Edited PDF claims PDF/A")
-			#meta['dc:title'] = os.path.basename(path)
+			meta['dc:title'] = os.path.basename(path)
 			meta['dc:creator'] = author
 			meta['pdf:Author'] = author
 			meta['dc:description'] = "QDR Data Project"
@@ -64,4 +69,4 @@ def standard_metadata(edit_path, author):
 		
 		pdf.save(path)
 		return True
-		#print("Metadata written to '%s'" %path)
+		print("Metadata written to '%s'" %path)

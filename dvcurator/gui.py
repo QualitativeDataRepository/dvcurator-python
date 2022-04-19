@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys
-import github, dataverse, pdf_metadata
+import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata
 
 def project_name(last_name, title):
 	import re
@@ -80,9 +80,17 @@ class MainApp(tk.Frame):
 			return
 			
 		#from . import dataverse
-		self.citation = dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
+		self.citation = dvcurator.dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
+		if (not self.citation):
+			return
+			
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
 		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
+		
+		special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
+		for i in special_characters:
+			self.folder_name = self.folder_name.replace(i,'')
+			
 		print(self.folder_name)
 		
 		# Enable the next step buttons
@@ -93,7 +101,7 @@ class MainApp(tk.Frame):
 
 	def download_extract(self):
 		#from . import dataverse
-		extracted_path = dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
+		extracted_path = dvcurator.dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
 		if not extracted_path:
 			print("Error: folder may already exist")
 		else:
@@ -110,15 +118,19 @@ class MainApp(tk.Frame):
 			print("Error: no github repository specified")
 			return
 			
+		if (not dvcurator.github.check_repo(self.repo.get())):
+			print("Error: github repository doesn't exist")
+			return
+			
 		#from . import github
-		existing = github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
+		existing = dvcurator.github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
 		if (existing):
 			print("Error: existing github issues!!")
 			return
 
 
 		# Create github project + issues
-		self.project = github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
+		self.project = dvcurator.github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
 		print("Created project: " + self.folder_name)
 		# Get internal issue templates from selected checkboxes
 		for issue in self.issues_selected:
@@ -128,7 +140,7 @@ class MainApp(tk.Frame):
 					path = os.path.join(sys._MEIPASS, "issues", path)
 				else:
 					path = resource_filename("dvcurator", "issues/" + path)
-				github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
+				dvcurator.github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
 				print(issue.get() + " added to project")
 
 	def set_metadata(self):
@@ -138,7 +150,7 @@ class MainApp(tk.Frame):
 			metadata_path = pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
 			if (not metadata_path): # Errors are outputted by pdf_metadata
 				return
-			pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
+			dvcurator.pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
 			print("PDF metadata updated in new folder")
 		else:
 			print("Error: Dropbox folder invalid")
