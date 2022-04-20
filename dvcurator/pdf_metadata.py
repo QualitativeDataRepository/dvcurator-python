@@ -15,6 +15,7 @@ def make_metadata_folder(dropbox, folder_name):
 		print("Error: multiple '#_rename' folders")
 		return None
 
+	# Increment folder number by 1 (e.g. 1_rename to 2_metadata)
 	import_path = candidates[0]
 	folder_number = os.path.split(import_path)[1]
 	folder_number = int(folder_number[0]) + 1

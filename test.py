@@ -17,7 +17,9 @@ class TestDataverseAPI(unittest.TestCase):
 		path = dataverse.download_dataset(host, doi, "", "Unit Test", f.name)
 
 		self.assertTrue(os.path.isdir(path))
-		self.assertTrue(os.path.exists(os.path.join(path, "..", "Original Deposit.zip")))
+		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
+		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
+
 		self.assertTrue(os.path.exists(os.path.join(path, "readme_CrosasEtal.txt")))
 		
 		f.cleanup()

@@ -31,12 +31,12 @@ def get_citation(host, doi, token=""):
 	return dict(zip(fields, values)) 
 
 def download_dataset(host, doi, token, folder_name, dropbox):
-	import zipfile, os, requests, urllib.request
+	import zipfile, os, requests, urllib.request, json
 
 	folder_path = 'QDR Project - ' + folder_name
 	folder_path = os.path.join(dropbox, folder_path)
 	
-	edit_path = os.path.join(folder_path, "QDR Prepared")
+	edit_path = os.path.join(folder_path, "QDR Prepared/1_extract")
 	if not os.path.exists(folder_path):
 		os.makedirs(edit_path) # Creates parents as well
 		#print("Directory '%s' created" %folder_path)
@@ -46,28 +46,30 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 	zip_url = 'https://' + host
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	zip_url += '&format=original'
+	metadata_url = "https://" + host 
+	metadata_url += '/api/datasets/:persistentId/versions?persistentId=' + doi
 	if token:
 		key = {'X-Dataverse-Key': token}
 		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
+		metadata = requests.get(metadata_url, headers=key, allow_redirects=True)
 	else:
 		r = requests.get(zip_url, allow_redirects=True, stream=True)
+		metadata = requests.get(metadata_url, allow_redirects=True)
 
-	#if token.strip():
-	#	zip_url += '&key=' + token
+	# Write metadata
+	with open(os.path.join(folder_path, "Original metadata.json"), "w") as outfile:
+		json.dump(metadata.json()['data'][0]['files'], outfile, indent=4)
+	
+	# Write the zip file
 	zip_path = os.path.join(folder_path, "Original Deposit.zip")
-	#print(zip_url)
 	with open(zip_path, 'wb') as outfile:
 		for chunk in r.iter_content(chunk_size = 1024):
-			#print("Downloading...")
 			if(chunk):
 				outfile.write(chunk)
-		
-	#zip_return = urllib.request.urlretrieve(zip_url, zip_path)
-	#print("Original archive downloaded to '%s'" %zip_path)
+				
 
 	with zipfile.ZipFile(zip_path, 'r') as zip_ref:
 		zip_ref.extractall(edit_path)
-		#print("Archive files extracted to '%s'" %edit_path)
 
 	manifest = os.path.join(edit_path, 'MANIFEST.TXT')
 	if (os.path.exists(manifest)):
