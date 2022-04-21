@@ -9,6 +9,8 @@ doi = "doi:10.7910/DVN/CZYY1N"
 class TestDataverseAPI(unittest.TestCase):
 	
 	def test_citation(self):
+		self.assertIsNone(dataverse.get_citation(host, "foobar"))
+		self.assertIsNone(dataverse.get_citation(host, "doi:foobar"))
 		citation = dataverse.get_citation(host, doi)
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
 
@@ -26,6 +28,10 @@ class TestDataverseAPI(unittest.TestCase):
 
 class TestGithubAPI(unittest.TestCase):
 	
+	def test_check(self):
+		self.assertTrue(github.check_repo("IQSS/Dataverse"))
+		self.assertFalse(github.check_repo("Not/arealrepo"))
+		
 	def test_search(self):
 		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", "QualitativeDataRepository/testing-demos"))
 
