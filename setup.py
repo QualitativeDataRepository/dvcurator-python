@@ -12,7 +12,7 @@ setup(
 	entry_points = {
 		"console_scripts": ['dvcurator = dvcurator.cli:main']
 	},
-	version='0.1.0',
+	version='0.1.2',
 	author='Michael C. McCall',
 	license='MIT',
 	include_package_data=True,

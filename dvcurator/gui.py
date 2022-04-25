@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys
-import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata
+import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata, dvcurator.version
 
 def project_name(last_name, title):
 	import re
@@ -253,7 +253,7 @@ class MainApp(tk.Frame):
 
 def main():
 	root=tk.Tk()
-	root.title("dvcurator")
+	root.title("dvcurator " + dvcurator.version.get_version())
 	MainApp(root).pack(side="top", fill="both", expand=True)
 	root.mainloop()
 
