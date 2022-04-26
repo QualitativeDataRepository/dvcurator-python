@@ -49,6 +49,9 @@ jobs:
             OUT_FILE_NAME: dvcurator.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
     steps:
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
     - uses: actions/checkout@v1
     - name: Set up Python 3.10
       uses: actions/setup-python@v2

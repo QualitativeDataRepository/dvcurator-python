@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys
-import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata, dvcurator.version
+import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata#, dvcurator.version
 
 def project_name(last_name, title):
 	import re
@@ -118,7 +118,7 @@ class MainApp(tk.Frame):
 			print("Error: no github repository specified")
 			return
 			
-		if (not dvcurator.github.check_repo(self.repo.get())):
+		if (not dvcurator.github.check_repo(self.repo.get(), self.gh_token.get())):
 			print("Error: github repository doesn't exist")
 			return
 			
@@ -253,7 +253,7 @@ class MainApp(tk.Frame):
 
 def main():
 	root=tk.Tk()
-	root.title("dvcurator " + dvcurator.version.get_version())
+	root.title("dvcurator ")# + dvcurator.version.get_version())
 	MainApp(root).pack(side="top", fill="both", expand=True)
 	root.mainloop()
 
