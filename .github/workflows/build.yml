@@ -49,10 +49,10 @@ jobs:
             OUT_FILE_NAME: dvcurator.exe
             ASSET_MIME: application/vnd.microsoft.portable-executable
     steps:
+    - uses: actions/checkout@v1
     - name: Get the version
       id: get_version
       run: echo "version = \"$(git describe --tags --match v[0-9]*)\"" > dvcurator/version.py
-    - uses: actions/checkout@v1
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
