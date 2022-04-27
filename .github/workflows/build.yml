@@ -51,7 +51,7 @@ jobs:
     steps:
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      run: echo "version = \"$(git describe --tags --match v[0-9]*)\"" > dvcurator/version.py
     - uses: actions/checkout@v1
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
