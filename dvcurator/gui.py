@@ -144,10 +144,9 @@ class MainApp(tk.Frame):
 				print(issue.get() + " added to project")
 
 	def set_metadata(self):
-		#from . import pdf_metadata
 		import os.path 
 		if (os.path.isdir(self.dropbox.get())):
-			metadata_path = pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
+			metadata_path = dvcurator.pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
 			if (not metadata_path): # Errors are outputted by pdf_metadata
 				return
 			dvcurator.pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
