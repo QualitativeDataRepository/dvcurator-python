@@ -40,7 +40,7 @@ jobs:
             CMD_BUILD: >
                 pyinstaller mac.spec &&
                 cd dist/ &&
-                zip -r9 dvcurator dvcurator.app/
+                zip -r9 dvcurator_mac dvcurator.app/
             OUT_FILE_NAME: dvcurator_mac.zip
             ASSET_MIME: application/zip
           - os: windows-latest
