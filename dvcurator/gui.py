@@ -248,6 +248,7 @@ class MainApp(tk.Frame):
 		self.out = scrolledtext.ScrolledText(self, width=40, height=20)
 		redir = redirect_text(self.out)
 		sys.stdout = redir
+		sys.stderr = redir
 		self.out.grid(column=1, row=2)
 
 def main():
