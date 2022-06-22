@@ -46,17 +46,24 @@ def standard_metadata(edit_path, author):
 	pdfs = find_pdfs(edit_path)
 	if not pdfs:
 		return None
+
+	# Ideally, we would just edit the files in place
+	# Some versions of pikepdf can't do this though
+	# so we copy them to a separate folder, then save back to the orginal place
+	old_path = os.path.join(edit_path, "originals")
+	os.mkdir(old_path)
 		
 	for path in pdfs:
-		pdf = pikepdf.open(path, allow_overwriting_input=True)
+		original = os.path.join(old_path, os.path.basename(path))
+		os.rename(path, original)
+		pdf = pikepdf.open(original)
 		# Clean out all existing metadata
 		try:
 			del pdf.Root.Metadata
+			del pdf.docinfo
 		except:
 			pass
 			
-		del pdf.docinfo
-
 		# Write new metadata
 		with pdf.open_metadata() as meta:
 			if meta.pdfa_status:
@@ -67,7 +74,11 @@ def standard_metadata(edit_path, author):
 			meta['dc:description'] = "QDR Data Project"
 			meta['pdf:Subject'] = "QDR Data Project"
 			meta['pdf:Keywords'] = "-"
-		
+
 		pdf.save(path)
-		return True
 		print("Metadata written to '%s'" %path)
+		os.remove(original)
+
+	os.rmdir(old_path)
+	return True
+
