@@ -12,9 +12,11 @@ This program executes four main tasks:
 3. Automatically setting metadata for PDF files based on dataverse metadata
 4. Creating github issues for standard curation tasks and associating them with a github Project for the curation of the data project.
 
-# Installing
+# Installing dvcurator-python
 
-Most users will likely prefer the single- applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). These are self-contained binaries for Windows (.exe) annd Mac (.zip) and require no additional dependencies to run.
+Most users will want to use the applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). These are self-contained binaries for Windows (.exe) annd Mac (.zip) and require no additional dependencies to run.
+
+## For developers (i.e. not most users!)
 
 The more adventurous can install this package directly through pip. If you have both pip and git installed, this package can be downloaded and installed directly with:
 
@@ -25,9 +27,11 @@ Otherwise, this package can be installed from a zip file:
 `pip install dvcurator-python-master.zip`
 
 
-# Executing
+# Running dvcurator-python
 
 This program is operated primarily through the GUI. If you downloaded the self-contained binaries, just double-click and run.
+
+## For developers
 
 Installations through pip can be run directly, e.g.
 
@@ -56,6 +60,6 @@ To be fully functional, the following parameters must be set:
   * Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=apiTokenTab (substitute the domain if not using QDR)
 
 Other parameters are:
-- Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox.
-- Repo: Which github repository to post the issues. This should be provided without the domain, i.e. in the form `organization|user/repository`, e.g., `QualitativeDataRepository/test-demos`
-- Host: Where the dataverse instance is hosted (For QDR: data.qdr.syr.edu)
+- Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox, but does not necessarily need to be.
+- Repo: Which github repository to post the issues. This should be provided without the domain, i.e. `QualitativeDataRepository/Project-Curation`
+- Host: Where the dataverse instance is hosted (For QDR: `data.qdr.syr.edu`)
