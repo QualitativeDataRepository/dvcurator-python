@@ -69,7 +69,7 @@ def standard_metadata(edit_path, author):
 			if meta.pdfa_status:
 				print("Warning: Edited PDF claims PDF/A")
 			meta['dc:title'] = os.path.basename(path)
-			meta['dc:creator'] = author
+			#meta['dc:creator'] = author
 			meta['pdf:Author'] = author
 			meta['dc:description'] = "QDR Data Project"
 			meta['pdf:Subject'] = "QDR Data Project"
@@ -77,8 +77,8 @@ def standard_metadata(edit_path, author):
 
 		pdf.save(path)
 		print("Metadata written to '%s'" %path)
-		os.remove(original)
+		#os.remove(original)
 
-	os.rmdir(old_path)
+	#os.rmdir(old_path)
 	return True
 
