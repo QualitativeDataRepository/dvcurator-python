@@ -60,7 +60,7 @@ class TestPDFMetadata(unittest.TestCase):
 		self.assertTrue(pdf_metadata.standard_metadata(d.name, test_string))
 		example = pikepdf.open(os.path.join(d.name, os.listdir(d.name)[0]))
 		meta = example.open_metadata()
-		self.assertEqual(meta['dc:creator'], test_string)
+		self.assertEqual(meta['pdf:Author'], test_string)
 
 		d.cleanup()
 		
