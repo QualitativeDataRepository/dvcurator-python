@@ -7,7 +7,7 @@ Not all of these need to be completed, but check if available/possible
   - [ ] Tag Data/Documentation
   - [ ] Restrict files for registered users as required
   - [ ] Authorize file access to registered users
-  - [ ] Set license and add terms of access if needed (always set for controlled access license)
+  - [ ] Set license and add terms of access if needed (always set for standard access license)
   - [ ] Enable Access Request
   - [ ] Select thumbnail image
   - [ ] Deposit agreement received from depositor
