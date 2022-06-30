@@ -1,5 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import copy_metadata
+
+datas = [('dvcurator\\issues', 'issues')]
+datas += copy_metadata('pikepdf')
+
+
 
 block_cipher = None
 
@@ -8,9 +14,9 @@ a = Analysis(
     ['dvcurator/gui.py'],
     pathex=[],
     binaries=[],
-    datas=[('dvcurator/issues', 'issues')],
-    hiddenimports=[],
-    hookspath=['./hooks'],
+    datas=datas,
+    hiddenimports=['dvcurator'],
+    hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
