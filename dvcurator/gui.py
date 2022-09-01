@@ -8,8 +8,10 @@
 
 import tkinter as tk
 import sys
-import dvcurator.github, dvcurator.dataverse, dvcurator.pdf_metadata, dvcurator.version
+import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.pdf_metadata, dvcurator.version
 
+# This is the function to make the folder name from the Dataverse project name.
+# Since we use this multiple times
 def project_name(last_name, title):
 	import re
 	title = re.sub("Data for: ", '', title)
@@ -46,6 +48,7 @@ class MainApp(tk.Frame):
 			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
 			print("Loaded: " + config_file)
 
+	# function to save settings as .ini file
 	def save_config(self):
 		from tkinter.filedialog import asksaveasfilename
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
@@ -62,6 +65,7 @@ class MainApp(tk.Frame):
 				config.write(config_file)
 			print("Written: " + f)
 			
+	# Set dropbox directory path, open OS folder select dialog
 	def set_dropbox(self):
 		from tkinter import filedialog
 		import os.path
@@ -79,14 +83,13 @@ class MainApp(tk.Frame):
 			print("Error: No dataverse host specified")
 			return
 			
-		#from . import dataverse
 		self.citation = dvcurator.dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
 		if (not self.citation):
 			return
 			
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
-		self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
-		
+		# self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
+		self.folder_name = project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
 		special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
 		for i in special_characters:
 			self.folder_name = self.folder_name.replace(i,'')
@@ -97,10 +100,11 @@ class MainApp(tk.Frame):
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
+		self.convert_button.config(state="normal")
+		self.rename_button.config(state="normal")
 		self.pdfmetadata_button.config(state="normal")
 
 	def download_extract(self):
-		#from . import dataverse
 		extracted_path = dvcurator.dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
 		if not extracted_path:
 			print("Error: folder may already exist")
@@ -122,12 +126,10 @@ class MainApp(tk.Frame):
 			print("Error: github repository doesn't exist")
 			return
 			
-		#from . import github
 		existing = dvcurator.github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
 		if (existing):
 			print("Error: existing github issues!!")
 			return
-
 
 		# Create github project + issues
 		self.project = dvcurator.github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
@@ -143,13 +145,27 @@ class MainApp(tk.Frame):
 				dvcurator.github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
 				print(issue.get() + " added to project")
 
+	def rename(self):		
+		import os.path 
+		if (os.path.isdir(self.dropbox.get())):
+			last_name = self.citation['author'][0]['authorName']['value'].split(", ")[0]
+			new_path = dvcurator.rename.basic_rename(self.dropbox.get(), self.folder_name, last_name)
+			print("Files renamed in: " + new_path)
+		else:
+			print("Error: Dropbox folder invalid")
+	
+	def convert(self):		
+		new_path = dvcurator.rename.copy_new_step(self.dropbox.get(), self.folder_name, "convert-pdf")
+		dvcurator.convert.docx_pdf(new_path)
+		print("Files converted to: " + new_path)
+
 	def set_metadata(self):
 		import os.path 
 		if (os.path.isdir(self.dropbox.get())):
 			metadata_path = dvcurator.pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
 			if (not metadata_path): # Errors are outputted by pdf_metadata
 				return
-			dvcurator.pdf_metadata.standard_metadata(metadata_path, self.citation['depositor'])
+			dvcurator.pdf_metadata.standard_metadata(metadata_path, self.citation['author'][0]['authorName']['value'])
 			print("PDF metadata updated in new folder")
 		else:
 			print("Error: Dropbox folder invalid")
@@ -159,6 +175,8 @@ class MainApp(tk.Frame):
 		self.doi_entry.config(state="normal")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
+		self.convert_button.config(state="disabled")
+		self.rename_button.config(state="disabled")
 		self.pdfmetadata_button.config(state="disabled")
 		self.out.delete('1.0', tk.END)
 	
@@ -235,8 +253,23 @@ class MainApp(tk.Frame):
 		self.download_button.pack()
 		self.makeproject_button = tk.Button(process, text="Make github project", state="disabled", command=self.make_github)
 		self.makeproject_button.pack()
+
+		#fileprocess_options = ["Basic rename", "Convert docx to PDF"]
+		#fileprocess_var = tk.StringVar()
+		#fileprocess_var.set(fileprocess_options[0])
+
+		#self.fileprocess_menu = tk.OptionMenu(process, fileprocess_var, *fileprocess_options)
+		#self.fileprocess_menu.pack(expand=True)
+
+		self.convert_button = tk.Button(process, state="disabled", text="Convert docx to PDF", command=self.convert)
+		self.convert_button.pack()
+
+		self.rename_button = tk.Button(process, state="disabled", text="Basic rename", command=self.rename)
+		self.rename_button.pack()
+
 		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files", command=self.set_metadata)
 		self.pdfmetadata_button.pack()
+
 		reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
 		reset_button.pack()
 		
