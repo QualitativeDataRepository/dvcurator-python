@@ -2,34 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 
-def make_metadata_folder(dropbox, folder_name):
-	from glob import glob
-	from shutil import copytree
-	import os
-	edit_path = os.path.normpath(os.path.join(dropbox, 'QDR Project - ' + folder_name, "QDR Prepared"))
-	candidates = glob(os.path.join(edit_path, "[0-9]_[Rr]ename"))
-	if (not candidates):
-		print("Error: couldn't find #_rename folder")
-		return None
-	if (len(candidates) > 1):
-		print("Error: multiple '#_rename' folders")
-		return None
-
-	# Increment folder number by 1 (e.g. 1_rename to 2_metadata)
-	import_path = candidates[0]
-	folder_number = os.path.split(import_path)[1]
-	folder_number = int(folder_number[0]) + 1
-	write_path = edit_path + "/%d_metadata" %folder_number
-
-	if os.path.exists(write_path): # Don't overwrite
-		print("Error: metadata folder already exists")
-		return None
-
-	# copy files to new folder
-	copytree(import_path, write_path)
-	
-	return write_path
-
 def find_pdfs(path):
 	import os, re
 	pdfs = []
@@ -40,8 +12,11 @@ def find_pdfs(path):
 
 	return pdfs
 	
-def standard_metadata(edit_path, author):
-	import pikepdf, os
+def standard_metadata(dropbox, folder_name, author):
+	import pikepdf, os, shutil
+	import dvcurator.rename
+
+	edit_path = dvcurator.rename.copy_new_step(dropbox, folder_name, "metadata")
 
 	pdfs = find_pdfs(edit_path)
 	if not pdfs:
@@ -67,7 +42,7 @@ def standard_metadata(edit_path, author):
 		# Write new metadata
 		with pdf.open_metadata() as meta:
 			if meta.pdfa_status:
-				print("Warning: Edited PDF claims PDF/A")
+				print("!! Warning !! PDF is PDF/A")
 			meta['dc:title'] = os.path.basename(path)
 			#meta['dc:creator'] = author
 			meta['pdf:Author'] = author
@@ -76,9 +51,10 @@ def standard_metadata(edit_path, author):
 			meta['pdf:Keywords'] = "-"
 
 		pdf.save(path)
-		print("Metadata written to '%s'" %path)
-		#os.remove(original)
+		print("Metadata written to '%s'" %os.path.basename(path))
 
 	#os.rmdir(old_path)
+	shutil.rmtree(old_path)
+
 	return True
 

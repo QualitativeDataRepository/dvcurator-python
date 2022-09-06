@@ -41,6 +41,7 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 		os.makedirs(edit_path) # Creates parents as well
 		#print("Directory '%s' created" %folder_path)
 	else: # If the folder already exists, don't overwrite!!
+		print("Error: extract folder already exists!")
 		return None
 
 	zip_url = 'https://' + host
@@ -48,6 +49,7 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 	zip_url += '&format=original'
 	metadata_url = "https://" + host 
 	metadata_url += '/api/datasets/:persistentId/versions?persistentId=' + doi
+	print("Downloading Dataverse files", end="... ")
 	if token:
 		key = {'X-Dataverse-Key': token}
 		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
@@ -66,10 +68,13 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 		for chunk in r.iter_content(chunk_size = 1024):
 			if(chunk):
 				outfile.write(chunk)
-				
+	print("Done!")
 
+				
+	print("Extracting Dataverse files", end="... ")
 	with zipfile.ZipFile(zip_path, 'r') as zip_ref:
 		zip_ref.extractall(edit_path)
+	print("Done!")
 
 	manifest = os.path.join(edit_path, 'MANIFEST.TXT')
 	if (os.path.exists(manifest)):

@@ -95,3 +95,25 @@ def add_issue(project_name, template, repo, project, key):
 	resp = requests.post(card_url, json.dumps(metadata), headers=key)
 
 	#print("Issue created: " + project_name + " _ " + issue_name)
+
+def generate_template(doi, citation, folder_name, repo, token, issues_selected):
+	import os.path, sys
+	from pkg_resources import resource_filename
+
+	existing = search_existing(folder_name, repo, token)
+	if (existing):
+		print("Error: existing github issues!!")
+		return
+
+	project = create_project(doi, citation, folder_name, repo, token)
+	print("Created project: " + folder_name)
+	# Get internal issue templates from selected checkboxes
+	for issue in issues_selected:
+		path = issue.get()
+		if (path != "0"):
+			if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+				path = os.path.join(sys._MEIPASS, "issues", path)
+			else:
+				path = resource_filename("dvcurator", "issues/" + path)
+			add_issue(folder_name, path, repo, project, token)
+			print(issue.get() + " added to project")

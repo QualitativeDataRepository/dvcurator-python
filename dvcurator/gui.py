@@ -7,20 +7,8 @@
 #
 
 import tkinter as tk
-import sys
+import sys, threading
 import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.pdf_metadata, dvcurator.version
-
-# This is the function to make the folder name from the Dataverse project name.
-# Since we use this multiple times
-def project_name(last_name, title):
-	import re
-	title = re.sub("Data for: ", '', title)
-	title = re.sub("(Replication )?[Dd]ata for ", '', title)
-	title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
-	title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
-	title = re.sub(":.+", '', title)
-	folder_name = last_name + " - " + title
-	return folder_name
 
 class redirect_text(object):
 	def __init__(self, text_ctrl):
@@ -31,6 +19,33 @@ class redirect_text(object):
 		pass
 
 class MainApp(tk.Frame):
+	def disable_buttons(self):
+		self.cite_button.config(state="disabled")
+		self.download_button.config(state="disabled")
+		self.makeproject_button.config(state="disabled")
+		self.convert_button.config(state="disabled")
+		self.rename_button.config(state="disabled")
+		self.pdfmetadata_button.config(state="disabled")
+		self.reset_button.config(state="disabled")
+
+	def enable_buttons(self):
+		self.cite_button.config(state="normal")
+		self.download_button.config(state="normal")
+		self.makeproject_button.config(state="normal")
+		self.convert_button.config(state="normal")
+		self.rename_button.config(state="normal")
+		self.pdfmetadata_button.config(state="normal")
+		self.reset_button.config(state="normal")
+
+	def schedule_check(self, t):
+		self.after(1000, self.check_if_done, t)
+	
+	def check_if_done(self, t):
+		if not t.is_alive():
+			self.enable_buttons()
+		else:
+			self.schedule_check(t)
+
 	def load_config(self):
 		from tkinter import filedialog
 		import os.path
@@ -89,11 +104,7 @@ class MainApp(tk.Frame):
 			
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
 		# self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
-		self.folder_name = project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
-		special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
-		for i in special_characters:
-			self.folder_name = self.folder_name.replace(i,'')
-			
+		self.folder_name = dvcurator.rename.project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
 		print(self.folder_name)
 		
 		# Enable the next step buttons
@@ -105,16 +116,12 @@ class MainApp(tk.Frame):
 		self.pdfmetadata_button.config(state="normal")
 
 	def download_extract(self):
-		extracted_path = dvcurator.dataverse.download_dataset(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get())
-		if not extracted_path:
-			print("Error: folder may already exist")
-		else:
-			print("Extracted to: " + extracted_path)
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get()))
+		t.start()
+		self.schedule_check(t)
 
 	def make_github(self):
-		from pkg_resources import resource_filename
-		import os.path
-		
 		if (not self.gh_token.get()):
 			print("Error: no github token specified")
 			return
@@ -125,54 +132,41 @@ class MainApp(tk.Frame):
 		if (not dvcurator.github.check_repo(self.repo.get(), self.gh_token.get())):
 			print("Error: github repository doesn't exist")
 			return
-			
-		existing = dvcurator.github.search_existing(self.folder_name, self.repo.get(), self.gh_token.get())
-		if (existing):
-			print("Error: existing github issues!!")
-			return
 
 		# Create github project + issues
-		self.project = dvcurator.github.create_project(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get())
-		print("Created project: " + self.folder_name)
-		# Get internal issue templates from selected checkboxes
-		for issue in self.issues_selected:
-			path = issue.get()
-			if (path != "0"):
-				if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-					path = os.path.join(sys._MEIPASS, "issues", path)
-				else:
-					path = resource_filename("dvcurator", "issues/" + path)
-				dvcurator.github.add_issue(self.folder_name, path, self.repo.get(), self.project, self.gh_token.get())
-				print(issue.get() + " added to project")
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.github.generate_template, 
+			args=(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get(), self.issues_selected))
+		t.start()
+		self.schedule_check(t)
 
 	def rename(self):		
 		import os.path 
 		if (os.path.isdir(self.dropbox.get())):
-			last_name = self.citation['author'][0]['authorName']['value'].split(", ")[0]
-			new_path = dvcurator.rename.basic_rename(self.dropbox.get(), self.folder_name, last_name)
+			prefix = dvcurator.rename.last_name_prefix(self.citation)
+			new_path = dvcurator.rename.basic_rename(self.dropbox.get(), self.folder_name, prefix)
+			if (not new_path):
+				print("Error: rename process failed")
+				return
 			print("Files renamed in: " + new_path)
 		else:
 			print("Error: Dropbox folder invalid")
 	
 	def convert(self):		
-		new_path = dvcurator.rename.copy_new_step(self.dropbox.get(), self.folder_name, "convert-pdf")
-		dvcurator.convert.docx_pdf(new_path)
-		print("Files converted to: " + new_path)
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.convert.docx_pdf, args=(self.dropbox.get(), self.folder_name))
 
 	def set_metadata(self):
-		import os.path 
-		if (os.path.isdir(self.dropbox.get())):
-			metadata_path = dvcurator.pdf_metadata.make_metadata_folder(self.dropbox.get(), self.folder_name)
-			if (not metadata_path): # Errors are outputted by pdf_metadata
-				return
-			dvcurator.pdf_metadata.standard_metadata(metadata_path, self.citation['author'][0]['authorName']['value'])
-			print("PDF metadata updated in new folder")
-		else:
-			print("Error: Dropbox folder invalid")
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.dropbox.get(), self.folder_name, self.citation['author'][0]['authorName']['value']))
+		t.start()
+		self.schedule_check(t)
 
 	def reset_all(self):
+		# Reset DOI entry
 		self.doi.set("")
 		self.doi_entry.config(state="normal")
+		# Disable all other buttons
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
 		self.convert_button.config(state="disabled")
@@ -270,8 +264,8 @@ class MainApp(tk.Frame):
 		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files", command=self.set_metadata)
 		self.pdfmetadata_button.pack()
 
-		reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
-		reset_button.pack()
+		self.reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
+		self.reset_button.pack()
 		
 		settings.grid(column=1, row=1)
 		checklist.grid(column=2, row=2)
