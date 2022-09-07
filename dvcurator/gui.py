@@ -163,12 +163,12 @@ class MainApp(tk.Frame):
 		t.start()
 		self.schedule_check(t)
 
-	def rename(self):		
+	def rename(self):
 		self.disable_buttons()
 		prefix = dvcurator.rename.last_name_prefix(self.citation)
 		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, prefix))
 		t.start()
-		self.schedule_check()
+		self.schedule_check(t)
 	
 	def convert(self):		
 		self.disable_buttons()
