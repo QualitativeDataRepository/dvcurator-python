@@ -30,14 +30,11 @@ def get_citation(host, doi, token=""):
 		values.append(entry['value'])
 	return dict(zip(fields, values)) 
 
-def download_dataset(host, doi, token, folder_name, dropbox):
+def download_dataset(host, doi, folder, token=None):
 	import zipfile, os, requests, urllib.request, json
 
-	folder_path = 'QDR Project - ' + folder_name
-	folder_path = os.path.join(dropbox, folder_path)
-	
-	edit_path = os.path.join(folder_path, "QDR Prepared/1_extract")
-	if not os.path.exists(folder_path):
+	edit_path = os.path.join(folder, "QDR Prepared/1_extract")
+	if not os.path.exists(edit_path):
 		os.makedirs(edit_path) # Creates parents as well
 		#print("Directory '%s' created" %folder_path)
 	else: # If the folder already exists, don't overwrite!!
@@ -59,11 +56,11 @@ def download_dataset(host, doi, token, folder_name, dropbox):
 		metadata = requests.get(metadata_url, allow_redirects=True)
 
 	# Write metadata
-	with open(os.path.join(folder_path, "Original metadata.json"), "w") as outfile:
+	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
 		json.dump(metadata.json()['data'][0]['files'], outfile, indent=4)
 	
 	# Write the zip file
-	zip_path = os.path.join(folder_path, "Original Deposit.zip")
+	zip_path = os.path.join(folder, "Original Deposit.zip")
 	with open(zip_path, 'wb') as outfile:
 		for chunk in r.iter_content(chunk_size = 1024):
 			if(chunk):

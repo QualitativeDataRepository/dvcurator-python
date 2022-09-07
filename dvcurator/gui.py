@@ -8,13 +8,14 @@
 
 import tkinter as tk
 import sys, threading
-import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.pdf_metadata, dvcurator.version
+import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
 
 class redirect_text(object):
 	def __init__(self, text_ctrl):
 		self.output = text_ctrl        
 	def write(self, string):
 		self.output.insert(tk.END, string)
+		self.output.see(tk.END)
 	def flush(self):
 		pass
 
@@ -23,18 +24,14 @@ class MainApp(tk.Frame):
 		self.cite_button.config(state="disabled")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
-		self.convert_button.config(state="disabled")
-		self.rename_button.config(state="disabled")
-		self.pdfmetadata_button.config(state="disabled")
+		self.menubar.entryconfig("Edit", state=tk.DISABLED)
 		self.reset_button.config(state="disabled")
 
 	def enable_buttons(self):
 		self.cite_button.config(state="normal")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
-		self.convert_button.config(state="normal")
-		self.rename_button.config(state="normal")
-		self.pdfmetadata_button.config(state="normal")
+		self.menubar.entryconfig("Edit", state=tk.NORMAL)
 		self.reset_button.config(state="normal")
 
 	def schedule_check(self, t):
@@ -87,10 +84,35 @@ class MainApp(tk.Frame):
 		dropbox = filedialog.askdirectory()
 		if (dropbox):
 			self.dropbox.set(dropbox)
+			test = dvcurator.fs.check_dropbox(dropbox)
+			if not test:
+				return
 			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
 			print("Dropbox folder: " + self.dropbox.get())
+
+	def set_subfolder(self):
+		from tkinter import filedialog
+		import os.path
+		subfolder = filedialog.askdirectory()
+		if not subfolder:
+			return
+		self.subfolder_path = subfolder
+		print("Subfolder set to: " + self.subfolder_path)
+
+	# Open project directory
+	def open_explorer(self):
+		import os
+		if not self.subfolder_path:
+			print("Error: No subfolder specified")
+			return
+		elif not os.path.exists(self.subfolder_path):
+			print("Error: subfolder does not exist: " + self.subfolder_path)
+			return
+
+		os.startfile(os.path.realpath(self.subfolder_path))
 		
 	def load_citation(self):
+		import os.path
 		if (not self.doi.get()):
 			print("Error: No persistent ID specified")
 			return
@@ -103,21 +125,26 @@ class MainApp(tk.Frame):
 			return
 			
 		# citation['depositor'].split(', ')[0] is the last name of the depositor
-		# self.folder_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
-		self.folder_name = dvcurator.rename.project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
-		print(self.folder_name)
+		# self.project_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
+		self.project_name = dvcurator.rename.project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
+		print("Loaded: " + self.project_name)
+
+		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
+		if not self.subfolder_path:
+			self.subfolder_path = os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name)
+			print("You need to download/extract or manually specify a subfolder.")
+		if os.path.exists(self.subfolder_path):
+			print("Existing extracted project detected at: " + self.subfolder_path)
 		
 		# Enable the next step buttons
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
-		self.convert_button.config(state="normal")
-		self.rename_button.config(state="normal")
-		self.pdfmetadata_button.config(state="normal")
+		self.menubar.entryconfig("Edit", state=tk.NORMAL)
 
 	def download_extract(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.host.get(), self.doi.get(), self.dv_token.get(), self.folder_name, self.dropbox.get()))
+		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.host.get(), self.doi.get(), self.subfolder_path, self.dv_token.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -128,37 +155,30 @@ class MainApp(tk.Frame):
 		if (not self.repo.get()):
 			print("Error: no github repository specified")
 			return
-			
-		if (not dvcurator.github.check_repo(self.repo.get(), self.gh_token.get())):
-			print("Error: github repository doesn't exist")
-			return
 
 		# Create github project + issues
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.github.generate_template, 
-			args=(self.doi.get(), self.citation, self.folder_name, self.repo.get(), self.gh_token.get(), self.issues_selected))
+			args=(self.doi.get(), self.citation, self.project_name, self.repo.get(), self.gh_token.get(), self.issues_selected))
 		t.start()
 		self.schedule_check(t)
 
 	def rename(self):		
-		import os.path 
-		if (os.path.isdir(self.dropbox.get())):
-			prefix = dvcurator.rename.last_name_prefix(self.citation)
-			new_path = dvcurator.rename.basic_rename(self.dropbox.get(), self.folder_name, prefix)
-			if (not new_path):
-				print("Error: rename process failed")
-				return
-			print("Files renamed in: " + new_path)
-		else:
-			print("Error: Dropbox folder invalid")
+		self.disable_buttons()
+		prefix = dvcurator.rename.last_name_prefix(self.citation)
+		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, prefix))
+		t.start()
+		self.schedule_check()
 	
 	def convert(self):		
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.convert.docx_pdf, args=(self.dropbox.get(), self.folder_name))
+		t = threading.Thread(target=dvcurator.convert.docx_pdf, args=(self.subfolder_path, None))
+		t.start()
+		self.schedule_check(t)
 
 	def set_metadata(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.dropbox.get(), self.folder_name, self.citation['author'][0]['authorName']['value']))
+		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.subfolder_path, self.citation['author'][0]['authorName']['value']))
 		t.start()
 		self.schedule_check(t)
 
@@ -169,18 +189,35 @@ class MainApp(tk.Frame):
 		# Disable all other buttons
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
-		self.convert_button.config(state="disabled")
-		self.rename_button.config(state="disabled")
-		self.pdfmetadata_button.config(state="disabled")
 		self.out.delete('1.0', tk.END)
-	
+
 	def __init__(self, parent, *args, **kwargs):
 		tk.Frame.__init__(self, parent, args, **kwargs)
 		self.parent = parent
+		
+		# Start with the menu
+		self.menubar = tk.Menu(self)
 
+		self.filemenu = tk.Menu(self.menubar, tearoff=False)
+		self.filemenu.add_command(label="Open config", command=self.load_config)
+		self.filemenu.add_command(label="Save current config", command=self.save_config)
+		self.filemenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)
+		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
+		self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+		self.editmenu = tk.Menu(self.menubar, tearoff=False)
+		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
+		self.editmenu.add_command(label="Basic file rename", command=self.rename)
+		self.editmenu.add_command(label="Convert docx to pdf", command=self.convert)
+		self.editmenu.add_command(label="Set PDF metadata", command=self.set_metadata)
+		self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+		self.menubar.entryconfig("Edit", state=tk.DISABLED)
+		parent.config(menu=self.menubar)
+
+		# Checklist of tickets included in the .md files
 		checklist = tk.Frame(self)
 		if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-				self.issues = os.listdir(os.path.join(sys._MEIPASS, "issues"))
+			self.issues = os.listdir(os.path.join(sys._MEIPASS, "issues"))
 		else:
 			from pkg_resources import resource_listdir
 			self.issues = resource_listdir(__name__, "issues/")
@@ -193,16 +230,16 @@ class MainApp(tk.Frame):
 		
 		# Settings
 		settings = tk.Frame(self)
-		config_file=tk.StringVar()
-		config_label = tk.Label(settings, text="Config file: ")
-		config_options = tk.Frame(settings)
-		config_entry = tk.Button(config_options, text="Open", command=self.load_config)
-		config_save = tk.Button(config_options, text="Save", command=self.save_config)
+		#config_file=tk.StringVar()
+		#config_label = tk.Label(settings, text="Config file: ")
+		#config_options = tk.Frame(settings)
+		#config_entry = tk.Button(config_options, text="Open", command=self.load_config)
+		#config_save = tk.Button(config_options, text="Save", command=self.save_config)
 
-		config_label.grid(column=1, row=1)
-		config_entry.grid(column=1, row=1)
-		config_save.grid(column=2, row=1)
-		config_options.grid(column=2, row=1)
+		#config_label.grid(column=1, row=1)
+		#config_entry.grid(column=1, row=1)
+		#config_save.grid(column=2, row=1)
+		#config_options.grid(column=2, row=1)
 		
 		self.doi=tk.StringVar()
 		doi_label = tk.Label(settings, text="Persistent ID (DOI): ")
@@ -248,29 +285,13 @@ class MainApp(tk.Frame):
 		self.makeproject_button = tk.Button(process, text="Make github project", state="disabled", command=self.make_github)
 		self.makeproject_button.pack()
 
-		#fileprocess_options = ["Basic rename", "Convert docx to PDF"]
-		#fileprocess_var = tk.StringVar()
-		#fileprocess_var.set(fileprocess_options[0])
-
-		#self.fileprocess_menu = tk.OptionMenu(process, fileprocess_var, *fileprocess_options)
-		#self.fileprocess_menu.pack(expand=True)
-
-		self.convert_button = tk.Button(process, state="disabled", text="Convert docx to PDF", command=self.convert)
-		self.convert_button.pack()
-
-		self.rename_button = tk.Button(process, state="disabled", text="Basic rename", command=self.rename)
-		self.rename_button.pack()
-
-		self.pdfmetadata_button = tk.Button(process, state="disabled", text="Set metadata in PDF files", command=self.set_metadata)
-		self.pdfmetadata_button.pack()
-
 		self.reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
 		self.reset_button.pack()
 		
 		settings.grid(column=1, row=1)
 		checklist.grid(column=2, row=2)
 		process.grid(column=2, row=1)
-		
+
 		from tkinter import scrolledtext
 		self.out = scrolledtext.ScrolledText(self, width=40, height=20)
 		redir = redirect_text(self.out)
@@ -278,10 +299,15 @@ class MainApp(tk.Frame):
 		sys.stderr = redir
 		self.out.grid(column=1, row=2)
 
+
+
+
 def main():
 	root=tk.Tk()
 	root.title("dvcurator " + dvcurator.version.version)
 	MainApp(root).pack(side="top", fill="both", expand=True)
+
+	
 	root.mainloop()
 
 if __name__ == "__main__":

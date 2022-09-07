@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 
+# Check if repository specified actually exists
+# False = Doesn't exist, True = exists
 def check_repo(repo, key=None):
 	import requests
 	github='https://api.github.com'
@@ -17,6 +19,8 @@ def check_repo(repo, key=None):
 	else:
 		return True
 
+# Search if tickets already exist in the repo for this project
+# True = tickets exist, False = they don't exist
 def search_existing(project_name, repo, key=None):
 	import json, requests
 	github='https://api.github.com'
@@ -96,14 +100,18 @@ def add_issue(project_name, template, repo, project, key):
 
 	#print("Issue created: " + project_name + " _ " + issue_name)
 
+# This is the actual function we run from the buttom
 def generate_template(doi, citation, folder_name, repo, token, issues_selected):
 	import os.path, sys
 	from pkg_resources import resource_filename
 
-	existing = search_existing(folder_name, repo, token)
-	if (existing):
+	if not check_repo(repo, token):
+		print("Error: github repository doesn't exist")
+		return None
+
+	if search_existing(folder_name, repo, token):
 		print("Error: existing github issues!!")
-		return
+		return None
 
 	project = create_project(doi, citation, folder_name, repo, token)
 	print("Created project: " + folder_name)

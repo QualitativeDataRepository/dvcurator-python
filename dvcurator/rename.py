@@ -31,21 +31,6 @@ def last_name_prefix(citation):
     else:
         return one + "-etal"
 
-# Copy QDR prepared latest step to a new step, incrementing step number
-def copy_new_step(dropbox, folder_name, step):
-    import os.path
-    from shutil import copytree
-    from glob import glob
-    edit_path = os.path.normpath(os.path.join(dropbox, 'QDR Project - ' + folder_name, "QDR Prepared"))
-    candidates = glob(os.path.join(edit_path, "[0-9]_*"))
-    if (len(candidates) < 1):
-        return None
-    current = candidates[len(candidates)-1]
-    number = int(os.path.split(current)[1].split("_")[0]) + 1
-    new_step = str(number) + "_" + step
-    copytree(os.path.join(edit_path, current), os.path.join(edit_path, new_step))
-    return os.path.join(edit_path, new_step)
-
 # All the below functions are for the rename process
 def add_filename_prefix(folder, prefix):
     import os
@@ -61,17 +46,21 @@ def replace_spaces(folder):
 
 def remove_all_accents(folder):
     import unicodedata, os
+
     for i, f in enumerate(os.listdir(folder)):
         os.rename(os.path.join(folder, f), os.path.join(
             folder, 
             unicodedata.normalize('NFKD', f).encode('ascii', 'ignore').decode('ascii')))
 
 # This is the function we call from the GUI, which calls all the above
-def basic_rename(dropbox, folder_name, prefix):
-    new_path = copy_new_step(dropbox, folder_name, "rename")
+def basic_rename(folder, prefix):
+    import dvcurator.fs
+    print("Renaming files", end="... ")
+    new_path = dvcurator.fs.copy_new_step(folder, "rename")
     if (not new_path):
         return None
     add_filename_prefix(new_path, prefix)
     remove_all_accents(new_path)
     replace_spaces(new_path)
+    print("Done!")
     return new_path

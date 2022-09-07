@@ -12,14 +12,17 @@ def find_pdfs(path):
 
 	return pdfs
 	
-def standard_metadata(dropbox, folder_name, author):
+def standard_metadata(folder, author):
 	import pikepdf, os, shutil
-	import dvcurator.rename
+	import dvcurator.fs
 
-	edit_path = dvcurator.rename.copy_new_step(dropbox, folder_name, "metadata")
+	edit_path = dvcurator.fs.copy_new_step(folder, "metadata")
+	if not edit_path:
+		return None
 
 	pdfs = find_pdfs(edit_path)
 	if not pdfs:
+		print("Error: no PDFs detected in: " + edit_path)
 		return None
 
 	# Ideally, we would just edit the files in place
@@ -51,10 +54,12 @@ def standard_metadata(dropbox, folder_name, author):
 			meta['pdf:Keywords'] = "-"
 
 		pdf.save(path)
-		print("Metadata written to '%s'" %os.path.basename(path))
+		pdf.close()
+		print("Metadata written to: %s" %os.path.basename(path))
 
 	#os.rmdir(old_path)
-	shutil.rmtree(old_path)
+	#shutil.rmtree(old_path)
+	print("PDF metadata process complete!")
 
-	return True
+	return edit_path
 

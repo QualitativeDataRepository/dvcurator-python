@@ -2,3 +2,4 @@ pikepdf
 requests
 simplejson
 pyinstaller
+docx2pdf

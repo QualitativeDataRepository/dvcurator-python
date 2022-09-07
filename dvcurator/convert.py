@@ -6,15 +6,15 @@
 #  Copyright 2022 Michael McCall <mimccall@syr.edu>
 #
 
-from dvcurator.rename import copy_new_step
-
-
-def docx_pdf(dropbox, folder_name):
-    import dvcurator.rename
+def docx_pdf(folder, suffix=None):
+    import dvcurator.fs
     from docx2pdf import convert
     import os, glob
 
-    path = dvcurator.rename.copy_new_step(dropbox, folder_name, "convert")
+    path = dvcurator.fs.copy_new_step(folder, "convert")
+    if not path:
+        return None
+
     convert(path)
     files = glob.glob(os.path.join(path, "*.docx"))
     for f in files:
