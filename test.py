@@ -1,5 +1,5 @@
-import unittest, tempfile, os
-from dvcurator import dataverse, github, pdf_metadata
+import unittest, tempfile, os, shutil
+from dvcurator import dataverse, github, pdf_metadata, rename, fs
 
 host = "dataverse.harvard.edu"
 doi = "doi:10.7910/DVN/CZYY1N"
@@ -16,8 +16,7 @@ class TestDataverseAPI(unittest.TestCase):
 
 	def test_download(self):
 		f = tempfile.TemporaryDirectory()
-		path = dataverse.download_dataset(host, doi, "", "Unit Test", f.name)
-
+		path = dataverse.download_dataset(host, doi, f.name)
 		self.assertTrue(os.path.isdir(path))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
@@ -38,12 +37,10 @@ class TestGithubAPI(unittest.TestCase):
 class TestPDFMetadata(unittest.TestCase):
 
 	def test_makedir(self):
-		number = 5
 		f = tempfile.TemporaryDirectory()
-		os.makedirs(f.name + "/QDR Project - Unit Test/QDR Prepared/%d_Rename" %number) 
-		metadata_path = pdf_metadata.make_metadata_folder(f.name, "Unit Test")
-		self.assertTrue(metadata_path)
-
+		os.makedirs(os.path.join(f.name, "QDR Prepared/5_Rename")) 
+		new_path = fs.copy_new_step(f.name, "Unit Test")
+		self.assertTrue(new_path)
 		f.cleanup()
 
 	def test_pdfmetadata(self):
@@ -52,15 +49,20 @@ class TestPDFMetadata(unittest.TestCase):
 		import pikepdf
 		test_string = "Unit Test"
 		d = tempfile.TemporaryDirectory()
+		temp_structure = os.path.normpath(os.path.join(d.name, "QDR Prepared/5_rename"))
+		os.makedirs(temp_structure) 
+
 		empty_pdf = pikepdf.Pdf.new()
 
 		for i in range(1, 11):
-			empty_pdf.save(os.path.join(d.name, f'test{i}.pdf'))
+			empty_pdf.save(os.path.join(temp_structure, f'test{i}.pdf'))
 
-		self.assertTrue(pdf_metadata.standard_metadata(d.name, test_string))
-		example = pikepdf.open(os.path.join(d.name, os.listdir(d.name)[0]))
+		edit_path = pdf_metadata.standard_metadata(d.name, test_string)
+		one_file = os.path.join(edit_path, os.listdir(edit_path)[4])
+		example = pikepdf.open(one_file)
 		meta = example.open_metadata()
 		self.assertEqual(meta['pdf:Author'], test_string)
+		example.close()
 
 		d.cleanup()
 		
