@@ -11,8 +11,18 @@ def find_pdfs(path):
 				pdfs += [os.path.join(root, name)]
 
 	return pdfs
-	
-def standard_metadata(folder, author):
+
+# Generate the string for the author metadata field
+# separate with semicolons between full names for > 1 author
+def combine_author_names(citation):
+	author_string = citation['author'][0]['authorName']['value']
+	if (len(citation['author']) > 1):
+		for author in citation['author'][1:]:
+			author_string += "; " + author['authorName']['value']
+	return author_string
+
+# This is the function run from the GUI
+def standard_metadata(folder, citation):
 	import pikepdf, os, shutil
 	import dvcurator.fs
 
@@ -25,12 +35,14 @@ def standard_metadata(folder, author):
 		print("Error: no PDFs detected in: " + edit_path)
 		return None
 
+	author_string = combine_author_names(citation)
+
 	# Ideally, we would just edit the files in place
 	# Some versions of pikepdf can't do this though
 	# so we copy them to a separate folder, then save back to the orginal place
 	old_path = os.path.join(edit_path, "originals")
 	os.mkdir(old_path)
-		
+
 	for path in pdfs:
 		original = os.path.join(old_path, os.path.basename(path))
 		os.rename(path, original)
@@ -48,7 +60,7 @@ def standard_metadata(folder, author):
 				print("!! Warning !! PDF is PDF/A")
 			meta['dc:title'] = os.path.basename(path)
 			#meta['dc:creator'] = author
-			meta['pdf:Author'] = author
+			meta['pdf:Author'] = author_string
 			meta['dc:description'] = "QDR Data Project"
 			meta['pdf:Subject'] = "QDR Data Project"
 			meta['pdf:Keywords'] = "-"
@@ -57,8 +69,7 @@ def standard_metadata(folder, author):
 		pdf.close()
 		print("Metadata written to: %s" %os.path.basename(path))
 
-	#os.rmdir(old_path)
-	#shutil.rmtree(old_path)
+	shutil.rmtree(old_path)
 	print("PDF metadata process complete!")
 
 	return edit_path

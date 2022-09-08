@@ -53,9 +53,10 @@ def remove_all_accents(folder):
             unicodedata.normalize('NFKD', f).encode('ascii', 'ignore').decode('ascii')))
 
 # This is the function we call from the GUI, which calls all the above
-def basic_rename(folder, prefix):
+def basic_rename(folder, citation):
     import dvcurator.fs
     print("Renaming files", end="... ")
+    prefix = last_name_prefix(citation)
     new_path = dvcurator.fs.copy_new_step(folder, "rename")
     if (not new_path):
         return None

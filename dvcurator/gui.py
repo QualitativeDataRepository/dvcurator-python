@@ -165,8 +165,7 @@ class MainApp(tk.Frame):
 
 	def rename(self):
 		self.disable_buttons()
-		prefix = dvcurator.rename.last_name_prefix(self.citation)
-		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, prefix))
+		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, self.citation))
 		t.start()
 		self.schedule_check(t)
 	
@@ -178,7 +177,7 @@ class MainApp(tk.Frame):
 
 	def set_metadata(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.subfolder_path, self.citation['author'][0]['authorName']['value']))
+		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.subfolder_path, self.citation))
 		t.start()
 		self.schedule_check(t)
 
@@ -201,21 +200,22 @@ class MainApp(tk.Frame):
 		self.filemenu = tk.Menu(self.menubar, tearoff=False)
 		self.filemenu.add_command(label="Open config", command=self.load_config)
 		self.filemenu.add_command(label="Save current config", command=self.save_config)
-		self.filemenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
 		self.menubar.add_cascade(label="File", menu=self.filemenu)
 
 		self.editmenu = tk.Menu(self.menubar, tearoff=False)
-		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
 		self.editmenu.add_command(label="Basic file rename", command=self.rename)
 		self.editmenu.add_command(label="Convert docx to pdf", command=self.convert)
 		self.editmenu.add_command(label="Set PDF metadata", command=self.set_metadata)
+		self.editmenu.add_separator()
+		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
+		self.editmenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)
 		self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 		self.menubar.entryconfig("Edit", state=tk.DISABLED)
 		parent.config(menu=self.menubar)
 
 		# Checklist of tickets included in the .md files
-		checklist = tk.Frame(self)
+		checklist = tk.LabelFrame(self, text="Project issues:")
 		if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 			self.issues = os.listdir(os.path.join(sys._MEIPASS, "issues"))
 		else:
@@ -230,17 +230,7 @@ class MainApp(tk.Frame):
 		
 		# Settings
 		settings = tk.Frame(self)
-		#config_file=tk.StringVar()
-		#config_label = tk.Label(settings, text="Config file: ")
-		#config_options = tk.Frame(settings)
-		#config_entry = tk.Button(config_options, text="Open", command=self.load_config)
-		#config_save = tk.Button(config_options, text="Save", command=self.save_config)
 
-		#config_label.grid(column=1, row=1)
-		#config_entry.grid(column=1, row=1)
-		#config_save.grid(column=2, row=1)
-		#config_options.grid(column=2, row=1)
-		
 		self.doi=tk.StringVar()
 		doi_label = tk.Label(settings, text="Persistent ID (DOI): ")
 		self.doi_entry = tk.Entry(settings, textvariable=self.doi)
@@ -289,7 +279,7 @@ class MainApp(tk.Frame):
 		self.reset_button.pack()
 		
 		settings.grid(column=1, row=1)
-		checklist.grid(column=2, row=2)
+		checklist.grid(column=2, row=2, padx=10)
 		process.grid(column=2, row=1)
 
 		from tkinter import scrolledtext
@@ -299,15 +289,10 @@ class MainApp(tk.Frame):
 		sys.stderr = redir
 		self.out.grid(column=1, row=2)
 
-
-
-
 def main():
 	root=tk.Tk()
 	root.title("dvcurator " + dvcurator.version.version)
 	MainApp(root).pack(side="top", fill="both", expand=True)
-
-	
 	root.mainloop()
 
 if __name__ == "__main__":

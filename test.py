@@ -34,6 +34,23 @@ class TestGithubAPI(unittest.TestCase):
 	def test_search(self):
 		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", "QualitativeDataRepository/testing-demos"))
 
+class TestRename(unittest.TestCase):
+
+	def test_rename(self):
+		f = tempfile.TemporaryDirectory()
+		first_folder = os.path.join(f.name, "QDR Prepared", "1_extract")
+		os.makedirs(first_folder) 
+
+		fake_file = "foobar.txt"
+		with open(os.path.join(first_folder, fake_file), 'w') as fp:
+			pass
+		
+		citation = dataverse.get_citation(host, doi)
+		new_path = rename.basic_rename(f.name, citation)
+		new_file = os.listdir(new_path)[0]
+		self.assertEqual(rename.last_name_prefix(citation) + "_" + fake_file,
+			new_file)
+
 class TestPDFMetadata(unittest.TestCase):
 
 	def test_makedir(self):
@@ -44,10 +61,14 @@ class TestPDFMetadata(unittest.TestCase):
 		f.cleanup()
 
 	def test_pdfmetadata(self):
-		# This test is to make sure test_string gets written
+		# This test is to make sure author string gets written
 		# We read it back out from one of the files
 		import pikepdf
-		test_string = "Unit Test"
+
+		# Get author string from online citation
+		citation = dataverse.get_citation(host, doi)
+		author_string = pdf_metadata.combine_author_names(citation)
+
 		d = tempfile.TemporaryDirectory()
 		temp_structure = os.path.normpath(os.path.join(d.name, "QDR Prepared/5_rename"))
 		os.makedirs(temp_structure) 
@@ -57,11 +78,11 @@ class TestPDFMetadata(unittest.TestCase):
 		for i in range(1, 11):
 			empty_pdf.save(os.path.join(temp_structure, f'test{i}.pdf'))
 
-		edit_path = pdf_metadata.standard_metadata(d.name, test_string)
+		edit_path = pdf_metadata.standard_metadata(d.name, citation)
 		one_file = os.path.join(edit_path, os.listdir(edit_path)[4])
 		example = pikepdf.open(one_file)
 		meta = example.open_metadata()
-		self.assertEqual(meta['pdf:Author'], test_string)
+		self.assertEqual(meta['pdf:Author'], author_string)
 		example.close()
 
 		d.cleanup()
