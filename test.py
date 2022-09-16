@@ -6,6 +6,20 @@ doi = "doi:10.7910/DVN/CZYY1N"
 #host = "data.qdr.syr.edu"
 #doi = "doi:10.5064/F6RQA7AQ"
 
+class TestFs(unittest.TestCase):
+
+	def test_check_dropbox(self):
+		self.assertFalse(fs.check_dropbox("notarealfolder"))
+		f = tempfile.TemporaryDirectory()
+		os.makedirs(os.path.join(f.name, "QDR Project - Foobar"))
+		self.assertTrue(fs.check_dropbox(f.name, "Foobar"))
+
+	def test_new_step(self):
+		f = tempfile.TemporaryDirectory()
+		first_folder = os.path.join(f.name, "QDR Prepared", "1_extract")
+		os.makedirs(first_folder)
+		self.assertTrue(fs.copy_new_step(f.name, "test"))
+
 class TestDataverseAPI(unittest.TestCase):
 	
 	def test_citation(self):
@@ -33,6 +47,9 @@ class TestGithubAPI(unittest.TestCase):
 		
 	def test_search(self):
 		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", "QualitativeDataRepository/testing-demos"))
+
+	def test_version(self):
+		self.assertFalse(github.check_version("v0.1", "QualitativeDataRepository/dvcurator-python"))
 
 class TestRename(unittest.TestCase):
 

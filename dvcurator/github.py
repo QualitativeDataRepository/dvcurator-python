@@ -2,6 +2,22 @@
 # -*- coding: utf-8 -*-
 #
 
+# Is there a more recent version of 
+def check_version(version, repo):
+	if (version == "git-development"):
+		print("Running development version")
+		return True
+	import requests
+	github='https://api.github.com'
+	tags_url = github + "/repos/" + repo + "/tags"
+	tags = requests.get(tags_url).json()
+	latest = tags[0]['name']
+	if (tags != latest):
+		print("! Alert: update available:\n" + "https://github.com/" + repo + "/releases")
+		return False
+	else:
+		return True
+
 # Check if repository specified actually exists
 # False = Doesn't exist, True = exists
 def check_repo(repo, key=None):

@@ -8,6 +8,7 @@
 
 import tkinter as tk
 import sys, threading
+from tkinter.messagebox import showwarning
 import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
 
 class redirect_text(object):
@@ -188,6 +189,7 @@ class MainApp(tk.Frame):
 		# Disable all other buttons
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
+		self.menubar.entryconfig("Edit", state=tk.DISABLED)
 		self.out.delete('1.0', tk.END)
 
 	def __init__(self, parent, *args, **kwargs):
@@ -288,6 +290,11 @@ class MainApp(tk.Frame):
 		sys.stdout = redir
 		sys.stderr = redir
 		self.out.grid(column=1, row=2)
+
+		is_latest = dvcurator.github.check_version(dvcurator.version.version, "QualitativeDataRepository/dvcurator-python")
+		#if not is_latest:
+		#	tk.messagebox.showwarning(title="Get new version", message="Please download new version of dvcurator")
+
 
 def main():
 	root=tk.Tk()
