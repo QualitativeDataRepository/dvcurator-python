@@ -3,22 +3,34 @@ from dvcurator import dataverse, github, pdf_metadata, rename, fs
 
 host = "dataverse.harvard.edu"
 doi = "doi:10.7910/DVN/CZYY1N"
-#host = "data.qdr.syr.edu"
-#doi = "doi:10.5064/F6RQA7AQ"
 
 class TestFs(unittest.TestCase):
 
 	def test_check_dropbox(self):
-		self.assertFalse(fs.check_dropbox("notarealfolder"))
+		self.assertFalse(fs.check_dropbox("/notarealfolder"))
+
 		f = tempfile.TemporaryDirectory()
 		os.makedirs(os.path.join(f.name, "QDR Project - Foobar"))
 		self.assertTrue(fs.check_dropbox(f.name, "Foobar"))
 
+		self.assertFalse(fs.check_dropbox(f.name, "Foobar-DoesntExist"))
+		self.assertTrue(fs.check_dropbox(f.name))
+
+		f.cleanup()
+
+
 	def test_new_step(self):
+		self.assertFalse(fs.copy_new_step("/notarealfolder", "test"))
+
 		f = tempfile.TemporaryDirectory()
 		first_folder = os.path.join(f.name, "QDR Prepared", "1_extract")
+		self.assertFalse(fs.copy_new_step(f.name, "test"))
+
 		os.makedirs(first_folder)
 		self.assertTrue(fs.copy_new_step(f.name, "test"))
+
+		f.cleanup()
+
 
 class TestDataverseAPI(unittest.TestCase):
 	
@@ -52,6 +64,11 @@ class TestGithubAPI(unittest.TestCase):
 		self.assertFalse(github.check_version("v0.1", "QualitativeDataRepository/dvcurator-python"))
 
 class TestRename(unittest.TestCase):
+	
+	def test_projectname(self):
+		title = "Data for: Child Support Adjudication: New York, California and Florida, 2015-2019"
+		name = "Haney"
+		self.assertEqual(rename.project_name(name, title), "Haney - Child Support Adjudication")
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()
@@ -68,13 +85,27 @@ class TestRename(unittest.TestCase):
 		self.assertEqual(rename.last_name_prefix(citation) + "_" + fake_file,
 			new_file)
 
+		f.cleanup()
+		
+	def test_nameprefix(self):
+		two_author_doi = "doi:10.5064/F6RQA7AQ"
+		citation = dataverse.get_citation("data.qdr.syr.edu", "doi:10.5064/F6YYA3O3")
+		self.assertEqual(rename.last_name_prefix(citation), "VandeVusse-Mueller")
+
+		one_author_doi = "doi:10.7910/DVN/RHDI2C"
+		citation = dataverse.get_citation(host, one_author_doi)
+		self.assertEqual(rename.last_name_prefix(citation), "Gadarian")
+
 class TestPDFMetadata(unittest.TestCase):
 
-	def test_makedir(self):
+	def test_nopdfs(self):
+		self.assertFalse(pdf_metadata.standard_metadata("/notarealfolder", None))
+
 		f = tempfile.TemporaryDirectory()
-		os.makedirs(os.path.join(f.name, "QDR Prepared/5_Rename")) 
-		new_path = fs.copy_new_step(f.name, "Unit Test")
-		self.assertTrue(new_path)
+		edit_path = os.path.join(f.name, "QDR Prepared/5_Rename")
+		os.makedirs(edit_path) 
+		self.assertFalse(pdf_metadata.standard_metadata(edit_path, None))
+
 		f.cleanup()
 
 	def test_pdfmetadata(self):
