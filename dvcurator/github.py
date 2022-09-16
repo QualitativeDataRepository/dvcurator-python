@@ -4,6 +4,7 @@
 
 # Is there a more recent version of 
 def check_version(version, repo):
+	import dvcurator.version
 	if (version == "git-development"):
 		print("Running development version")
 		return True
@@ -12,7 +13,7 @@ def check_version(version, repo):
 	tags_url = github + "/repos/" + repo + "/tags"
 	tags = requests.get(tags_url).json()
 	latest = tags[0]['name']
-	if (tags != latest):
+	if (dvcurator.version.version != latest):
 		print("! Alert: update available:\n" + "https://github.com/" + repo + "/releases")
 		return False
 	else:
