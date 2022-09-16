@@ -3,7 +3,7 @@ def check_dropbox(dropbox, project_name=None):
     import os.path
     from glob import glob
     if not os.path.exists(dropbox):
-        print("Dropbox folder not found: %s")  %dropbox
+        print("Dropbox folder not found: " + dropbox) 
         return None
     if not project_name:
         # check if there's any existing "QDR Project - " folders
