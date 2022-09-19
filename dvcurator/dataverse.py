@@ -10,20 +10,26 @@ def get_citation(doi, token="", host=None):
 		return None
 	
 	# Scrape data and metadata from dataverse
-	dataset_url = dvcurator.hosts.qdr_dataverse if not host else host 
+	host = dvcurator.hosts.qdr_dataverse if not host else host 
 
-	dataset_url += '/api/datasets/:persistentId/?persistentId=' + doi
+	dataset_url = host + '/api/datasets/:persistentId/?persistentId=' + doi
 	if (not token):
 		dataset = requests.get(dataset_url)
 	else:
 		key = {'X-Dataverse-Key': token}
 		dataset = requests.get(dataset_url, headers=key)
-		
-	if (dataset.json()['status']=="ERROR"):
-		print("Error: " + dataset.json()['message'])
+	
+	try: 
+		dataset = dataset.json()
+	except:
+		print("Error: " + host + " not serving JSON")
+		return None
+
+	if (dataset['status']=="ERROR"):
+		print("Error: " + dataset['message'])
 		return None
 		
-	citation=dataset.json()['data']['latestVersion']['metadataBlocks']['citation']['fields']
+	citation=dataset['data']['latestVersion']['metadataBlocks']['citation']['fields']
 	fields = [] # Make an index of all the metadata fields
 	values = []
 	for entry in citation:

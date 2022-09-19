@@ -38,6 +38,7 @@ class TestDataverseAPI(unittest.TestCase):
 		self.assertIsNone(dataverse.get_citation("foobar", host=harvard_host))
 		self.assertIsNone(dataverse.get_citation("doi:foobar", host=harvard_host))
 		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		self.assertIsNotNone(citation)
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
 
 	def test_download(self):
@@ -67,6 +68,7 @@ class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
 		citation = dataverse.get_citation("doi:10.5064/F6AQGERV")
+		self.assertIsNotNone(citation)
 		self.assertEqual(rename.project_name(citation), "Haney - Child Support Adjudication")
 
 	def test_rename(self):
@@ -79,6 +81,7 @@ class TestRename(unittest.TestCase):
 			pass
 		
 		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		self.assertIsNotNone(citation)
 		new_path = rename.basic_rename(f.name, citation)
 		new_file = os.listdir(new_path)[0]
 		self.assertEqual(rename.last_name_prefix(citation) + "_" + fake_file,
@@ -88,6 +91,7 @@ class TestRename(unittest.TestCase):
 		
 	def test_nameprefix(self):
 		citation = dataverse.get_citation("doi:10.5064/F6YYA3O3")
+		self.assertIsNotNone(citation)
 		self.assertEqual(rename.last_name_prefix(citation), "VandeVusse-Mueller")
 
 		one_author_doi = "doi:10.7910/DVN/RHDI2C"
@@ -113,6 +117,8 @@ class TestPDFMetadata(unittest.TestCase):
 
 		# Get author string from online citation
 		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		self.assertIsNotNone(citation)
+
 		author_string = pdf_metadata.combine_author_names(citation)
 
 		d = tempfile.TemporaryDirectory()
