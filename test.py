@@ -1,8 +1,8 @@
 import unittest, tempfile, os, shutil
 from dvcurator import dataverse, github, pdf_metadata, rename, fs
 
-host = "dataverse.harvard.edu"
-doi = "doi:10.7910/DVN/CZYY1N"
+harvard_host = "https://dataverse.harvard.edu"
+harvard_doi = "doi:10.7910/DVN/CZYY1N"
 
 class TestFs(unittest.TestCase):
 
@@ -35,14 +35,14 @@ class TestFs(unittest.TestCase):
 class TestDataverseAPI(unittest.TestCase):
 	
 	def test_citation(self):
-		self.assertIsNone(dataverse.get_citation(host, "foobar"))
-		self.assertIsNone(dataverse.get_citation(host, "doi:foobar"))
-		citation = dataverse.get_citation(host, doi)
+		self.assertIsNone(dataverse.get_citation("foobar", host=harvard_host))
+		self.assertIsNone(dataverse.get_citation("doi:foobar", host=harvard_host))
+		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
 
 	def test_download(self):
 		f = tempfile.TemporaryDirectory()
-		path = dataverse.download_dataset(host, doi, f.name)
+		path = dataverse.download_dataset(harvard_doi, f.name, host=harvard_host)
 		self.assertTrue(os.path.isdir(path))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
@@ -54,21 +54,20 @@ class TestDataverseAPI(unittest.TestCase):
 class TestGithubAPI(unittest.TestCase):
 	
 	def test_check(self):
-		self.assertTrue(github.check_repo("IQSS/Dataverse"))
-		self.assertFalse(github.check_repo("Not/arealrepo"))
+		self.assertTrue(github.check_repo(repo="IQSS/Dataverse"))
+		self.assertFalse(github.check_repo(repo="Not/arealrepo"))
 		
 	def test_search(self):
-		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", "QualitativeDataRepository/testing-demos"))
+		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", repo="QualitativeDataRepository/testing-demos"))
 
 	def test_version(self):
-		self.assertFalse(github.check_version("v0.1", "QualitativeDataRepository/dvcurator-python"))
+		self.assertFalse(github.check_version())
 
 class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
-		title = "Data for: Child Support Adjudication: New York, California and Florida, 2015-2019"
-		name = "Haney"
-		self.assertEqual(rename.project_name(name, title), "Haney - Child Support Adjudication")
+		citation = dataverse.get_citation("doi:10.5064/F6AQGERV")
+		self.assertEqual(rename.project_name(citation), "Haney - Child Support Adjudication")
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()
@@ -79,7 +78,7 @@ class TestRename(unittest.TestCase):
 		with open(os.path.join(first_folder, fake_file), 'w') as fp:
 			pass
 		
-		citation = dataverse.get_citation(host, doi)
+		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
 		new_path = rename.basic_rename(f.name, citation)
 		new_file = os.listdir(new_path)[0]
 		self.assertEqual(rename.last_name_prefix(citation) + "_" + fake_file,
@@ -88,12 +87,11 @@ class TestRename(unittest.TestCase):
 		f.cleanup()
 		
 	def test_nameprefix(self):
-		two_author_doi = "doi:10.5064/F6RQA7AQ"
-		citation = dataverse.get_citation("data.qdr.syr.edu", "doi:10.5064/F6YYA3O3")
+		citation = dataverse.get_citation("doi:10.5064/F6YYA3O3")
 		self.assertEqual(rename.last_name_prefix(citation), "VandeVusse-Mueller")
 
 		one_author_doi = "doi:10.7910/DVN/RHDI2C"
-		citation = dataverse.get_citation(host, one_author_doi)
+		citation = dataverse.get_citation(one_author_doi, host=harvard_host)
 		self.assertEqual(rename.last_name_prefix(citation), "Gadarian")
 
 class TestPDFMetadata(unittest.TestCase):
@@ -114,7 +112,7 @@ class TestPDFMetadata(unittest.TestCase):
 		import pikepdf
 
 		# Get author string from online citation
-		citation = dataverse.get_citation(host, doi)
+		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
 		author_string = pdf_metadata.combine_author_names(citation)
 
 		d = tempfile.TemporaryDirectory()

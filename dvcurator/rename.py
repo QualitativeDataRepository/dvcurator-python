@@ -7,18 +7,24 @@
 #
 
 # Create the name that will be used for the dropbox folder
-def project_name(last_name, title):
-	import re
-	title = re.sub("Data for: ", '', title)
-	title = re.sub("(Replication )?[Dd]ata for ", '', title)
-	title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
-	title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
-	title = re.sub(":.+", '', title)
-	folder_name = last_name + " - " + title
-	special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
-	for i in special_characters:
-		folder_name = folder_name.replace(i,'')
-	return folder_name
+def project_name(citation):
+    import re
+
+    author1_last_name = citation['author'][0]['authorName']['value'].split(', ')[0]
+    title = citation['title']
+    title = re.sub("Data for: ", '', title)
+    title = re.sub("(Replication )?[Dd]ata for ", '', title)
+    title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
+    title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
+    title = re.sub(":.+", '', title)
+    
+    folder_name = author1_last_name + " - " + title
+
+    special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
+    for i in special_characters:
+        folder_name = folder_name.replace(i,'')
+        
+    return folder_name
 
 # Extract the last name of the first author (and second) for filename prefix
 def last_name_prefix(citation):

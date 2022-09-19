@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 #
 
-def get_citation(host, doi, token=""):
-	import requests
+def get_citation(doi, token="", host=None):
+	import requests, dvcurator.hosts
 
 	if not doi.startswith("doi:"):
 		print("Error: DOIs should start with \"doi:\"")
 		return None
 	
 	# Scrape data and metadata from dataverse
-	dataset_url = 'https://' + host 
+	dataset_url = dvcurator.hosts.qdr_dataverse if not host else host 
+
 	dataset_url += '/api/datasets/:persistentId/?persistentId=' + doi
 	if (not token):
 		dataset = requests.get(dataset_url)
@@ -30,8 +31,8 @@ def get_citation(host, doi, token=""):
 		values.append(entry['value'])
 	return dict(zip(fields, values)) 
 
-def download_dataset(host, doi, folder, token=None):
-	import zipfile, os, requests, urllib.request, json
+def download_dataset(doi, folder, token=None, host=None):
+	import zipfile, os, requests, urllib.request, json, dvcurator.hosts
 
 	edit_path = os.path.join(folder, "QDR Prepared/1_extract")
 	if not os.path.exists(edit_path):
@@ -41,10 +42,10 @@ def download_dataset(host, doi, folder, token=None):
 		print("Error: extract folder already exists!")
 		return None
 
-	zip_url = 'https://' + host
+	zip_url = dvcurator.hosts.qdr_dataverse if not host else host 
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	zip_url += '&format=original'
-	metadata_url = "https://" + host 
+	metadata_url = dvcurator.hosts.qdr_dataverse if not host else host 
 	metadata_url += '/api/datasets/:persistentId/versions?persistentId=' + doi
 	print("Downloading Dataverse files", end="... ")
 	if token:

@@ -53,8 +53,6 @@ class MainApp(tk.Frame):
 			import configparser
 			config = configparser.ConfigParser()
 			config.read(config_file)
-			self.host.set(config['default']['host'])
-			self.repo.set(config['default']['repo'])
 			self.dv_token.set(config['default']['dataverse_token'])
 			self.gh_token.set(config['default']['github_token'])
 			self.dropbox.set(config['default']['dropbox'])
@@ -69,9 +67,7 @@ class MainApp(tk.Frame):
 		if f:
 			import configparser
 			config = configparser.ConfigParser()
-			config['default'] = {"host": self.host.get(),
-								"repo": self.repo.get(),
-								"dataverse_token": self.dv_token.get(),
+			config['default'] = {"dataverse_token": self.dv_token.get(),
 								"github_token": self.gh_token.get(),
 							"dropbox": self.dropbox.get()}
 			with open(f, 'w') as config_file:
@@ -122,20 +118,16 @@ class MainApp(tk.Frame):
 		if (not self.doi.get()):
 			print("Error: No persistent ID specified")
 			return
-		if (not self.host.get()):
-			print("Error: No dataverse host specified")
-			return
 		if not dvcurator.fs.check_dropbox(self.dropbox.get()):
 			print("Error: Set valid Dropbox folder first")
 			return
-			
-		self.citation = dvcurator.dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
+		# Grab the citation
+		self.citation = dvcurator.dataverse.get_citation(self.doi.get(), self.dv_token.get())
 		if (not self.citation):
+			print("Error: citation failed to load.")
 			return
 			
-		# citation['depositor'].split(', ')[0] is the last name of the depositor
-		# self.project_name = project_name(self.citation['depositor'].split(', ')[0], self.citation['title'])
-		self.project_name = dvcurator.rename.project_name(self.citation['author'][0]['authorName']['value'].split(', ')[0], self.citation['title'])
+		self.project_name = dvcurator.rename.project_name(self.citation)
 		print("Loaded: " + self.project_name)
 
 		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
@@ -153,7 +145,7 @@ class MainApp(tk.Frame):
 
 	def download_extract(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.host.get(), self.doi.get(), self.subfolder_path, self.dv_token.get()))
+		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.doi.get(), self.subfolder_path, self.dv_token.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -161,14 +153,11 @@ class MainApp(tk.Frame):
 		if (not self.gh_token.get()):
 			print("Error: no github token specified")
 			return
-		if (not self.repo.get()):
-			print("Error: no github repository specified")
-			return
 
 		# Create github project + issues
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.github.generate_template, 
-			args=(self.doi.get(), self.citation, self.project_name, self.repo.get(), self.gh_token.get(), self.issues_selected))
+			args=(self.doi.get(), self.citation, self.project_name, self.gh_token.get(), self.issues_selected))
 		t.start()
 		self.schedule_check(t)
 
@@ -246,25 +235,13 @@ class MainApp(tk.Frame):
 		self.doi_entry = tk.Entry(settings, textvariable=self.doi)
 		doi_label.grid(column=1, row=2)
 		self.doi_entry.grid(column=2, row=2)
-		
-		self.host = tk.StringVar()
-		host_label = tk.Label(settings, text="Dataverse host: ")
-		host_entry = tk.Entry(settings, textvariable=self.host)
-		host_label.grid(column=1, row=3)
-		host_entry.grid(column=2, row=3)
-		
+			
 		self.dv_token = tk.StringVar()
 		dv_label = tk.Label(settings, text="Dataverse token: ")
 		dv_entry = tk.Entry(settings, textvariable=self.dv_token)
 		dv_label.grid(column=1, row=4)
 		dv_entry.grid(column=2, row=4)
-		
-		self.repo = tk.StringVar()
-		repo_label = tk.Label(settings, text="Github repository: ")
-		repo_entry = tk.Entry(settings, textvariable=self.repo)
-		repo_label.grid(column=1, row=5)
-		repo_entry.grid(column=2, row=5)
-		
+			
 		self.gh_token = tk.StringVar()
 		gh_label = tk.Label(settings, text="Github token: ")
 		gh_entry = tk.Entry(settings, textvariable=self.gh_token)
@@ -299,7 +276,7 @@ class MainApp(tk.Frame):
 		sys.stderr = redir
 		self.out.grid(column=1, row=2)
 
-		is_latest = dvcurator.github.check_version(dvcurator.version.version, "QualitativeDataRepository/dvcurator-python")
+		dvcurator.github.check_version()
 		#if not is_latest:
 		#	tk.messagebox.showwarning(title="Get new version", message="Please download new version of dvcurator")
 

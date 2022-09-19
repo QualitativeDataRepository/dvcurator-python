@@ -2,29 +2,29 @@
 # -*- coding: utf-8 -*-
 #
 
+github_api='https://api.github.com'
+
 # Is there a more recent version of 
-def check_version(version, repo):
-	import dvcurator.version
-	if (version == "git-development"):
-		print("Running development version")
-		return True
-	import requests
-	github='https://api.github.com'
-	tags_url = github + "/repos/" + repo + "/tags"
+def check_version():
+	import requests, dvcurator.version, dvcurator.hosts
+	tags_url = github_api + "/repos/" + dvcurator.hosts.pkg_repo + "/tags"
 	tags = requests.get(tags_url).json()
 	latest = tags[0]['name']
 	if (dvcurator.version.version != latest):
-		print("! Alert: update available:\n" + "https://github.com/" + repo + "/releases")
+		if (dvcurator.version.version == "git-development"):
+			print("Running development version")
+		else:
+			print("! Alert: update available:\n" + "https://github.com/" + dvcurator.hosts.pkg_repo + "/releases")
 		return False
 	else:
 		return True
 
 # Check if repository specified actually exists
 # False = Doesn't exist, True = exists
-def check_repo(repo, key=None):
-	import requests
-	github='https://api.github.com'
-	project_url = github + "/repos/" + repo + "/issues"
+def check_repo(key=None, repo=None):
+	import requests, dvcurator.hosts
+	repo = dvcurator.hosts.curation_repo if not repo else repo
+	project_url = github_api + "/repos/" + repo + "/issues"
 	if (not key):
 		projects = requests.get(project_url + "?per_page=100")
 	else:
@@ -38,14 +38,15 @@ def check_repo(repo, key=None):
 
 # Search if tickets already exist in the repo for this project
 # True = tickets exist, False = they don't exist
-def search_existing(project_name, repo, key=None):
-	import json, requests
-	github='https://api.github.com'
+def search_existing(project_name, key=None, repo=None):
+	import json, requests, dvcurator.hosts
+
+	repo = dvcurator.hosts.curation_repo if not repo else repo 
+	project_url = github_api + "/repos/" + repo + "/issues"
 
 	# Ideally we would use the project API endpoint here.
 	# We can't, because it requires an OAuth token for all calls
 	# even on public repositories. So we go directly to the issues
-	project_url = github + "/repos/" + repo + "/issues"
 	if (not key):
 		projects = requests.get(project_url + "?per_page=100")
 	else:
@@ -66,16 +67,15 @@ def search_existing(project_name, repo, key=None):
 	return False
 
 def create_project(doi, metadata, folder_name, repo, key):
-	import json, requests, os, re
+	import json, requests, os, re, dvcurator.hosts
 
-	github='https://api.github.com'
 	key = {'Authorization': "token " + key}
 	workflow='main'
 
-	project_url = github + "/repos/" + repo + "/projects"
+	project_url = github_api + "/repos/" + repo + "/projects"
 
 	contact_info = 'Name:' + metadata['depositor'] + '\n'
-	contact_info += 'DV link: https://data.qdr.syr.edu/dataset.xhtml?persistentId=' + doi
+	contact_info += 'DV link: ' + dvcurator.hosts.qdr_doi_path + doi
 
 	metadata = { 'name': folder_name, 'body': contact_info }
 	project = requests.post(project_url, json.dumps(metadata), headers=key)
@@ -83,7 +83,7 @@ def create_project(doi, metadata, folder_name, repo, key):
 	#print("Created github project: " + folder_name)
 	
 	# Make a Todo, in progress and done column
-	column_url = github + "/projects/%d/columns" % (project_id)
+	column_url = github_api + "/projects/%d/columns" % (project_id)
 	columns = []
 	for column in ['To Do', 'In Progress', 'Done']:
 		metadata = { 'name': column }
@@ -95,7 +95,6 @@ def create_project(doi, metadata, folder_name, repo, key):
 def add_issue(project_name, template, repo, project, key):
 	import os, json, requests, re
 	
-	github='https://api.github.com'
 	key = {'Authorization': "token " + key}
 
 	# Format issue name from template filename
@@ -106,27 +105,29 @@ def add_issue(project_name, template, repo, project, key):
 	# Import the markdown file as the issue body
 	f = open(template, "r")
 	body = f.readlines()
-	issue_url = github + "/repos/" + repo + "/issues"
+	issue_url = github_api + "/repos/" + repo + "/issues"
 	metadata = {'title': project_name + " - " + issue_name, 'body': ''.join(body) }
 	resp = requests.post(issue_url, json.dumps(metadata), headers=key)
 	issue = resp.json()['id']
 
 	metadata = {'content_type': "Issue", 'content_id': issue}
-	card_url = github + "/projects/columns/%d/cards" % (project)
+	card_url = github_api + "/projects/columns/%d/cards" % (project)
 	resp = requests.post(card_url, json.dumps(metadata), headers=key)
 
 	#print("Issue created: " + project_name + " _ " + issue_name)
 
 # This is the actual function we run from the buttom
-def generate_template(doi, citation, folder_name, repo, token, issues_selected):
-	import os.path, sys
+def generate_template(doi, citation, folder_name, token, issues_selected, repo=None):
+	import os.path, sys, dvcurator.hosts
 	from pkg_resources import resource_filename
 
-	if not check_repo(repo, token):
+	repo = dvcurator.hosts.curation_repo if not repo else repo 
+
+	if not check_repo(token):
 		print("Error: github repository doesn't exist")
 		return None
 
-	if search_existing(folder_name, repo, token):
+	if search_existing(folder_name, token):
 		print("Error: existing github issues!!")
 		return None
 
