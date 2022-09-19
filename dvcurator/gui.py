@@ -102,7 +102,7 @@ class MainApp(tk.Frame):
 
 	# Open project directory
 	def open_explorer(self):
-		import os
+		import os, sys, subprocess
 		if not self.subfolder_path:
 			print("Error: No subfolder specified")
 			return
@@ -110,8 +110,13 @@ class MainApp(tk.Frame):
 			print("Error: subfolder does not exist: " + self.subfolder_path)
 			return
 
-		os.startfile(os.path.realpath(self.subfolder_path))
-		
+		# Windows, Mac and Linux require different handlers
+		if sys.platform == "win32":
+			os.startfile(self.subfolder_path)
+		else:
+			opener = "open" if sys.platform == "darwin" else "xdg-open"
+			subprocess.call([opener, self.subfolder_path])
+
 	def load_citation(self):
 		import os.path
 		if (not self.doi.get()):
@@ -119,6 +124,9 @@ class MainApp(tk.Frame):
 			return
 		if (not self.host.get()):
 			print("Error: No dataverse host specified")
+			return
+		if not dvcurator.fs.check_dropbox(self.dropbox.get()):
+			print("Error: Set valid Dropbox folder first")
 			return
 			
 		self.citation = dvcurator.dataverse.get_citation(self.host.get(), self.doi.get(), self.dv_token.get())
