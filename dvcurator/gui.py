@@ -7,8 +7,7 @@
 #
 
 import tkinter as tk
-import sys, threading
-from tkinter.messagebox import showwarning
+import sys, threading, os
 import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
 
 class redirect_text(object):
@@ -44,40 +43,49 @@ class MainApp(tk.Frame):
 		else:
 			self.schedule_check(t)
 
-	def load_config(self):
+	# File menu buttons
+	def open_config(self):
 		from tkinter import filedialog
-		import os.path
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
 		config_file = filedialog.askopenfilename(filetypes=file_type)
-		if config_file:
-			import configparser
-			config = configparser.ConfigParser()
-			config.read(config_file)
-			self.dv_token.set(config['default']['dataverse_token'])
-			self.gh_token.set(config['default']['github_token'])
-			self.dropbox.set(config['default']['dropbox'])
-			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-			print("Loaded: " + config_file)
+		if (os.path.exists(config_file)):
+			self.load_config(config_file)
+		
+	def load_config(self, path=None):
+		if not os.path.exists(path):
+			return None
+		import configparser
+		config = configparser.ConfigParser()
+		config.read(path)
+		self.dv_token.set(config['default']['dataverse_token'])
+		self.gh_token.set(config['default']['github_token'])
+		self.dropbox.set(config['default']['dropbox'])
+		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
+		print("Loaded: " + path)
 
 	# function to save settings as .ini file
-	def save_config(self):
+
+	def save_config_as(self):
 		from tkinter.filedialog import asksaveasfilename
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
 		f = asksaveasfilename(filetypes=file_type)
 		if f:
-			import configparser
-			config = configparser.ConfigParser()
-			config['default'] = {"dataverse_token": self.dv_token.get(),
-								"github_token": self.gh_token.get(),
-							"dropbox": self.dropbox.get()}
-			with open(f, 'w') as config_file:
-				config.write(config_file)
-			print("Written: " + f)
-			
+			self.save_config(f)
+
+	def save_config(self, path=None):
+		path = self.local_ini if not path else path
+		import configparser
+		config = configparser.ConfigParser()
+		config['default'] = {"dataverse_token": self.dv_token.get(),
+							"github_token": self.gh_token.get(),
+						"dropbox": self.dropbox.get()}
+		with open(path, 'w') as config_file:
+			config.write(config_file)
+		print("Written: " + path)
+
 	# Set dropbox directory path, open OS folder select dialog
 	def set_dropbox(self):
 		from tkinter import filedialog
-		import os.path
 		dropbox = filedialog.askdirectory()
 		if (dropbox):
 			self.dropbox.set(dropbox)
@@ -89,16 +97,14 @@ class MainApp(tk.Frame):
 
 	def set_subfolder(self):
 		from tkinter import filedialog
-		import os.path
 		subfolder = filedialog.askdirectory()
 		if not subfolder:
 			return
 		self.subfolder_path = subfolder
 		print("Subfolder set to: " + self.subfolder_path)
 
-	# Open project directory
+	# Open project directory (edit menu)
 	def open_explorer(self):
-		import os, sys, subprocess
 		if not self.subfolder_path:
 			print("Error: No subfolder specified")
 			return
@@ -110,11 +116,12 @@ class MainApp(tk.Frame):
 		if sys.platform == "win32":
 			os.startfile(self.subfolder_path)
 		else:
+			import subprocess
 			opener = "open" if sys.platform == "darwin" else "xdg-open"
 			subprocess.call([opener, self.subfolder_path])
 
+	# Main window buttons
 	def load_citation(self):
-		import os.path
 		if (not self.doi.get()):
 			print("Error: No persistent ID specified")
 			return
@@ -161,6 +168,17 @@ class MainApp(tk.Frame):
 		t.start()
 		self.schedule_check(t)
 
+	def reset_all(self):
+		# Reset DOI entry
+		self.doi.set("")
+		self.doi_entry.config(state="normal")
+		# Disable all other buttons
+		self.download_button.config(state="disabled")
+		self.makeproject_button.config(state="disabled")
+		self.menubar.entryconfig("Edit", state=tk.DISABLED)
+		self.out.delete('1.0', tk.END)
+
+	# Edit menu options
 	def rename(self):
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, self.citation))
@@ -179,15 +197,9 @@ class MainApp(tk.Frame):
 		t.start()
 		self.schedule_check(t)
 
-	def reset_all(self):
-		# Reset DOI entry
-		self.doi.set("")
-		self.doi_entry.config(state="normal")
-		# Disable all other buttons
-		self.download_button.config(state="disabled")
-		self.makeproject_button.config(state="disabled")
-		self.menubar.entryconfig("Edit", state=tk.DISABLED)
-		self.out.delete('1.0', tk.END)
+	def close_window(self):
+		self.save_config()
+		self.parent.destroy()
 
 	def __init__(self, parent, *args, **kwargs):
 		tk.Frame.__init__(self, parent, args, **kwargs)
@@ -197,8 +209,9 @@ class MainApp(tk.Frame):
 		self.menubar = tk.Menu(self)
 
 		self.filemenu = tk.Menu(self.menubar, tearoff=False)
-		self.filemenu.add_command(label="Open config", command=self.load_config)
-		self.filemenu.add_command(label="Save current config", command=self.save_config)
+		self.filemenu.add_command(label="Save config", command=self.save_config)
+		self.filemenu.add_command(label="Save config As", command=self.save_config_as)
+		self.filemenu.add_command(label="Open config", command=self.open_config)
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
 		self.menubar.add_cascade(label="File", menu=self.filemenu)
 
@@ -277,8 +290,14 @@ class MainApp(tk.Frame):
 		self.out.grid(column=1, row=2)
 
 		dvcurator.github.check_version()
-		#if not is_latest:
-		#	tk.messagebox.showwarning(title="Get new version", message="Please download new version of dvcurator")
+		self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
+		if os.path.exists(self.local_ini):
+			self.load_config(self.local_ini)
+		else:
+			print("Alert: no config file detected. Select \"File->Save config\" after entering tokens")
+
+		# save config on exit
+		parent.protocol("WM_DELETE_WINDOW", self.close_window)
 
 
 def main():
