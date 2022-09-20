@@ -293,8 +293,6 @@ class MainApp(tk.Frame):
 		self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
 		if os.path.exists(self.local_ini):
 			self.load_config(self.local_ini)
-		else:
-			print("Alert: no config file detected. Select \"File->Save config\" after entering tokens")
 
 		# save config on exit
 		parent.protocol("WM_DELETE_WINDOW", self.close_window)
