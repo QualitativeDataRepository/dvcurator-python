@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys, threading, os
-import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
+import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.readme, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
 
 class redirect_text(object):
 	def __init__(self, text_ctrl):
@@ -64,7 +64,6 @@ class MainApp(tk.Frame):
 		print("Loaded: " + path)
 
 	# function to save settings as .ini file
-
 	def save_config_as(self):
 		from tkinter.filedialog import asksaveasfilename
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
@@ -84,16 +83,28 @@ class MainApp(tk.Frame):
 		print("Written: " + path)
 
 	# Set dropbox directory path, open OS folder select dialog
+	def check_subfolder(self):
+		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
+		if not self.subfolder_path:
+			self.subfolder_path = os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name)
+			print("You need to download/extract or manually specify a subfolder.")
+		if os.path.exists(self.subfolder_path):
+			print("Existing extracted project detected at: " + self.subfolder_path)
+
 	def set_dropbox(self):
 		from tkinter import filedialog
 		dropbox = filedialog.askdirectory()
-		if (dropbox):
-			self.dropbox.set(dropbox)
-			test = dvcurator.fs.check_dropbox(dropbox)
-			if not test:
-				return
-			self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-			print("Dropbox folder: " + self.dropbox.get())
+		if not dropbox:
+			return None
+
+		self.dropbox.set(dropbox)
+		test = dvcurator.fs.check_dropbox(dropbox)
+		if not test:
+			return
+		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
+		print("Dropbox folder: " + self.dropbox.get())
+		if hasattr(self, "metadata"):
+			self.check_subfolder()
 
 	def set_subfolder(self):
 		from tkinter import filedialog
@@ -129,21 +140,16 @@ class MainApp(tk.Frame):
 			print("Error: Set valid Dropbox folder first")
 			return
 		# Grab the citation
-		self.citation = dvcurator.dataverse.get_citation(self.doi.get(), self.dv_token.get())
-		if (not self.citation):
+		self.metadata = dvcurator.dataverse.get_metadata(self.doi.get(), self.dv_token.get())
+		if (not self.metadata):
 			print("Error: citation failed to load.")
 			return
-			
+		self.citation = dvcurator.dataverse.get_citation(self.metadata)
 		self.project_name = dvcurator.rename.project_name(self.citation)
 		print("Loaded: " + self.project_name)
 
-		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
-		if not self.subfolder_path:
-			self.subfolder_path = os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name)
-			print("You need to download/extract or manually specify a subfolder.")
-		if os.path.exists(self.subfolder_path):
-			print("Existing extracted project detected at: " + self.subfolder_path)
-		
+		self.check_subfolder()
+
 		# Enable the next step buttons
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
@@ -152,7 +158,9 @@ class MainApp(tk.Frame):
 
 	def download_extract(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.dataverse.download_dataset, args=(self.doi.get(), self.subfolder_path, self.dv_token.get()))
+		t = threading.Thread(target=dvcurator.dataverse.download_dataset, 
+			args=(self.doi.get(), self.subfolder_path, 
+			self.metadata, self.dv_token.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -181,19 +189,33 @@ class MainApp(tk.Frame):
 	# Edit menu options
 	def rename(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.rename.basic_rename, args=(self.subfolder_path, self.citation))
+		t = threading.Thread(target=dvcurator.rename.basic_rename, 
+			args=(self.subfolder_path, self.citation))
 		t.start()
 		self.schedule_check(t)
 	
 	def convert(self):		
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.convert.docx_pdf, args=(self.subfolder_path, None))
+		t = threading.Thread(target=dvcurator.convert.docx_pdf, 
+			args=(self.subfolder_path, None))
 		t.start()
 		self.schedule_check(t)
 
 	def set_metadata(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, args=(self.subfolder_path, self.citation))
+		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, 
+			args=(self.subfolder_path, self.citation))
+		t.start()
+		self.schedule_check(t)
+
+	def create_readme(self):
+		if (not self.dv_token.get()):
+			print("Error: no dataverse token specified")
+			return
+
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.readme.generate_readme, 
+			args=(self.metadata, os.path.join(self.subfolder_path, "QDR Prepared"), self.dv_token.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -219,6 +241,7 @@ class MainApp(tk.Frame):
 		self.editmenu.add_command(label="Basic file rename", command=self.rename)
 		self.editmenu.add_command(label="Convert docx to pdf", command=self.convert)
 		self.editmenu.add_command(label="Set PDF metadata", command=self.set_metadata)
+		self.editmenu.add_command(label="Generate README", command=self.create_readme)
 		self.editmenu.add_separator()
 		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
 		self.editmenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)

@@ -23,6 +23,20 @@ def check_dropbox(dropbox, project_name=None):
     # return true as long as the dropbox path exists if we're not checking for the subfolder
     return True
 
+# What is the latest folder under QDR Prepared?
+def current_step(folder):
+    from glob import glob
+    import os.path
+    if not os.path.isdir(folder):
+        print("Error: not a folder " + folder)
+        return None
+    candidates = glob(os.path.join(folder, "[0-9]_*"))
+    if (len(candidates) < 1):
+        print("Error: no folders found under " + folder)
+        return None
+    current = candidates[len(candidates)-1]
+    return current
+
 # Copy QDR prepared latest step to a new step, incrementing step number
 def copy_new_step(folder, step):
     #exists = check_dropbox(dropbox, project_name)
@@ -35,12 +49,10 @@ def copy_new_step(folder, step):
 
     import os.path
     from shutil import copytree
-    from glob import glob
-    edit_path = os.path.join(folder, "QDR Prepared")
-    candidates = glob(os.path.join(edit_path, "[0-9]_*"))
-    if (len(candidates) < 1):
+    edit_path = os.path.normpath(os.path.join(folder, "QDR Prepared"))
+    current = current_step(edit_path)
+    if not current:
         return None
-    current = candidates[len(candidates)-1]
     number = int(os.path.split(current)[1].split("_")[0]) + 1
     new_step = str(number) + "_" + step
     copytree(os.path.join(edit_path, current), os.path.join(edit_path, new_step))

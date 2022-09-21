@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 #
 
-def get_citation(doi, token="", host=None):
+def get_metadata(doi, token="", host=None):
 	import requests, dvcurator.hosts
 
+	doi = doi.strip()
 	if not doi.startswith("doi:"):
 		print("Error: DOIs should start with \"doi:\"")
 		return None
 	
 	# Scrape data and metadata from dataverse
 	host = dvcurator.hosts.qdr_dataverse if not host else host 
-
 	dataset_url = host + '/api/datasets/:persistentId/?persistentId=' + doi
 	if (not token):
 		dataset = requests.get(dataset_url)
@@ -28,8 +28,13 @@ def get_citation(doi, token="", host=None):
 	if (dataset['status']=="ERROR"):
 		print("Error: " + dataset['message'])
 		return None
-		
-	citation=dataset['data']['latestVersion']['metadataBlocks']['citation']['fields']
+	
+	return(dataset)
+
+# extract and format the citation metadata block
+def get_citation(metadata):
+	#metadata = get_metadata(doi, token, host)
+	citation=metadata['data']['latestVersion']['metadataBlocks']['citation']['fields']
 	fields = [] # Make an index of all the metadata fields
 	values = []
 	for entry in citation:
@@ -37,11 +42,34 @@ def get_citation(doi, token="", host=None):
 		values.append(entry['value'])
 	return dict(zip(fields, values)) 
 
-def download_dataset(doi, folder, token=None, host=None):
-	import zipfile, os, requests, urllib.request, json, dvcurator.hosts
+# This pulls the "recommended citation" field
+# Gotta pull from the SWORD API, not available from native metadata
+def get_biblio_citation(doi, token, host=None):
+	import requests, dvcurator.hosts
+	import xml.etree.ElementTree as et
 
-	edit_path = os.path.join(folder, "QDR Prepared/1_extract")
-	if not os.path.exists(edit_path):
+	doi = doi.strip()
+	if not doi.startswith("doi:"):
+		print("Error: DOIs should start with \"doi:\"")
+		return None
+
+	host = dvcurator.hosts.qdr_dataverse if not host else host 
+
+	atom_url = host + "/dvn/api/data-deposit/v1.1/swordv2/edit/study/" + doi
+	atom = requests.get(atom_url, auth=requests.auth.HTTPBasicAuth(token, ""))
+	if atom.status_code == 400:
+		return None
+
+	tree = et.fromstring(atom.text)
+	return tree[0].text
+
+def download_dataset(doi, folder, metadata, token=None, host=None):
+	import zipfile, os, urllib, json, requests, dvcurator.hosts
+
+	doi = doi.strip()
+
+	edit_path = os.path.normpath(os.path.join(folder, "QDR Prepared/1_extract"))
+	if not os.path.isdir(edit_path):
 		os.makedirs(edit_path) # Creates parents as well
 		#print("Directory '%s' created" %folder_path)
 	else: # If the folder already exists, don't overwrite!!
@@ -51,27 +79,24 @@ def download_dataset(doi, folder, token=None, host=None):
 	zip_url = dvcurator.hosts.qdr_dataverse if not host else host 
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	zip_url += '&format=original'
-	metadata_url = dvcurator.hosts.qdr_dataverse if not host else host 
-	metadata_url += '/api/datasets/:persistentId/versions?persistentId=' + doi
 	print("Downloading Dataverse files", end="... ")
 	if token:
 		key = {'X-Dataverse-Key': token}
 		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
-		metadata = requests.get(metadata_url, headers=key, allow_redirects=True)
 	else:
 		r = requests.get(zip_url, allow_redirects=True, stream=True)
-		metadata = requests.get(metadata_url, allow_redirects=True)
 
 	# Write metadata
 	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
-		json.dump(metadata.json()['data'][0]['files'], outfile, indent=4)
+		json.dump(metadata['data']['latestVersion']['files'], outfile, indent=4)
 	
 	# Write the zip file
 	zip_path = os.path.join(folder, "Original Deposit.zip")
-	with open(zip_path, 'wb') as outfile:
-		for chunk in r.iter_content(chunk_size = 1024):
-			if(chunk):
-				outfile.write(chunk)
+	urllib.request.urlretrieve(zip_url, zip_path)
+	#with open(zip_path, 'wb') as outfile:
+	#	for chunk in r.iter_content(chunk_size = 1024):
+	#		if(chunk):
+	#			outfile.write(r.content)
 	print("Done!")
 
 				

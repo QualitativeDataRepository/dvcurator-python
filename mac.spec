@@ -2,7 +2,7 @@
 
 from PyInstaller.utils.hooks import copy_metadata
 
-datas = [('dvcurator/issues', 'issues')]
+datas = [('dvcurator/issues', 'issues'), ('dvcurator/templates', 'templates')]
 datas += copy_metadata('pikepdf')
 
 

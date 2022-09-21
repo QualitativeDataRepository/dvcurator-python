@@ -1,8 +1,10 @@
+from importlib.metadata import metadata
 import unittest, tempfile, os, shutil
 from dvcurator import dataverse, github, pdf_metadata, rename, fs
 
 harvard_host = "https://dataverse.harvard.edu"
 harvard_doi = "doi:10.7910/DVN/CZYY1N"
+qdr_doi = "doi:10.5064/F6YYA3O3"
 
 class TestFs(unittest.TestCase):
 
@@ -17,7 +19,6 @@ class TestFs(unittest.TestCase):
 		self.assertTrue(fs.check_dropbox(f.name))
 
 		f.cleanup()
-
 
 	def test_new_step(self):
 		self.assertFalse(fs.copy_new_step("/notarealfolder", "test"))
@@ -35,20 +36,22 @@ class TestFs(unittest.TestCase):
 class TestDataverseAPI(unittest.TestCase):
 	
 	def test_citation(self):
-		self.assertIsNone(dataverse.get_citation("foobar", host=harvard_host))
-		self.assertIsNone(dataverse.get_citation("doi:foobar", host=harvard_host))
-		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		self.assertIsNone(dataverse.get_metadata("foobar", host=harvard_host))
+		self.assertIsNone(dataverse.get_metadata("doi:foobar", host=harvard_host))
+		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
+		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
 
 	def test_download(self):
 		f = tempfile.TemporaryDirectory()
-		path = dataverse.download_dataset(harvard_doi, f.name, host=harvard_host)
+		metadata = dataverse.get_metadata(qdr_doi)
+		path = dataverse.download_dataset(qdr_doi, f.name, metadata)
 		self.assertTrue(os.path.isdir(path))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
 
-		self.assertTrue(os.path.exists(os.path.join(path, "readme_CrosasEtal.txt")))
+		self.assertTrue(os.path.exists(os.path.join(path, "README_VandeVusse-Mueller.txt")))
 		
 		f.cleanup()
 
@@ -67,7 +70,8 @@ class TestGithubAPI(unittest.TestCase):
 class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
-		citation = dataverse.get_citation("doi:10.5064/F6AQGERV")
+		metadata = dataverse.get_metadata("doi:10.5064/F6AQGERV")
+		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		self.assertEqual(rename.project_name(citation), "Haney - Child Support Adjudication")
 
@@ -80,7 +84,8 @@ class TestRename(unittest.TestCase):
 		with open(os.path.join(first_folder, fake_file), 'w') as fp:
 			pass
 		
-		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
+		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		new_path = rename.basic_rename(f.name, citation)
 		new_file = os.listdir(new_path)[0]
@@ -90,12 +95,14 @@ class TestRename(unittest.TestCase):
 		f.cleanup()
 		
 	def test_nameprefix(self):
-		citation = dataverse.get_citation("doi:10.5064/F6YYA3O3")
+		metadata = dataverse.get_metadata("doi:10.5064/F6YYA3O3")
+		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		self.assertEqual(rename.last_name_prefix(citation), "VandeVusse-Mueller")
 
 		one_author_doi = "doi:10.7910/DVN/RHDI2C"
-		citation = dataverse.get_citation(one_author_doi, host=harvard_host)
+		metadata = dataverse.get_metadata(one_author_doi, host=harvard_host)
+		citation = dataverse.get_citation(metadata)
 		self.assertEqual(rename.last_name_prefix(citation), "Gadarian")
 
 class TestPDFMetadata(unittest.TestCase):
@@ -116,7 +123,8 @@ class TestPDFMetadata(unittest.TestCase):
 		import pikepdf
 
 		# Get author string from online citation
-		citation = dataverse.get_citation(harvard_doi, host=harvard_host)
+		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
+		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 
 		author_string = pdf_metadata.combine_author_names(citation)
