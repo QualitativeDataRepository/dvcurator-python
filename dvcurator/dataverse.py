@@ -76,29 +76,22 @@ def download_dataset(doi, folder, metadata, token=None, host=None):
 		print("Error: extract folder already exists!")
 		return None
 
+	# Write metadata
+	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
+		json.dump(metadata['data']['latestVersion']['files'], outfile, indent=4)
+
+	# Write the zip file
 	zip_url = dvcurator.hosts.qdr_dataverse if not host else host 
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	zip_url += '&format=original'
 	print("Downloading Dataverse files", end="... ")
-	if token:
-		key = {'X-Dataverse-Key': token}
-		r = requests.get(zip_url, headers=key, allow_redirects=True, stream=True)
-	else:
-		r = requests.get(zip_url, allow_redirects=True, stream=True)
-
-	# Write metadata
-	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
-		json.dump(metadata['data']['latestVersion']['files'], outfile, indent=4)
-	
-	# Write the zip file
 	zip_path = os.path.join(folder, "Original Deposit.zip")
+	opener = urllib.request.build_opener()
+	if token:
+		opener.addheaders = [('X-Dataverse-Key', token)]
+	urllib.request.install_opener(opener)
 	urllib.request.urlretrieve(zip_url, zip_path)
-	#with open(zip_path, 'wb') as outfile:
-	#	for chunk in r.iter_content(chunk_size = 1024):
-	#		if(chunk):
-	#			outfile.write(r.content)
 	print("Done!")
-
 				
 	print("Extracting Dataverse files", end="... ")
 	with zipfile.ZipFile(zip_path, 'r') as zip_ref:
