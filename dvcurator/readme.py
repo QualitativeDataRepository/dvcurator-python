@@ -34,7 +34,7 @@ def generate_readme(metadata, folder, token=None):
         'citation': biblio_citation,
         'description': clean_html_tags(citation['dsDescription'][0]['dsDescriptionValue']['value']),
         'access': access,
-        'files': "\n".join(os.listdir(folder))
+        'files': dvcurator.fs.recursive_scan(folder) #"\n".join(os.listdir(folder))
     }
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):

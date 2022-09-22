@@ -23,6 +23,21 @@ def check_dropbox(dropbox, project_name=None):
     # return true as long as the dropbox path exists if we're not checking for the subfolder
     return True
 
+def recursive_scan(path):
+    import os
+    output = []
+    for root, dirs, files in os.walk(path):
+        level = root.replace(path, '').count(os.sep)
+        indent = ' ' * 4 * (level-1)
+        output.append('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level)
+        for f in files:
+            output.append('{}{}'.format(subindent, f))
+
+    output = output[1:] # remove first item (like "./")
+    output = '\n'.join(output)
+    return output
+
 # What is the latest folder under QDR Prepared?
 def current_step(folder):
     from glob import glob
