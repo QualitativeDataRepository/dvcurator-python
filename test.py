@@ -56,7 +56,10 @@ class TestDataverseAPI(unittest.TestCase):
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
 
 		self.assertTrue(os.path.exists(os.path.join(path, "README_VandeVusse-Mueller.txt")))
-		
+	
+		# Try again, we should fail the second time
+		self.assertIsNone(dataverse.download_dataset(metadata, f.name))
+
 		f.cleanup()
 
 class TestGithubAPI(unittest.TestCase):
