@@ -21,6 +21,7 @@ class redirect_text(object):
 
 class MainApp(tk.Frame):
 	def disable_buttons(self):
+		self.out.delete('1.0', tk.END)
 		self.cite_button.config(state="disabled")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
@@ -61,7 +62,7 @@ class MainApp(tk.Frame):
 		self.gh_token.set(config['default']['github_token'])
 		self.dropbox.set(config['default']['dropbox'])
 		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-		print("Loaded: " + path)
+		print("Loaded settings: " + path)
 
 	# function to save settings as .ini file
 	def save_config_as(self):
@@ -172,7 +173,7 @@ class MainApp(tk.Frame):
 		# Create github project + issues
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.github.generate_template, 
-			args=(self.doi.get(), self.citation, self.project_name, self.gh_token.get(), self.issues_selected))
+			args=(self.metadata, self.project_name, self.gh_token.get(), self.issues_selected))
 		t.start()
 		self.schedule_check(t)
 

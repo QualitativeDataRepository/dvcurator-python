@@ -66,19 +66,19 @@ def search_existing(project_name, key=None, repo=None):
 	# Return false if nothing was found
 	return False
 
-def create_project(doi, metadata, folder_name, repo, key):
-	import json, requests, os, re, dvcurator.hosts
+def create_project(dv_metadata, folder_name, repo, key):
+	import json, requests, dvcurator.hosts, dvcurator.dataverse
 
 	key = {'Authorization': "token " + key}
-	workflow='main'
 
 	project_url = github_api + "/repos/" + repo + "/projects"
 
-	contact_info = 'Name:' + metadata['depositor'] + '\n'
+	contact_info = 'Name:' + dvcurator.dataverse.get_citation(dv_metadata)['depositor'] + '\n'
+	doi = dv_metadata['data']['latestVersion']['datasetPersistentId']
 	contact_info += 'DV link: ' + dvcurator.hosts.qdr_doi_path + doi
 
-	metadata = { 'name': folder_name, 'body': contact_info }
-	project = requests.post(project_url, json.dumps(metadata), headers=key)
+	proj_metadata = { 'name': folder_name, 'body': contact_info }
+	project = requests.post(project_url, json.dumps(proj_metadata), headers=key)
 	project_id = project.json()['id']
 	#print("Created github project: " + folder_name)
 	
@@ -86,8 +86,8 @@ def create_project(doi, metadata, folder_name, repo, key):
 	column_url = github_api + "/projects/%d/columns" % (project_id)
 	columns = []
 	for column in ['To Do', 'In Progress', 'Done']:
-		metadata = { 'name': column }
-		resp = requests.post(column_url, json.dumps(metadata), headers=key)
+		col_metadata = { 'name': column }
+		resp = requests.post(column_url, json.dumps(col_metadata), headers=key)
 		columns += [resp.json()['id']]
 
 	return columns[0] # This is the ID of the todo column, for assigning issue cards
@@ -117,7 +117,7 @@ def add_issue(project_name, template, repo, project, key):
 	#print("Issue created: " + project_name + " _ " + issue_name)
 
 # This is the actual function we run from the buttom
-def generate_template(doi, citation, folder_name, token, issues_selected, repo=None):
+def generate_template(metadata, folder_name, token, issues_selected, repo=None):
 	import os.path, sys, dvcurator.hosts
 	from pkg_resources import resource_filename
 
@@ -131,7 +131,7 @@ def generate_template(doi, citation, folder_name, token, issues_selected, repo=N
 		print("Error: existing github issues!!")
 		return None
 
-	project = create_project(doi, citation, folder_name, repo, token)
+	project = create_project(metadata, folder_name, repo, token)
 	print("Created project: " + folder_name)
 	# Get internal issue templates from selected checkboxes
 	for issue in issues_selected:
@@ -143,3 +143,5 @@ def generate_template(doi, citation, folder_name, token, issues_selected, repo=N
 				path = resource_filename("dvcurator", "issues/" + path)
 			add_issue(folder_name, path, repo, project, token)
 			print(issue.get() + " added to project")
+
+	print("Completed populating github project!")
