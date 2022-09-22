@@ -1,6 +1,6 @@
 from importlib.metadata import metadata
 import unittest, tempfile, os, shutil
-from dvcurator import dataverse, github, pdf_metadata, rename, fs
+from dvcurator import dataverse, github, pdf_metadata, rename, readme, fs
 
 harvard_host = "https://dataverse.harvard.edu"
 harvard_doi = "doi:10.7910/DVN/CZYY1N"
@@ -144,6 +144,21 @@ class TestPDFMetadata(unittest.TestCase):
 		meta = example.open_metadata()
 		self.assertEqual(meta['pdf:Author'], author_string)
 		example.close()
+
+		d.cleanup()
+
+class TestREADME(unittest.TestCase):
+
+	def test_generateREADME(self):
+		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
+		d=tempfile.TemporaryDirectory()
+		subfolder = os.path.join(d.name, "5_ready")
+		os.makedirs(subfolder)
+		with open(os.path.join(subfolder, "a_file.txt"), 'w') as f:
+			pass
+		
+		generated = readme.generate_readme(metadata, d.name)
+		self.assertTrue(os.path.exists(generated))
 
 		d.cleanup()
 		

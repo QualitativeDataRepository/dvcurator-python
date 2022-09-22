@@ -11,12 +11,15 @@ def generate_readme(metadata, folder, token=None):
     citation = dvcurator.dataverse.get_citation(metadata)
     folder = dvcurator.fs.current_step(folder)
 
-    biblio_citation = dvcurator.dataverse.get_biblio_citation(
-        metadata['data']['latestVersion']['datasetPersistentId'], 
-        token)
-    if not biblio_citation:
-        print("Warning: dataverse token not authorized for this project, citation missing")
-        # What string will go in the actual readme
+    if token:
+        biblio_citation = dvcurator.dataverse.get_biblio_citation(
+            metadata['data']['latestVersion']['datasetPersistentId'], 
+            token)
+        if not biblio_citation:
+            print("Warning: dataverse token not authorized for this project, citation missing")
+            # What string will go in the actual readme
+            biblio_citation = "NOTICE: Citation unable to be automatically scraped from dataverse"
+    else:
         biblio_citation = "NOTICE: Citation unable to be automatically scraped from dataverse"
     
     # Some projects don't have defined access terms.
@@ -51,3 +54,5 @@ def generate_readme(metadata, folder, token=None):
         with open(new_path, 'w') as n:
             n.write(text)
             print("Written: " + new_path)
+
+    return new_path
