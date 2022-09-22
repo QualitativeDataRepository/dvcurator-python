@@ -11,6 +11,12 @@ def generate_readme(metadata, folder, token=None):
     citation = dvcurator.dataverse.get_citation(metadata)
     folder = dvcurator.fs.current_step(folder)
 
+    readme_name = "README_" + dvcurator.rename.last_name_prefix(citation) + ".txt"
+    new_path = os.path.join(folder, "..", readme_name)
+    if os.path.exists(new_path):
+        print("Error: README exists at " + new_path)
+        return None
+
     if token:
         biblio_citation = dvcurator.dataverse.get_biblio_citation(
             metadata['data']['latestVersion']['datasetPersistentId'], 
@@ -41,13 +47,7 @@ def generate_readme(metadata, folder, token=None):
         path = os.path.join(sys._MEIPASS, "templates", "README.txt")
     else:
         path = resource_filename("dvcurator", "templates/README.txt")
-
-    readme_name = "README_" + dvcurator.rename.last_name_prefix(citation) + ".txt"
-    new_path = os.path.join(folder, "..", readme_name)
-    if os.path.exists(new_path):
-        print("Error: README exists at " + new_path)
-        return None
-
+        
     with open(path, 'r') as f:
         src = Template(f.read())
         text = src.safe_substitute(d)
