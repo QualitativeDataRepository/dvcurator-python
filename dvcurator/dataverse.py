@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 
+# This function gets the entire metadata block from Dataverse
 def get_metadata(doi, token="", host=None):
 	import requests, dvcurator.hosts
 
@@ -31,7 +32,7 @@ def get_metadata(doi, token="", host=None):
 	
 	return(dataset)
 
-# extract and format the citation metadata block
+# extract and format the citation metadata block from the larger metadata object
 def get_citation(metadata):
 	#metadata = get_metadata(doi, token, host)
 	citation=metadata['data']['latestVersion']['metadataBlocks']['citation']['fields']
@@ -63,10 +64,10 @@ def get_biblio_citation(doi, token, host=None):
 	tree = et.fromstring(atom.text)
 	return tree[0].text
 
-def download_dataset(doi, folder, metadata, token=None, host=None):
+# Actually download and extract the dataset
+# This is the function run by the download and extract button
+def download_dataset(metadata, folder, token=None, host=None):
 	import zipfile, os, urllib, json, requests, dvcurator.hosts
-
-	doi = doi.strip()
 
 	edit_path = os.path.normpath(os.path.join(folder, "QDR Prepared/1_extract"))
 	if not os.path.isdir(edit_path):
@@ -81,6 +82,7 @@ def download_dataset(doi, folder, metadata, token=None, host=None):
 		json.dump(metadata['data']['latestVersion']['files'], outfile, indent=4)
 
 	# Write the zip file
+	doi = metadata['data']['latestVersion']['datasetPersistentId']
 	zip_url = dvcurator.hosts.qdr_dataverse if not host else host 
 	zip_url += '/api/access/dataset/:persistentId/?persistentId=' + doi
 	zip_url += '&format=original'

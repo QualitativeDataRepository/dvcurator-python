@@ -160,8 +160,7 @@ class MainApp(tk.Frame):
 	def download_extract(self):
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.dataverse.download_dataset, 
-			args=(self.doi.get(), self.subfolder_path, 
-			self.metadata, self.dv_token.get()))
+			args=(self.metadata, self.subfolder_path, self.dv_token.get()))
 		t.start()
 		self.schedule_check(t)
 
