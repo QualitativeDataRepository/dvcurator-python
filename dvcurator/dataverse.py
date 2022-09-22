@@ -62,7 +62,10 @@ def get_biblio_citation(doi, token, host=None):
 		return None
 
 	tree = et.fromstring(atom.text)
-	return tree[0].text
+	result = tree[0].text
+	if (result=="\n"):
+		return None
+	return result
 
 # Actually download and extract the dataset
 # This is the function run by the download and extract button
