@@ -166,7 +166,9 @@ class TestREADME(unittest.TestCase):
 		
 		generated = readme.generate_readme(metadata, d.name)
 		self.assertTrue(os.path.exists(generated))
-
+		# Fail on the second time
+		self.assertIsNone(readme.generate_readme(metadata, d.name))
+		
 		d.cleanup()
 		
 if __name__ == '__main__':
