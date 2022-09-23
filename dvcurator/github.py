@@ -101,6 +101,7 @@ def add_issue(project_name, template, repo, project, key):
 	issue_name = os.path.basename(template)
 	issue_name = re.sub('\.md', '', issue_name)
 	issue_name = re.sub('_', ' ', issue_name)
+	issue_name = issue_name.title()
 
 	# Import the markdown file as the issue body
 	f = open(template, "r")
@@ -114,7 +115,7 @@ def add_issue(project_name, template, repo, project, key):
 	card_url = github_api + "/projects/columns/%d/cards" % (project)
 	resp = requests.post(card_url, json.dumps(metadata), headers=key)
 
-	#print("Issue created: " + project_name + " _ " + issue_name)
+	print("Issue added: " + issue_name)
 
 # This is the actual function we run from the buttom
 def generate_template(metadata, project_name, token, repo=None):
@@ -124,11 +125,11 @@ def generate_template(metadata, project_name, token, repo=None):
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
 
 	if not check_repo(token):
-		print("Error: github repository doesn't exist")
+		print("Error: github repository doesn't exist (" + repo + ")")
 		return None
 
 	if search_existing(project_name, token):
-		print("Error: existing github issues!!")
+		print("Error: existing github issues")
 		return None
 	project = create_project(metadata, project_name, repo, token)
 	print("Created project: " + project_name)
@@ -145,7 +146,6 @@ def generate_template(metadata, project_name, token, repo=None):
 	# Get internal issue templates from selected checkboxes
 	for issue in issues:
 		add_issue(project_name, issue, repo, project, token)
-		print(os.path.basename(issue) + " added to project")
 
 	print("Completed populating github project!")
 	
