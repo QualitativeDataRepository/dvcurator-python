@@ -172,7 +172,7 @@ class MainApp(tk.Frame):
 		# Create github project + issues
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.github.generate_template, 
-			args=(self.metadata, self.project_name, self.gh_token.get(), self.issues_selected))
+			args=(self.metadata, self.project_name, self.gh_token.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -194,7 +194,9 @@ class MainApp(tk.Frame):
 		t.start()
 		self.schedule_check(t)
 	
-	def convert(self):		
+	def convert(self):
+		import pythoncom	
+		pythoncom.CoInitialize()
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.convert.docx_pdf, 
 			args=(self.subfolder_path, None))
@@ -250,18 +252,12 @@ class MainApp(tk.Frame):
 		parent.config(menu=self.menubar)
 
 		# Checklist of tickets included in the .md files
-		checklist = tk.LabelFrame(self, text="Project issues:")
-		if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-			self.issues = os.listdir(os.path.join(sys._MEIPASS, "issues"))
-		else:
-			from pkg_resources import resource_listdir
-			self.issues = resource_listdir(__name__, "issues/")
-
-		self.issues_selected = []
-		for n, issue in enumerate(self.issues):
-			self.issues_selected.append(tk.StringVar(value=issue))
-			i = tk.Checkbutton(checklist, text=issue, onvalue=issue, offvalue=None, variable=self.issues_selected[n])
-			i.pack()
+		#checklist = tk.LabelFrame(self, text="Project issues:")
+		#self.issues_selected = []
+		#for n, issue in enumerate(self.issues):
+		#	self.issues_selected.append(tk.StringVar(value=issue))
+		#	i = tk.Checkbutton(checklist, text=issue, onvalue=issue, offvalue=None, variable=self.issues_selected[n])
+		#	i.pack()
 		
 		# Settings
 		settings = tk.Frame(self)
@@ -286,31 +282,31 @@ class MainApp(tk.Frame):
 		
 		self.dropbox=tk.StringVar()
 		dropbox_label = tk.Label(settings, text="Dropbox folder: ")
-		self.dropbox_entry = tk.Button(settings, text="Select folder", command=self.set_dropbox)
+		self.dropbox_entry = tk.Button(settings, width=15, text="Select folder", command=self.set_dropbox)
 		dropbox_label.grid(column=1, row=7)
-		self.dropbox_entry.grid(column=2, row=7)
+		self.dropbox_entry.grid(column=2, row=7, sticky="w")
 		
 		process = tk.Frame(self)
-		self.cite_button = tk.Button(process, text="Load metadata", command=self.load_citation)
-		self.cite_button.pack()
-		self.download_button = tk.Button(process, text="Download and extract", state="disabled", command=self.download_extract)
-		self.download_button.pack()
-		self.makeproject_button = tk.Button(process, text="Make github project", state="disabled", command=self.make_github)
-		self.makeproject_button.pack()
+		pb_width = 17
+		self.cite_button = tk.Button(process, width=pb_width, text="(Re)load metadata", command=self.load_citation)
+		self.cite_button.grid(row=1, column=1, sticky="e")
+		self.download_button = tk.Button(process, width=pb_width, text="Download and Extract", state="disabled", command=self.download_extract)
+		self.download_button.grid(row=2, column=1, sticky="e")
+		self.makeproject_button = tk.Button(process, width=pb_width, text="Make github project", state="disabled", command=self.make_github)
+		self.makeproject_button.grid(row=3, column=1, sticky="e")
 
-		self.reset_button = tk.Button(process, text="Reset dvcurator", command=self.reset_all)
-		self.reset_button.pack()
+		self.reset_button = tk.Button(process, width=pb_width, text="Reset dvcurator", command=self.reset_all)
+		self.reset_button.grid(row=4, column=1, sticky="e")
 		
-		settings.grid(column=1, row=1)
-		checklist.grid(column=2, row=2, padx=10)
-		process.grid(column=2, row=1)
+		settings.grid(column=1, row=1, padx=3, pady=3)
+		process.grid(column=2, row=1, padx=3, pady=3)
 
 		from tkinter import scrolledtext
 		self.out = scrolledtext.ScrolledText(self, width=40, height=20)
 		redir = redirect_text(self.out)
 		sys.stdout = redir
 		sys.stderr = redir
-		self.out.grid(column=1, row=2)
+		self.out.grid(column=1, row=2, columnspan=2)
 
 		dvcurator.github.check_version()
 		self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
@@ -323,6 +319,7 @@ class MainApp(tk.Frame):
 
 def main():
 	root=tk.Tk()
+	root.resizable(width=False, height=False)
 	root.title("dvcurator " + dvcurator.version.version)
 	MainApp(root).pack(side="top", fill="both", expand=True)
 	root.mainloop()

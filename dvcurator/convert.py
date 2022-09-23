@@ -7,16 +7,20 @@
 #
 
 def docx_pdf(folder, suffix=None):
-    import dvcurator.fs
+    import dvcurator.fs, os, glob, pythoncom
     from docx2pdf import convert
-    import os, glob
+    
+    pythoncom.CoInitialize()
 
     path = dvcurator.fs.copy_new_step(folder, "convert")
     if not path:
         return None
-
+        
+    print("Converting docx files...")
     convert(path)
+
     files = glob.glob(os.path.join(path, "*.docx"))
     for f in files:
         os.remove(f)
-
+        
+    print("Done!")

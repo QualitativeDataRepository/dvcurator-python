@@ -117,8 +117,8 @@ def add_issue(project_name, template, repo, project, key):
 	#print("Issue created: " + project_name + " _ " + issue_name)
 
 # This is the actual function we run from the buttom
-def generate_template(metadata, folder_name, token, issues_selected, repo=None):
-	import os.path, sys, dvcurator.hosts
+def generate_template(metadata, project_name, token, repo=None):
+	import os, sys, dvcurator.hosts
 	from pkg_resources import resource_filename
 
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
@@ -127,21 +127,25 @@ def generate_template(metadata, folder_name, token, issues_selected, repo=None):
 		print("Error: github repository doesn't exist")
 		return None
 
-	if search_existing(folder_name, token):
+	if search_existing(project_name, token):
 		print("Error: existing github issues!!")
 		return None
+	project = create_project(metadata, project_name, repo, token)
+	print("Created project: " + project_name)
 
-	project = create_project(metadata, folder_name, repo, token)
-	print("Created project: " + folder_name)
+	folder = "issues"
+	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+		folder = os.path.join(sys._MEIPASS, folder)
+		issues = [os.path.join(folder, f) for f in os.listdir(folder)]
+	else:
+		folder += "/"
+		from pkg_resources import resource_listdir, resource_filename
+		issues = [resource_filename(__name__, folder + f) for f in resource_listdir(__name__, folder)]
+
 	# Get internal issue templates from selected checkboxes
-	for issue in issues_selected:
-		path = issue.get()
-		if (path != "0"):
-			if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-				path = os.path.join(sys._MEIPASS, "issues", path)
-			else:
-				path = resource_filename("dvcurator", "issues/" + path)
-			add_issue(folder_name, path, repo, project, token)
-			print(issue.get() + " added to project")
+	for issue in issues:
+		add_issue(project_name, issue, repo, project, token)
+		print(os.path.basename(issue) + " added to project")
 
 	print("Completed populating github project!")
+	
