@@ -47,25 +47,26 @@ def standard_metadata(folder, citation):
 		original = os.path.join(old_path, os.path.basename(path))
 		os.rename(path, original)
 		pdf = pikepdf.open(original)
-		# Clean out all existing metadata
-		try:
-			del pdf.Root.Metadata
-			del pdf.docinfo
-		except:
-			pass
-			
+
 		# Write new metadata
 		with pdf.open_metadata() as meta:
 			if meta.pdfa_status:
-				print("!! Warning !! PDF is PDF/A")
+				print("Warning: Voiding PDF/A status!")
+			# Clean out all existing metadata
+			try:
+				del pdf.Root.Metadata
+				del pdf.docinfo
+			except:
+				pass
+
 			meta['dc:title'] = os.path.basename(path)
-			#meta['dc:creator'] = author
+			meta['dc:creator'] = [author_string]
 			meta['pdf:Author'] = author_string
 			meta['dc:description'] = "QDR Data Project"
 			meta['pdf:Subject'] = "QDR Data Project"
 			meta['pdf:Keywords'] = "-"
 
-		pdf.save(path)
+		pdf.save(path, preserve_pdfa=False)
 		pdf.close()
 		print("Metadata written to: %s" %os.path.basename(path))
 
@@ -73,4 +74,3 @@ def standard_metadata(folder, citation):
 	print("PDF metadata process complete!")
 
 	return edit_path
-

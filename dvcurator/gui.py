@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import sys, threading, os
-import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.readme, dvcurator.convert, dvcurator.fs, dvcurator.pdf_metadata, dvcurator.version
+import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.readme, dvcurator.convert, dvcurator.fs, dvcurator.pdf, dvcurator.version
 
 class redirect_text(object):
 	def __init__(self, text_ctrl):
@@ -203,7 +203,7 @@ class MainApp(tk.Frame):
 
 	def set_metadata(self):
 		self.disable_buttons()
-		t = threading.Thread(target=dvcurator.pdf_metadata.standard_metadata, 
+		t = threading.Thread(target=dvcurator.pdf.standard_metadata, 
 			args=(self.subfolder_path, self.citation))
 		t.start()
 		self.schedule_check(t)

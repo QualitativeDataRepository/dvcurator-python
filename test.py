@@ -1,6 +1,6 @@
 from importlib.metadata import metadata
 import unittest, tempfile, os, shutil
-from dvcurator import dataverse, github, pdf_metadata, rename, readme, fs
+from dvcurator import dataverse, github, pdf, rename, readme, fs
 
 harvard_host = "https://dataverse.harvard.edu"
 harvard_doi = "doi:10.7910/DVN/CZYY1N"
@@ -115,12 +115,12 @@ class TestRename(unittest.TestCase):
 class TestPDFMetadata(unittest.TestCase):
 
 	def test_nopdfs(self):
-		self.assertFalse(pdf_metadata.standard_metadata("/notarealfolder", None))
+		self.assertFalse(pdf.standard_metadata("/notarealfolder", None))
 
 		f = tempfile.TemporaryDirectory()
 		edit_path = os.path.join(f.name, "QDR Prepared/5_Rename")
 		os.makedirs(edit_path) 
-		self.assertFalse(pdf_metadata.standard_metadata(edit_path, None))
+		self.assertFalse(pdf.standard_metadata(edit_path, None))
 
 		f.cleanup()
 
@@ -134,7 +134,7 @@ class TestPDFMetadata(unittest.TestCase):
 		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 
-		author_string = pdf_metadata.combine_author_names(citation)
+		author_string = pdf.combine_author_names(citation)
 
 		d = tempfile.TemporaryDirectory()
 		temp_structure = os.path.normpath(os.path.join(d.name, "QDR Prepared/5_rename"))
@@ -145,7 +145,7 @@ class TestPDFMetadata(unittest.TestCase):
 		for i in range(1, 11):
 			empty_pdf.save(os.path.join(temp_structure, f'test{i}.pdf'))
 
-		edit_path = pdf_metadata.standard_metadata(d.name, citation)
+		edit_path = pdf.standard_metadata(d.name, citation)
 		one_file = os.path.join(edit_path, os.listdir(edit_path)[4])
 		example = pikepdf.open(one_file)
 		meta = example.open_metadata()
@@ -168,7 +168,7 @@ class TestREADME(unittest.TestCase):
 		self.assertTrue(os.path.exists(generated))
 		# Fail on the second time
 		self.assertIsNone(readme.generate_readme(metadata, d.name))
-		
+
 		d.cleanup()
 		
 if __name__ == '__main__':
