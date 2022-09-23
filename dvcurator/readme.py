@@ -17,6 +17,12 @@ def generate_readme(metadata, folder, token=None):
         print("Error: README exists at " + new_path)
         return None
 
+    # Just contains files, or files and folders?
+    if any(os.path.isdir(os.path.join(folder, f)) for f in os.listdir(folder)):
+        any_folders = "files and folders"
+    else:
+        any_folders = "files"
+
     if token:
         biblio_citation = dvcurator.dataverse.get_biblio_citation(
             metadata['data']['latestVersion']['datasetPersistentId'], 
@@ -40,6 +46,7 @@ def generate_readme(metadata, folder, token=None):
         'citation': biblio_citation,
         'description': clean_html_tags(citation['dsDescription'][0]['dsDescriptionValue']['value']),
         'access': access,
+        'any_folders': any_folders,
         'files': dvcurator.fs.recursive_scan(folder) #"\n".join(os.listdir(folder))
     }
 

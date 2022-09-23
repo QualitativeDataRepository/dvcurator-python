@@ -13,13 +13,13 @@ $description
 $access
 
 **Included Files**
-This collection contains the following files:
+This collection contains the following $any_folders:
 
 $files
 
 **Data Processing Note**
 
-The data were processed according to the Qualitative Data Repository’s curation policy. All files were checked for integrity. Files were checked to make sure they match documentation and consistent file names were applied. PDF files were converted to PDF/A using Adobe Acrobat Pro DC Version 2022.001.20117, XMP tags edited using pikepdf, and enhanced for WCAG accessibility compliance.
+The data were processed according to the Qualitative Data Repository's curation policy. All files were checked for integrity. Files were checked to make sure they match documentation and consistent file names were applied. PDF files were converted to PDF/A using Adobe Acrobat Pro DC Version 2022.001.20117, XMP tags edited using pikepdf, and enhanced for WCAG accessibility compliance.
 
 [edit data processing note according to processing steps, note everything we did with the data -- e.g., add notes on de-identification (2.3.1.), copyright (2.3.2.), and other file conversions (2.4.) -- and update software versions as necessary]
 
