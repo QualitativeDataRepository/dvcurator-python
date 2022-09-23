@@ -7,7 +7,7 @@ def clean_html_tags(text):
 def generate_readme(metadata, folder, token=None):
     from string import Template
     from pkg_resources import resource_filename
-    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys
+    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys, re
     citation = dvcurator.dataverse.get_citation(metadata)
     folder = dvcurator.fs.current_step(folder)
 
@@ -27,6 +27,7 @@ def generate_readme(metadata, folder, token=None):
         biblio_citation = dvcurator.dataverse.get_biblio_citation(
             metadata['data']['latestVersion']['datasetPersistentId'], 
             token)
+        biblio_citation = re.sub("DRAFT VERSION", "", biblio_citation)
         if not biblio_citation:
             print("Warning: dataverse token not authorized for this project, citation missing")
             # What string will go in the actual readme
