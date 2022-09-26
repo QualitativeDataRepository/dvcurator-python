@@ -7,6 +7,7 @@
 #
 
 import tkinter as tk
+from tkinter import ttk
 import sys, threading, os
 import dvcurator.github, dvcurator.dataverse, dvcurator.rename, dvcurator.readme, dvcurator.convert, dvcurator.fs, dvcurator.pdf, dvcurator.version
 
@@ -27,6 +28,7 @@ class MainApp(tk.Frame):
 		self.makeproject_button.config(state="disabled")
 		self.menubar.entryconfig("Edit", state=tk.DISABLED)
 		self.reset_button.config(state="disabled")
+		self.pb.start()
 
 	def enable_buttons(self):
 		self.cite_button.config(state="normal")
@@ -34,6 +36,7 @@ class MainApp(tk.Frame):
 		self.makeproject_button.config(state="normal")
 		self.menubar.entryconfig("Edit", state=tk.NORMAL)
 		self.reset_button.config(state="normal")
+		self.pb.stop()
 
 	def schedule_check(self, t):
 		self.after(1000, self.check_if_done, t)
@@ -233,7 +236,7 @@ class MainApp(tk.Frame):
 		self.menubar = tk.Menu(self)
 
 		self.filemenu = tk.Menu(self.menubar, tearoff=False)
-		self.filemenu.add_command(label="Save config", command=self.save_config)
+		#self.filemenu.add_command(label="Save config", command=self.save_config)
 		self.filemenu.add_command(label="Save config As", command=self.save_config_as)
 		self.filemenu.add_command(label="Open config", command=self.open_config)
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
@@ -251,62 +254,57 @@ class MainApp(tk.Frame):
 		self.menubar.entryconfig("Edit", state=tk.DISABLED)
 		parent.config(menu=self.menubar)
 
-		# Checklist of tickets included in the .md files
-		#checklist = tk.LabelFrame(self, text="Project issues:")
-		#self.issues_selected = []
-		#for n, issue in enumerate(self.issues):
-		#	self.issues_selected.append(tk.StringVar(value=issue))
-		#	i = tk.Checkbutton(checklist, text=issue, onvalue=issue, offvalue=None, variable=self.issues_selected[n])
-		#	i.pack()
-		
 		# Settings
 		settings = tk.Frame(self)
 
 		self.doi=tk.StringVar()
-		doi_label = tk.Label(settings, text="Persistent ID (DOI): ")
-		self.doi_entry = tk.Entry(settings, textvariable=self.doi)
+		doi_label = ttk.Label(settings, text="Persistent ID (DOI): ")
+		self.doi_entry = ttk.Entry(settings, textvariable=self.doi)
 		doi_label.grid(column=1, row=2)
 		self.doi_entry.grid(column=2, row=2)
 			
 		self.dv_token = tk.StringVar()
-		dv_label = tk.Label(settings, text="Dataverse token: ")
-		dv_entry = tk.Entry(settings, textvariable=self.dv_token)
-		dv_label.grid(column=1, row=4)
-		dv_entry.grid(column=2, row=4)
+		dv_label = ttk.Label(settings, text="Dataverse token: ")
+		dv_entry = ttk.Entry(settings, textvariable=self.dv_token)
+		dv_label.grid(column=1, row=3)
+		dv_entry.grid(column=2, row=3)
 			
 		self.gh_token = tk.StringVar()
-		gh_label = tk.Label(settings, text="Github token: ")
-		gh_entry = tk.Entry(settings, textvariable=self.gh_token)
-		gh_label.grid(column=1, row=6)
-		gh_entry.grid(column=2, row=6)
+		gh_label = ttk.Label(settings, text="Github token: ")
+		gh_entry = ttk.Entry(settings, textvariable=self.gh_token)
+		gh_label.grid(column=1, row=4)
+		gh_entry.grid(column=2, row=4)
 		
 		self.dropbox=tk.StringVar()
-		dropbox_label = tk.Label(settings, text="Dropbox folder: ")
-		self.dropbox_entry = tk.Button(settings, width=15, text="Select folder", command=self.set_dropbox)
-		dropbox_label.grid(column=1, row=7)
-		self.dropbox_entry.grid(column=2, row=7, sticky="w")
-		
+		dropbox_label = ttk.Label(settings, text="Dropbox folder: ")
+		self.dropbox_entry = ttk.Button(settings, width=20, text="Select folder", command=self.set_dropbox)
+		dropbox_label.grid(column=1, row=5)
+		self.dropbox_entry.grid(column=2, row=5, sticky="w")
+
 		process = tk.Frame(self)
-		pb_width = 17
-		self.cite_button = tk.Button(process, width=pb_width, text="(Re)load metadata", command=self.load_citation)
+		pb_width = 25
+		self.cite_button = ttk.Button(process, width=pb_width, text="(Re)load metadata", command=self.load_citation)
 		self.cite_button.grid(row=1, column=1, sticky="e")
-		self.download_button = tk.Button(process, width=pb_width, text="Download and Extract", state="disabled", command=self.download_extract)
+		self.download_button = ttk.Button(process, width=pb_width, text="Download and Extract", state="disabled", command=self.download_extract)
 		self.download_button.grid(row=2, column=1, sticky="e")
-		self.makeproject_button = tk.Button(process, width=pb_width, text="Make github project", state="disabled", command=self.make_github)
+		self.makeproject_button = ttk.Button(process, width=pb_width, text="Make github project", state="disabled", command=self.make_github)
 		self.makeproject_button.grid(row=3, column=1, sticky="e")
 
-		self.reset_button = tk.Button(process, width=pb_width, text="Reset dvcurator", command=self.reset_all)
+		self.reset_button = ttk.Button(process, width=pb_width, text="Reset dvcurator", command=self.reset_all)
 		self.reset_button.grid(row=4, column=1, sticky="e")
 		
 		settings.grid(column=1, row=1, padx=3, pady=3)
 		process.grid(column=2, row=1, padx=3, pady=3)
 
-		from tkinter import scrolledtext
-		self.out = scrolledtext.ScrolledText(self, width=40, height=20)
+		self.pb = ttk.Progressbar(self, orient="horizontal", length=300, mode="indeterminate")
+		self.pb.grid(column=1, row=2, columnspan=2, pady=3)
+
+		self.out = tk.Text(self, width=50, height=15,
+			font=("Courier", "10"))
 		redir = redirect_text(self.out)
 		sys.stdout = redir
 		sys.stderr = redir
-		self.out.grid(column=1, row=2, columnspan=2)
+		self.out.grid(column=1, row=3, columnspan=2, padx=0, pady=0)
 
 		dvcurator.github.check_version()
 		self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
