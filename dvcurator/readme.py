@@ -7,11 +7,12 @@ def clean_html_tags(text):
 def generate_readme(metadata, folder, token=None):
     from string import Template
     from pkg_resources import resource_filename
-    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys, re
+    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys, re, unicodedata
     citation = dvcurator.dataverse.get_citation(metadata)
     folder = dvcurator.fs.current_step(folder)
 
     readme_name = "README_" + dvcurator.rename.last_name_prefix(citation) + ".txt"
+    readme_name = unicodedata.normalize('NFKD', readme_name).encode('ascii', 'ignore').decode('ascii')
     new_path = os.path.join(folder, "..", readme_name)
     if os.path.exists(new_path):
         print("Error: README exists at " + new_path)
@@ -59,7 +60,7 @@ def generate_readme(metadata, folder, token=None):
     with open(path, 'r') as f:
         src = Template(f.read())
         text = src.safe_substitute(d)
-        with open(new_path, 'w') as n:
+        with open(new_path, 'w', encoding="utf-8") as n:
             n.write(text)
             print("Written: " + new_path)
 
