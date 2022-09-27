@@ -53,9 +53,9 @@ def generate_readme(metadata, folder, token=None):
     }
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        path = os.path.join(sys._MEIPASS, "templates", "README.txt")
+        path = os.path.join(sys._MEIPASS, "assets", "README.txt")
     else:
-        path = resource_filename("dvcurator", "templates/README.txt")
+        path = resource_filename("dvcurator", "assets/README.txt")
         
     with open(path, 'r') as f:
         src = Template(f.read())

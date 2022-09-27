@@ -134,7 +134,7 @@ def generate_template(metadata, project_name, token, repo=None):
 	project = create_project(metadata, project_name, repo, token)
 	print("Created project: " + project_name)
 
-	folder = "issues"
+	folder = os.path.join("assets", "issues")
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		folder = os.path.join(sys._MEIPASS, folder)
 		issues = [os.path.join(folder, f) for f in os.listdir(folder)]

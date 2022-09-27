@@ -311,8 +311,17 @@ class MainApp(tk.Frame):
 		if os.path.exists(self.local_ini):
 			self.load_config(self.local_ini)
 
+		if getattr(sys, 'frozen', False):
+			icon = os.path.join(sys._MEIPASS, "assets", "qdr.ico")
+		else:
+			from pkg_resources import resource_filename
+			icon = resource_filename("dvcurator", "assets/qdr.ico")
+		
+		parent.iconbitmap(default=icon)
+
 		# save config on exit
 		parent.protocol("WM_DELETE_WINDOW", self.close_window)
+
 
 
 def main():
