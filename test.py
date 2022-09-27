@@ -44,8 +44,7 @@ class TestDataverseAPI(unittest.TestCase):
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
 
 	def test_biblio(self):
-		# No API key so we'll just test the fail condition
-		self.assertIsNone(dataverse.get_biblio_citation(qdr_doi, ""))
+		self.assertTrue(dataverse.get_biblio_citation(qdr_doi).startswith("VandeVusse"))
 
 	def test_download(self):
 		f = tempfile.TemporaryDirectory()

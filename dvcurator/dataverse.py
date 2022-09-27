@@ -3,7 +3,7 @@
 #
 
 # This function gets the entire metadata block from Dataverse
-def get_metadata(doi, token="", host=None):
+def get_metadata(doi, token=None, host=None):
 	import requests, dvcurator.hosts
 
 	doi = doi.strip()
@@ -45,28 +45,23 @@ def get_citation(metadata):
 
 # This pulls the "recommended citation" field
 # Gotta pull from the SWORD API, not available from native metadata
-def get_biblio_citation(doi, token, host=None):
+def get_biblio_citation(doi, token=None, host=None):
 	import requests, dvcurator.hosts
-	import xml.etree.ElementTree as et
-
-	doi = doi.strip()
-	if not doi.startswith("doi:"):
-		print("Error: DOIs should start with \"doi:\"")
-		return None
-
 	host = dvcurator.hosts.qdr_dataverse if not host else host 
 
-	atom_url = host + "/dvn/api/data-deposit/v1.1/swordv2/edit/study/" + doi
-	atom = requests.get(atom_url, auth=requests.auth.HTTPBasicAuth(token, ""))
-	if atom.status_code == 400:
+	search_api = host + "/api/search?q=dsPersistentId=%22" + doi + "%22"
+	if (not token):
+		query = requests.get(search_api)
+	else:
+		key = {'X-Dataverse-Key': token}
+		query = requests.get(search_api, headers=key)
+
+	if not query.ok:
+		print("HTTP error " + query.status_code + ": " + query.reason)
 		return None
 
-	tree = et.fromstring(atom.text)
-	result = tree[0].text
-	if (result=="\n"):
-		return None
-	return result
-
+	return query.json()['data']['items'][0]['citation']
+	
 # Actually download and extract the dataset
 # This is the function run by the download and extract button
 def download_dataset(metadata, folder, token=None, host=None):
