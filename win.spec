@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import copy_metadata
 
-datas = [('dvcurator\\issues', 'issues'), ('dvcurator\\templates', 'templates')]
+datas = [('dvcurator\\assets', 'assets')]
 datas += copy_metadata('pikepdf')
 
 
@@ -44,5 +44,6 @@ exe = EXE(
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
+    icon='dvcurator\\assets\\qdr.ico',
     entitlements_file=None,
 )
