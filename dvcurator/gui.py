@@ -276,7 +276,7 @@ class MainApp(tk.Frame):
 		gh_entry.grid(column=2, row=4)
 		
 		self.dropbox=tk.StringVar()
-		dropbox_label = ttk.Label(settings, text="Dropbox folder: ")
+		dropbox_label = ttk.Label(settings, text="QDR GA folder: ")
 		self.dropbox_entry = ttk.Button(settings, width=20, text="Select folder", command=self.set_dropbox)
 		dropbox_label.grid(column=1, row=5)
 		self.dropbox_entry.grid(column=2, row=5, sticky="w")
@@ -285,7 +285,7 @@ class MainApp(tk.Frame):
 		pb_width = 25
 		self.cite_button = ttk.Button(process, width=pb_width, text="(Re)load metadata", command=self.load_citation)
 		self.cite_button.grid(row=1, column=1, sticky="e")
-		self.download_button = ttk.Button(process, width=pb_width, text="Download and Extract", state="disabled", command=self.download_extract)
+		self.download_button = ttk.Button(process, width=pb_width, text="Download and extract", state="disabled", command=self.download_extract)
 		self.download_button.grid(row=2, column=1, sticky="e")
 		self.makeproject_button = ttk.Button(process, width=pb_width, text="Make github project", state="disabled", command=self.make_github)
 		self.makeproject_button.grid(row=3, column=1, sticky="e")
