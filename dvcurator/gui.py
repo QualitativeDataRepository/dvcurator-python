@@ -232,7 +232,11 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def close_window(self):
-		self.save_config()
+		try:
+			self.save_config()
+		except PermissionError:
+			pass
+			
 		self.parent.destroy()
 
 	def __init__(self, parent, *args, **kwargs):
@@ -316,16 +320,20 @@ class MainApp(tk.Frame):
 		self.out.grid(column=1, row=3, columnspan=2, padx=0, pady=0)
 
 		dvcurator.github.check_version()
-		self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
-		if os.path.exists(self.local_ini):
-			self.load_config(self.local_ini)
 
+		# set paths depending on if we're using the compiled version
 		if getattr(sys, 'frozen', False):
+			# Set working directory to the folder the executable is in
+			self.local_ini = os.path.join(os.path.dirname(sys.executable), "dvcurator.ini")
 			icon = os.path.join(sys._MEIPASS, "assets", "qdr.ico")
 		else:
+			self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
 			from pkg_resources import resource_filename
 			icon = resource_filename("dvcurator", "assets/qdr.ico")
-		
+
+		if os.path.exists(self.local_ini):
+			self.load_config(self.local_ini)		
+
 		parent.iconbitmap(default=icon)
 
 		# save config on exit
@@ -340,5 +348,5 @@ def main():
 	MainApp(root).pack(side="top", fill="both", expand=True)
 	root.mainloop()
 
-if __name__ == "__main__":
+if __name__ == "__main__":		
 	main()
