@@ -6,7 +6,13 @@
 #  Copyright 2022 Michael McCall <mimccall@syr.edu>
 #
 
-def docx_pdf(folder, suffix=None):
+def docx_pdf(folder):
+    """
+    Convert all docx files in a folder to PDFs
+
+    :param folder: Folder to convert docx files in
+    :type folder: Path, as String
+    """
     import dvcurator.fs, os, glob, pythoncom
     from docx2pdf import convert
     

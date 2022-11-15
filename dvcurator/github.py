@@ -6,6 +6,12 @@ github_api='https://api.github.com'
 
 # Is there a more recent version of 
 def check_version():
+	"""
+	Check whether the running version is the same as the newest github tag
+
+	:return: Whether a new update is available on github
+	:rtype: boolean
+	"""
 	import requests, dvcurator.version, dvcurator.hosts
 	tags_url = github_api + "/repos/" + dvcurator.hosts.pkg_repo + "/tags"
 	tags = requests.get(tags_url).json()
@@ -22,6 +28,16 @@ def check_version():
 # Check if repository specified actually exists
 # False = Doesn't exist, True = exists
 def check_repo(key=None, repo=None):
+	"""
+	Check whether github repository exists
+
+	:param key: Github API key, or None for public repository
+	:type key: String or None
+	:param repo: Github repository path (e.g. QualitativeDataRepository/dvcurator-python), or None for default
+	:type repo: String or None
+	:return: Whether or not the repository is accessible
+	:rtype: boolean
+	"""
 	import requests, dvcurator.hosts
 	repo = dvcurator.hosts.curation_repo if not repo else repo
 	project_url = github_api + "/repos/" + repo + "/issues"
@@ -39,6 +55,18 @@ def check_repo(key=None, repo=None):
 # Search if tickets already exist in the repo for this project
 # True = tickets exist, False = they don't exist
 def search_existing(project_name, key=None, repo=None):
+	"""
+	Check if a project has existing github tickets
+
+	:param project_name: Project name to check for existing tickets
+	:type project_name: String
+	:param key: Github API key, or None for public repository
+	:type key: String or None
+	:param repo: Github repository path (e.g. QualitativeDataRepository/dvcurator-python), or None for default
+	:type repo: String or None
+	:return: Whether or not there are any existing tickets with the specified project name
+	:rtype: boolean
+	"""
 	import json, requests, dvcurator.hosts
 
 	repo = dvcurator.hosts.curation_repo if not repo else repo 

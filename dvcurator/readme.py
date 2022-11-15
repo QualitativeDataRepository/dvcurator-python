@@ -1,10 +1,31 @@
 def clean_html_tags(text):
+    """
+    Remove all HTML tags from text
+
+    :param text: Text to remove tags from
+    :type text: String
+    :return: Text without HTML tags
+    :rtype: String
+
+    """
     import re
     tags = re.compile('<.*?>')
     clean_text = re.sub(tags, '', text)
     return clean_text
 
 def generate_readme(metadata, folder, token=None):
+    """
+    Generate README
+
+    :param metadata: Project metadata from `get_metadata()`
+    :param folder: "QDR Prepared" folder for project
+    :type folder: Path, as string
+   	:param token: Dataverse token, necessary if the project is unpublished
+	:type token: String, or None
+    :return: Path to new README file
+    :rtype: Path, as string
+    
+    """
     from string import Template
     from pkg_resources import resource_filename
     import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys, re, unicodedata

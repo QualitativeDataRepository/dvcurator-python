@@ -12,6 +12,9 @@ import sys, threading, os
 import dvcurator.github, dvcurator.github_projectv2, dvcurator.dataverse, dvcurator.rename, dvcurator.readme, dvcurator.convert, dvcurator.fs, dvcurator.pdf, dvcurator.version
 
 class redirect_text(object):
+	"""
+	Redirect standard output to a text box in the GUI
+	"""
 	def __init__(self, text_ctrl):
 		self.output = text_ctrl        
 	def write(self, string):
@@ -22,6 +25,9 @@ class redirect_text(object):
 
 class MainApp(tk.Frame):
 	def disable_buttons(self):
+		"""
+		Disable most GUI buttons, for while an operation is in progress
+		"""
 		self.out.delete('1.0', tk.END)
 		self.cite_button.config(state="disabled")
 		self.download_button.config(state="disabled")
@@ -31,6 +37,9 @@ class MainApp(tk.Frame):
 		self.pb.start()
 
 	def enable_buttons(self):
+		"""
+		Re-enable most GUI buttons, for once an operation has finished
+		"""
 		self.cite_button.config(state="normal")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
@@ -39,9 +48,15 @@ class MainApp(tk.Frame):
 		self.pb.stop()
 
 	def schedule_check(self, t):
+		"""
+		Check if an in-progress operation has finished after 1 second 
+		"""
 		self.after(1000, self.check_if_done, t)
 	
 	def check_if_done(self, t):
+		"""
+		Enable buttons again if an operation is done, or run `schedule_check()` again
+		"""
 		if not t.is_alive():
 			self.enable_buttons()
 		else:
@@ -49,6 +64,9 @@ class MainApp(tk.Frame):
 
 	# File menu buttons
 	def open_config(self):
+		"""
+		Manually select a config file 
+		"""
 		from tkinter import filedialog
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
 		config_file = filedialog.askopenfilename(filetypes=file_type)
@@ -56,6 +74,9 @@ class MainApp(tk.Frame):
 			self.load_config(config_file)
 		
 	def load_config(self, path=None):
+		"""
+		Load the variables from a config file into the program
+		"""
 		if not os.path.exists(path):
 			return None
 		import configparser
@@ -70,6 +91,9 @@ class MainApp(tk.Frame):
 
 	# function to save settings as .ini file
 	def save_config_as(self):
+		"""
+		Manually save a config file (save-as)
+		"""
 		from tkinter.filedialog import asksaveasfilename
 		file_type = (('ini file', '*.ini'),('All files', '*.*'),)
 		f = asksaveasfilename(filetypes=file_type)
@@ -77,6 +101,9 @@ class MainApp(tk.Frame):
 			self.save_config(f)
 
 	def save_config(self, path=None):
+		"""
+		Save variables to a 
+		"""
 		path = self.local_ini if not path else path
 		import configparser
 		config = configparser.ConfigParser()
@@ -90,6 +117,9 @@ class MainApp(tk.Frame):
 
 	# Set dropbox directory path, open OS folder select dialog
 	def check_subfolder(self):
+		"""
+		Check if a folder in dropbox for the loaded project already exists
+		"""
 		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
 		if not self.subfolder_path:
 			self.subfolder_path = os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name)
@@ -98,6 +128,9 @@ class MainApp(tk.Frame):
 			print("Existing extracted project detected at: " + self.subfolder_path)
 
 	def set_dropbox(self):
+		"""
+		Set the top-level Dropbox folder
+		"""
 		from tkinter import filedialog
 		dropbox = filedialog.askdirectory()
 		if not dropbox:
@@ -113,6 +146,9 @@ class MainApp(tk.Frame):
 			self.check_subfolder()
 
 	def set_subfolder(self):
+		"""
+		Manually set a Dropbox project subfolder, for when `check_subfolder()` can't detect it but a folder does exist
+		"""
 		from tkinter import filedialog
 		subfolder = filedialog.askdirectory()
 		if not subfolder:
@@ -122,6 +158,9 @@ class MainApp(tk.Frame):
 
 	# Open project directory (edit menu)
 	def open_explorer(self):
+		"""
+		Open the Dropbox project subfolder in the native file explorer
+		"""
 		if not self.subfolder_path:
 			print("Error: No subfolder specified")
 			return
@@ -139,6 +178,9 @@ class MainApp(tk.Frame):
 
 	# Main window buttons
 	def load_citation(self):
+		"""
+		Load project metadata from Dataverse, mainly runs `get_citaiton()`
+		"""
 		if (not self.doi.get()):
 			print("Error: No persistent ID specified")
 			return
@@ -163,6 +205,9 @@ class MainApp(tk.Frame):
 		self.menubar.entryconfig("Edit", state=tk.NORMAL)
 
 	def download_extract(self):
+		"""
+		Run `download_extract()`
+		"""
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.dataverse.download_dataset, 
 			args=(self.metadata, self.subfolder_path, self.dv_token.get()))
@@ -170,6 +215,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def make_github(self):
+		"""
+		Run `generate_template()`
+		"""
 		if (not self.gh_token.get()):
 			print("Error: no github token specified")
 			return
@@ -187,6 +235,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def reset_all(self):
+		"""
+		Unload project metadata
+		"""
 		# Reset DOI entry
 		self.doi.set("")
 		self.doi_entry.config(state="normal")
@@ -198,6 +249,9 @@ class MainApp(tk.Frame):
 
 	# Edit menu options
 	def rename(self):
+		"""
+		Run `basic_rename()`
+		"""
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.rename.basic_rename, 
 			args=(self.subfolder_path, self.citation))
@@ -205,6 +259,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 	
 	def convert(self):
+		"""
+		Run `docx_pdf()`
+		"""
 		import pythoncom	
 		pythoncom.CoInitialize()
 		self.disable_buttons()
@@ -214,6 +271,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def set_metadata(self):
+		"""
+		Run `standard_metadata()`
+		"""
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.pdf.standard_metadata, 
 			args=(self.subfolder_path, self.citation))
@@ -221,6 +281,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def create_readme(self):
+		"""
+		Run `generate_readme()`
+		"""
 		if (not self.dv_token.get()):
 			print("Error: no dataverse token specified")
 			return
@@ -232,6 +295,9 @@ class MainApp(tk.Frame):
 		self.schedule_check(t)
 
 	def close_window(self):
+		"""
+		Save config before killing window
+		"""
 		try:
 			self.save_config()
 		except PermissionError:
@@ -240,6 +306,9 @@ class MainApp(tk.Frame):
 		self.parent.destroy()
 
 	def __init__(self, parent, *args, **kwargs):
+		"""
+		Draw GUI window
+		"""
 		tk.Frame.__init__(self, parent, args, **kwargs)
 		self.parent = parent
 		

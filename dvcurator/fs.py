@@ -1,5 +1,14 @@
 # check whether dropbox folder is set correctly
 def check_dropbox(dropbox, project_name=None):
+    """
+    Check whether the specified dropbox folder is accessible
+
+    :param dropbox: Path to dropbox folder
+    :type dropbox: path as a string
+    :param project_name: Project name to check if there is an existing folder in dropbox
+    :type project_name: String
+
+    """
     import os.path
     from glob import glob
     if not os.path.exists(dropbox):
@@ -24,6 +33,15 @@ def check_dropbox(dropbox, project_name=None):
     return True
 
 def recursive_scan(path):
+    """
+    List all files in folder, recursively. Used to generate file list in README
+
+    :param path: Path to folder
+    :type path: Path as string
+    :return: Pretty-printed recursive file list
+    :rtype: String
+
+    """
     import os
     output = []
     for root, dirs, files in os.walk(path):
@@ -40,6 +58,15 @@ def recursive_scan(path):
 
 # What is the latest folder under QDR Prepared?
 def current_step(folder):
+    """
+    Find latest (highest numbered) step in the "QDR Prepared" subfolder, i.e. "4_metadata"
+
+    :param folder: Folder to check, should be path to "QDR Prepared" folder
+    :type folder: Path, as string
+    :return: Path to subfolder with highest number, or None in case of error
+    :rtype: Path as a string, or None
+
+    """
     from glob import glob
     import os.path
     if not os.path.isdir(folder):
@@ -54,6 +81,17 @@ def current_step(folder):
 
 # Copy QDR prepared latest step to a new step, incrementing step number
 def copy_new_step(folder, step):
+    """
+    Copy QDR Prepared latest step (i.e. 3_rename) to a new step (i.e. 4_metadata), incrementing step number
+
+    :param folder: "QDR Prepared" folder
+    :type folder: Path, as string
+    :param step: Short description of next step, e.g. "metadata" or "rename"
+    :type step: String
+    :return: Path to newly created folder
+    :rtype: String
+
+    """
     #exists = check_dropbox(dropbox, project_name)
     #if not exists:
     #    return None

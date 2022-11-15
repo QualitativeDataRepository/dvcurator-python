@@ -1,0 +1,7 @@
+dist/
+build/
+dvcurator/__pycache__/
+dvcurator.egg-info/
+dvcurator.ini
+
+docs/_build/
