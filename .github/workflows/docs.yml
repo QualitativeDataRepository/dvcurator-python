@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install autoapi
-      run: sudo apt-get update -y && sudo apt-get install -y python3-sphinx-autoapi
+      run: python -m pip install sphinx-autoapi
     # Standard drop-in approach that should work for most people.
     - uses: ammaraskar/sphinx-action@master
       with:
