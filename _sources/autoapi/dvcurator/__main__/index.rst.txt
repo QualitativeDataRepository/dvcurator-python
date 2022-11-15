@@ -1,0 +1,6 @@
+:py:mod:`dvcurator.__main__`
+============================
+
+.. py:module:: dvcurator.__main__
+
+

@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dvcurator.gui &#8212; dvcurator 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dvcurator.gui">
+<span id="dvcurator-gui"></span><h1><a class="reference internal" href="#module-dvcurator.gui" title="dvcurator.gui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dvcurator.gui</span></code></a><a class="headerlink" href="#module-dvcurator.gui" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.gui.redirect_text" title="dvcurator.gui.redirect_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">redirect_text</span></code></a></p></td>
+<td><p>Redirect standard output to a text box in the GUI</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.gui.MainApp" title="dvcurator.gui.MainApp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainApp</span></code></a></p></td>
+<td><p>Frame widget which may contain other widgets and can have a 3D border.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.gui.main" title="dvcurator.gui.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="dvcurator.gui.redirect_text">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dvcurator.gui.</span></span><span class="sig-name descname"><span class="pre">redirect_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_ctrl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.redirect_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Redirect standard output to a text box in the GUI</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.redirect_text.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.redirect_text.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.redirect_text.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.redirect_text.flush" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dvcurator.gui.</span></span><span class="sig-name descname"><span class="pre">MainApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>Frame widget which may contain other widgets and can have a 3D border.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.disable_buttons">
+<span class="sig-name descname"><span class="pre">disable_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.disable_buttons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable most GUI buttons, for while an operation is in progress</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.enable_buttons">
+<span class="sig-name descname"><span class="pre">enable_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.enable_buttons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-enable most GUI buttons, for once an operation has finished</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.schedule_check">
+<span class="sig-name descname"><span class="pre">schedule_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.schedule_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if an in-progress operation has finished after 1 second</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.check_if_done">
+<span class="sig-name descname"><span class="pre">check_if_done</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.check_if_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable buttons again if an operation is done, or run <cite>schedule_check()</cite> again</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.open_config">
+<span class="sig-name descname"><span class="pre">open_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.open_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually select a config file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the variables from a config file into the program</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.save_config_as">
+<span class="sig-name descname"><span class="pre">save_config_as</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.save_config_as" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually save a config file (save-as)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save variables to a</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.check_subfolder">
+<span class="sig-name descname"><span class="pre">check_subfolder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.check_subfolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a folder in dropbox for the loaded project already exists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.set_dropbox">
+<span class="sig-name descname"><span class="pre">set_dropbox</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.set_dropbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the top-level Dropbox folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.set_subfolder">
+<span class="sig-name descname"><span class="pre">set_subfolder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.set_subfolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually set a Dropbox project subfolder, for when <cite>check_subfolder()</cite> can’t detect it but a folder does exist</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.open_explorer">
+<span class="sig-name descname"><span class="pre">open_explorer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.open_explorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the Dropbox project subfolder in the native file explorer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.load_citation">
+<span class="sig-name descname"><span class="pre">load_citation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.load_citation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load project metadata from Dataverse, mainly runs <cite>get_citaiton()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.download_extract">
+<span class="sig-name descname"><span class="pre">download_extract</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.download_extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>download_extract()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.make_github">
+<span class="sig-name descname"><span class="pre">make_github</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.make_github" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>generate_template()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.reset_all">
+<span class="sig-name descname"><span class="pre">reset_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.reset_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unload project metadata</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>basic_rename()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>docx_pdf()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.set_metadata">
+<span class="sig-name descname"><span class="pre">set_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.set_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>standard_metadata()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.create_readme">
+<span class="sig-name descname"><span class="pre">create_readme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.create_readme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <cite>generate_readme()</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.close_window">
+<span class="sig-name descname"><span class="pre">close_window</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.close_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save config before killing window</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.gui.main">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.gui.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">dvcurator</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, QDR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/dvcurator/gui/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

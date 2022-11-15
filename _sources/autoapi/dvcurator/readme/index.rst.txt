@@ -1,0 +1,45 @@
+:py:mod:`dvcurator.readme`
+==========================
+
+.. py:module:: dvcurator.readme
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   dvcurator.readme.clean_html_tags
+   dvcurator.readme.generate_readme
+
+
+
+.. py:function:: clean_html_tags(text)
+
+   Remove all HTML tags from text
+
+   :param text: Text to remove tags from
+   :type text: String
+   :return: Text without HTML tags
+   :rtype: String
+
+
+
+.. py:function:: generate_readme(metadata, folder, token=None)
+
+   Generate README
+
+   :param metadata: Project metadata from `get_metadata()`
+   :param folder: "QDR Prepared" folder for project
+   :type folder: Path, as string
+       :param token: Dataverse token, necessary if the project is unpublished
+       :type token: String, or None
+   :return: Path to new README file
+   :rtype: Path, as string
+
+
+

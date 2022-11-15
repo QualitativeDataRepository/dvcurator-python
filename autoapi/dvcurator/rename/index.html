@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dvcurator.rename &#8212; dvcurator 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dvcurator.rename">
+<span id="dvcurator-rename"></span><h1><a class="reference internal" href="#module-dvcurator.rename" title="dvcurator.rename"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dvcurator.rename</span></code></a><a class="headerlink" href="#module-dvcurator.rename" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.rename.project_name" title="dvcurator.rename.project_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_name</span></code></a>(citation)</p></td>
+<td><p>Generate project name string, used in dropbox folder name and github project name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.rename.last_name_prefix" title="dvcurator.rename.last_name_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_name_prefix</span></code></a>(citation)</p></td>
+<td><p>Extract the last name of the first author (and second) for filename prefix</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.rename.add_filename_prefix" title="dvcurator.rename.add_filename_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_filename_prefix</span></code></a>(folder, prefix)</p></td>
+<td><p>Add a prefix to all files in a folder</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.rename.replace_spaces" title="dvcurator.rename.replace_spaces"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_spaces</span></code></a>(folder)</p></td>
+<td><p>Remove spaces in all filenames in a folder</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.rename.remove_all_accents" title="dvcurator.rename.remove_all_accents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_all_accents</span></code></a>(folder)</p></td>
+<td><p>Remove all accented characters in filenames in a folder</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.rename.basic_rename" title="dvcurator.rename.basic_rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basic_rename</span></code></a>(folder, citation)</p></td>
+<td><p>Run a series of operations to properly format filenames in a folder according to QDR guidelines.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.project_name">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">project_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">citation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.project_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate project name string, used in dropbox folder name and github project name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>citation</strong> – Citation block generated by <cite>get_citation()</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String to use as the folder name or project name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.last_name_prefix">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">last_name_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">citation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.last_name_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the last name of the first author (and second) for filename prefix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>citation</strong> – Citation block generated by <cite>get_citation()</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String of last name (or other prefix if &gt;1 author)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.add_filename_prefix">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">add_filename_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.add_filename_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a prefix to all files in a folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em><em>, </em><em>as string</em>) – Folder to rename files in</p></li>
+<li><p><strong>prefix</strong> (<em>String</em>) – Prefix to add to filenames</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.replace_spaces">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">replace_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.replace_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove spaces in all filenames in a folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>folder</strong> (<em>Path</em><em>, </em><em>as string</em>) – Folder to rename files in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.remove_all_accents">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">remove_all_accents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.remove_all_accents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all accented characters in filenames in a folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>folder</strong> (<em>Path</em><em>, </em><em>as string</em>) – Folder to rename files in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.rename.basic_rename">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.rename.</span></span><span class="sig-name descname"><span class="pre">basic_rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.rename.basic_rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a series of operations to properly format filenames in a folder according to QDR guidelines.
+Add prefix, remove accents, replace spaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em><em>, </em><em>as string</em>) – Folder to rename files in</p></li>
+<li><p><strong>citation</strong> – Citation block generated by <cite>get_citation()</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Path to the new folder with renamed files</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">dvcurator</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, QDR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/dvcurator/rename/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

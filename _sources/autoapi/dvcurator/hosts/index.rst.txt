@@ -1,0 +1,34 @@
+:py:mod:`dvcurator.hosts`
+=========================
+
+.. py:module:: dvcurator.hosts
+
+
+Module Contents
+---------------
+
+.. py:data:: qdr_dataverse
+   :annotation: = https://data.qdr.syr.edu
+
+   
+
+.. py:data:: qdr_doi_path
+   
+
+   
+
+.. py:data:: github_api
+   :annotation: = https://api.github.com
+
+   
+
+.. py:data:: curation_repo
+   :annotation: = QualitativeDataRepository/testing-demos
+
+   
+
+.. py:data:: pkg_repo
+   :annotation: = QualitativeDataRepository/dvcurator-python
+
+   
+

@@ -1,0 +1,75 @@
+:py:mod:`dvcurator.github_projectv2`
+====================================
+
+.. py:module:: dvcurator.github_projectv2
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   dvcurator.github_projectv2.test_gql
+   dvcurator.github_projectv2.gql_query
+   dvcurator.github_projectv2.get_org_id
+   dvcurator.github_projectv2.get_repo
+   dvcurator.github_projectv2.get_proj
+   dvcurator.github_projectv2.alter_column
+   dvcurator.github_projectv2.get_columns
+   dvcurator.github_projectv2.draft_issue
+   dvcurator.github_projectv2.new_projectv2
+   dvcurator.github_projectv2.generate_templatev2
+   dvcurator.github_projectv2.add_issue
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   dvcurator.github_projectv2.github_api
+
+
+.. py:data:: github_api
+   :annotation: = https://api.github.com
+
+   
+
+.. py:function:: test_gql(token)
+
+
+.. py:function:: gql_query(query, token, params=None)
+
+
+.. py:function:: get_org_id(endpoint, token=None)
+
+
+.. py:function:: get_repo(token)
+
+
+.. py:function:: get_proj(token)
+
+
+.. py:function:: alter_column(project_id, item_id, field_id, option_id, token)
+
+
+.. py:function:: get_columns(token)
+
+
+.. py:function:: draft_issue(pid, template, token)
+
+
+.. py:function:: new_projectv2(dv, title, token)
+
+
+.. py:function:: generate_templatev2(dv, project_name, token)
+
+
+.. py:function:: add_issue(project_name, template, repo, pid, token)
+
+

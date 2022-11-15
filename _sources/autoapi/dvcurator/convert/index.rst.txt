@@ -1,0 +1,27 @@
+:py:mod:`dvcurator.convert`
+===========================
+
+.. py:module:: dvcurator.convert
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   dvcurator.convert.docx_pdf
+
+
+
+.. py:function:: docx_pdf(folder)
+
+   Convert all docx files in a folder to PDFs
+
+   :param folder: Folder to convert docx files in
+   :type folder: Path, as String
+
+

@@ -1,0 +1,14 @@
+:py:mod:`dvcurator.version`
+===========================
+
+.. py:module:: dvcurator.version
+
+
+Module Contents
+---------------
+
+.. py:data:: version
+   :annotation: = git-development
+
+   
+
