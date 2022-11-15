@@ -12,10 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Install autoapi
+      run: apt-get update -y && apt-get install -y python3-sphinx-autoapi
     # Standard drop-in approach that should work for most people.
     - uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "apt-get update -y && apt-get install -y python3-sphinx-autoapi"
         docs-folder: "docs/"
     # Great extra actions to compose with:
     # Create an artifact of the html output.
