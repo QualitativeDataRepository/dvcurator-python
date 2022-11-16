@@ -15,16 +15,20 @@ def clean_html_tags(text):
 
 def generate_readme(metadata, folder, token=None):
     """
-    Generate README
+    Generate README.txt file. 
+    
+    This function uses the template assets/README.txt
 
     :param metadata: Project metadata from `get_metadata()`
-    :param folder: "QDR Prepared" folder for project
-    :type folder: Path, as string
-   	:param token: Dataverse token, necessary if the project is unpublished
-	:type token: String, or None
-    :return: Path to new README file
-    :rtype: Path, as string
-    
+    :type metadata: list
+    :param folder: Path to QDR Prepared folder for project
+    :type folder: String
+    :param token: Dataverse token (required if the project is unpublished)
+    :type token: string
+
+    :return: Path to newly generated README file
+    :rtype: string
+
     """
     from string import Template
     from pkg_resources import resource_filename
@@ -45,6 +49,7 @@ def generate_readme(metadata, folder, token=None):
     else:
         any_folders = "files"
 
+    # the "recommended citation" field requires a token to scrape from the API
     if token:
         biblio_citation = dvcurator.dataverse.get_biblio_citation(
             metadata['data']['latestVersion']['datasetPersistentId'], 
@@ -73,11 +78,13 @@ def generate_readme(metadata, folder, token=None):
         'files': dvcurator.fs.recursive_scan(folder) #"\n".join(os.listdir(folder))
     }
 
+    # the location of the template differs if this is a compiled pyinstaller file or run directly
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         path = os.path.join(sys._MEIPASS, "assets", "README.txt")
     else:
         path = resource_filename("dvcurator", "assets/README.txt")
         
+    # write the actual file
     with open(path, 'r') as f:
         src = Template(f.read())
         text = src.safe_substitute(d)

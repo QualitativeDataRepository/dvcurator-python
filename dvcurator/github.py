@@ -95,6 +95,19 @@ def search_existing(project_name, key=None, repo=None):
 	return False
 
 def create_project(dv_metadata, folder_name, repo, key):
+	"""
+	Create a github project (classic) in kanban format with metadata from dataverse
+
+	:param dv_metadata: Dataverse metadata, from `get_metadata()`
+	:param folder_name: Name of the dropbox folder, used a a prefix for the project title
+	:type folder_name: string
+	:param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
+	:type repo: string
+	:param key: Github API token
+	:type key: string
+	:return: ID of the Todo column in the project
+	:rtype: string
+	"""
 	import json, requests, dvcurator.hosts, dvcurator.dataverse
 
 	key = {'Authorization': "token " + key}
@@ -121,6 +134,20 @@ def create_project(dv_metadata, folder_name, repo, key):
 	return columns[0] # This is the ID of the todo column, for assigning issue cards
 
 def add_issue(project_name, template, repo, project, key):
+	"""
+	Add an issue to a project based on a template
+
+	:param project_name: Name of the project, prefix on the issue name
+	:type project_name: string
+	:param template: Path to the template file for the issue body
+	:type template: string
+	:param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
+	:type repo: string
+	:param project: ID to add the issue to, use column ID from `create_project()`
+	:type project: string
+	:param key: Github API token
+	:type key: string
+	"""
 	import os, json, requests, re
 	
 	key = {'Authorization': "token " + key}
@@ -147,6 +174,17 @@ def add_issue(project_name, template, repo, project, key):
 
 # This is the actual function we run from the buttom
 def generate_template(metadata, project_name, token, repo=None):
+	"""
+	Generate a github project (classic) with issues for a curation project
+
+	:param metadata: Dataverse metadata from `get_metadata()`
+	:param folder_name: Name of the dropbox folder, used a a prefix for the project title
+	:type folder_name: string
+	:param token: Github API token
+	:type token: string
+	:param repo: Optional. Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
+	:type repo: string
+	"""
 	import os, sys, dvcurator.hosts
 	from pkg_resources import resource_filename
 
@@ -162,6 +200,7 @@ def generate_template(metadata, project_name, token, repo=None):
 	project = create_project(metadata, project_name, repo, token)
 	print("Created project: " + project_name)
 
+	# folder with issue templates depends on whether or not this is a pyinstaller compiled version
 	folder = os.path.join("assets", "issues")
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		folder = os.path.join(sys._MEIPASS, folder)
@@ -171,7 +210,7 @@ def generate_template(metadata, project_name, token, repo=None):
 		from pkg_resources import resource_listdir, resource_filename
 		issues = [resource_filename(__name__, folder + f) for f in resource_listdir(__name__, folder)]
 
-	# Get internal issue templates from selected checkboxes
+	# Get internal issue templates
 	for issue in issues:
 		add_issue(project_name, issue, repo, project, token)
 

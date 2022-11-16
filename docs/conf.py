@@ -17,6 +17,7 @@ release = '1.0'
 extensions = [ 'autoapi.extension' ]
 
 autoapi_dirs = ['../dvcurator']
+# autoapi_ignore = ['__main__.py'] # Not working
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

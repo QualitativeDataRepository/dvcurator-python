@@ -19,6 +19,16 @@ def test_gql(token):
 	return results
 
 def gql_query(query, token, params=None):
+	"""
+	Run a gql API query on Github
+
+	:param query: The gql query
+	:type query: string
+	:param token: Github API token
+	:type token: string
+	:param params: Parameters (variables) to pass to the gql query
+	:return: The response from the API
+	"""
 	from gql import Client
 	from gql.transport.aiohttp import AIOHTTPTransport
 
@@ -36,6 +46,16 @@ def gql_query(query, token, params=None):
 	return results
 
 def get_org_id(endpoint, token=None):
+	"""
+	Get the ID of an organization
+
+	:param endpoint: Name of the organization
+	:type endpoint: string
+	:param token: Github API token
+	:type token: string
+	:return: Organization github ID
+	:rtype: string
+	"""
 	import requests
 	url = github_api + "/orgs/" + endpoint
 	if not token:
@@ -49,7 +69,41 @@ def get_org_id(endpoint, token=None):
 
 	return info.json()['node_id']
 
-def get_repo(token):
+def get_team_id(team, token, org=None):
+	"""
+	Get node ID of a team
+
+	:param team: Name of the team (slug format, i.e. "Curation and recruitment" becomes "curation-and-recruitment")
+	:type team: string
+	:param token: Github API token
+	:type token: string
+	:param org: Github organization, defaults to `github_org` in `hosts.py`
+	:type org: string
+	:return: Node ID of the team
+	:rtype: string
+	"""
+	import requests
+	import dvcurator.hosts
+	if not org:
+		org = dvcurator.hosts.github_org
+
+	url = github_api + "/orgs/" + org + "/teams"
+	token = {'Authorization': "token " + token}
+	info = requests.get(url, headers=token)
+
+	return info.json()
+
+def get_repo(token, repo=None):
+	"""
+	Get the ID of a repository
+
+	:param token: Github API token
+	:type token: string
+	:param repo: Github repository (e.g. QualitativeDataRepository/dvcurator-python)
+	:type repo: string
+	:return: ID of the repository
+	:rtype: string
+	"""
 	from gql import gql
 	import dvcurator.hosts
 	query = gql(
@@ -62,7 +116,11 @@ def get_repo(token):
 		"""
 	)
 
-	repo_components = dvcurator.hosts.curation_repo.split("/")
+	if not repo:
+		repo_components = dvcurator.hosts.curation_repo.split("/")
+	else:
+		repo_components = repo.split("/")
+
 	params = {"org": repo_components[0], "repo": repo_components[1]}
 	response = gql_query(query, token, params)
 	return response['repository']['id']
@@ -93,6 +151,20 @@ def get_proj(token):
 
 # This function is used to set each generated ticket to "todo" status
 def alter_column(project_id, item_id, field_id, option_id, token):
+	"""
+	Put a created issue into a different column
+
+	:param project_id: Project ID
+	:type project_id: string
+	:param item_id: Issue ID
+	:type item_id: string
+	:param field_id: ID of the columns option
+	:type field_id: string
+	:param option_id: ID of the option to change to (i.e. which column)
+	:type option_id: string
+	:param token: Github API token
+	:type token: string
+	"""
 	from gql import gql
 
 	query = gql(
@@ -165,6 +237,18 @@ def get_columns(token):
 
 
 def draft_issue(pid, template, token):
+	"""
+	Create a draft issue in a project based on a template
+
+	:param pid: Github project ID
+	:type pid: String
+	:param template: Path to template txt file
+	:type template: Path, as string
+	:param token: Github API token
+	:type token: string
+	:return: ID of draft issue
+	:rtype: string
+	"""
 	from gql import gql
 	import os, re
 
@@ -196,6 +280,16 @@ def draft_issue(pid, template, token):
 # This makes the project itself
 # And returns all the variable fields of the new project
 def new_projectv2(dv, title, token):
+	"""
+	Create new github project (version 2)
+
+	:param dv: Dataverse metadata block from `get_metadata()`
+	:param title: Title of the project
+	:type title: string
+	:param token: Github API token
+	:type token: string
+	:return: ProjectV2 object from API
+	"""
 	from gql import gql
 	import dvcurator.hosts, dvcurator.dataverse
 
@@ -237,10 +331,28 @@ def new_projectv2(dv, title, token):
 	params = {"pid": project['createProjectV2']['projectV2']['id'], "readme": contact_info, "desc": title}
 	gql_query(query, token, params)
 
+	query = gql(
+		"""
+		mutation($pid: ID!, $team: ID!) {
+			LinkProjectV2ToTeam( input: {projectId: $pid, teamId: $team})
+			{team {name}}
+		}
+		"""
+	)
+
 	return project['createProjectV2']['projectV2']
 
 # This is the actual function we run from the buttom
 def generate_templatev2(dv, project_name, token):
+	"""
+	Create new github project and associated tickets for a project
+
+	:param dv: Dataverse metadata block from `get_metadata()`
+	:param project_name: Project name (used as prefix)
+	:type project_name: string
+	:param token: Github API token
+	:type token: string
+	"""
 	import os, sys, dvcurator.hosts, dvcurator.github
 	from pkg_resources import resource_filename
 
@@ -253,6 +365,7 @@ def generate_templatev2(dv, project_name, token):
 	columns = project['fields']['nodes'][2]
 	print("Created project: " + project_name)
 
+	# issues folder location differs depending on whether or not this is run as a pyinstaller compiled file
 	folder = os.path.join("assets", "issues")
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		folder = os.path.join(sys._MEIPASS, folder)
@@ -262,14 +375,31 @@ def generate_templatev2(dv, project_name, token):
 		from pkg_resources import resource_listdir, resource_filename
 		issues = [resource_filename(__name__, folder + f) for f in resource_listdir(__name__, folder)]
 
-	# Get internal issue templates from selected checkboxes
+	# Get internal issue templates
 	for issue in issues:
-		draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
+		draft = draft_issue(project['id'], issue, token)
+		#draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
 		alter_column(project['id'], draft, columns['id'], columns['options'][0]['id'], token)
 
 	print("Completed populating github project!")
 	
 def add_issue(project_name, template, repo, pid, token):
+	"""
+	Create an issue and associate it with a project v2
+
+	:param project_name: Prefix to attach to the ticket name
+	:type project_name: string
+	:param template: Path to the issue template that will be the body of the issue
+	:type template: Path, as string
+	:param repo: Github repository (e.g. QualitativeDataRepository/dvcurator-python)
+	:type repo: string
+	:param pid: Project ID
+	:type pid: string
+	:param token: Github API token
+	:type token: string
+	:return: ID of the newly created issue, or the API error
+	:rtype: string or list[str]
+	"""
 	import os, json, requests, re
 	
 	token_header = {'Authorization': "token " + token}
