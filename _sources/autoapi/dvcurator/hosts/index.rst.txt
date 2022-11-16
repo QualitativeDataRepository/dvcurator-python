@@ -22,6 +22,11 @@ Module Contents
 
    
 
+.. py:data:: github_org
+   :annotation: = QualitativeDataRepository
+
+   
+
 .. py:data:: curation_repo
    :annotation: = QualitativeDataRepository/testing-demos
 

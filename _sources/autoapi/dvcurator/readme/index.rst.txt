@@ -31,15 +31,19 @@ Functions
 
 .. py:function:: generate_readme(metadata, folder, token=None)
 
-   Generate README
+   Generate README.txt file. 
+
+   This function uses the template assets/README.txt
 
    :param metadata: Project metadata from `get_metadata()`
-   :param folder: "QDR Prepared" folder for project
-   :type folder: Path, as string
-       :param token: Dataverse token, necessary if the project is unpublished
-       :type token: String, or None
-   :return: Path to new README file
-   :rtype: Path, as string
+   :type metadata: list
+   :param folder: Path to QDR Prepared folder for project
+   :type folder: String
+   :param token: Dataverse token (required if the project is unpublished)
+   :type token: string
+
+   :return: Path to newly generated README file
+   :rtype: string
 
 
 

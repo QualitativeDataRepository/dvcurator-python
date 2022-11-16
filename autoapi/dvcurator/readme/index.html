@@ -49,7 +49,7 @@
 <td><p>Remove all HTML tags from text</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.readme.generate_readme" title="dvcurator.readme.generate_readme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_readme</span></code></a>(metadata, folder[, token])</p></td>
-<td><p>Generate README</p></td>
+<td><p>Generate README.txt file.</p></td>
 </tr>
 </tbody>
 </table>
@@ -73,21 +73,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.readme.generate_readme">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.readme.</span></span><span class="sig-name descname"><span class="pre">generate_readme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.readme.generate_readme" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate README</p>
+<dd><p>Generate README.txt file.</p>
+<p>This function uses the template assets/README.txt</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metadata</strong> – Project metadata from <cite>get_metadata()</cite></p></li>
-<li><p><strong>folder</strong> (<em>Path</em><em>, </em><em>as string
-:param token: Dataverse token</em><em>, </em><em>necessary if the project is unpublished
-:type token: String</em><em>, or </em><em>None</em>) – “QDR Prepared” folder for project</p></li>
+<li><p><strong>metadata</strong> (<em>list</em>) – Project metadata from <cite>get_metadata()</cite></p></li>
+<li><p><strong>folder</strong> (<em>String</em>) – Path to QDR Prepared folder for project</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Dataverse token (required if the project is unpublished)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Path to new README file</p>
+<dd class="field-even"><p>Path to newly generated README file</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Path, as string</p>
+<dd class="field-odd"><p>string</p>
 </dd>
 </dl>
 </dd></dl>
@@ -115,6 +115,7 @@
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev.html">Developers overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 

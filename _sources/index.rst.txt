@@ -6,9 +6,13 @@
 Welcome to dvcurator's documentation!
 =====================================
 
+**dvcurator** is a python program for QDR graduate assistants to automate tasks related to project curation.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   dev
 
 Indices and tables
 ==================

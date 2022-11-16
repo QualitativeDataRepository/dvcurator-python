@@ -49,34 +49,37 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.gql_query" title="dvcurator.github_projectv2.gql_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gql_query</span></code></a>(query, token[, params])</p></td>
-<td><p></p></td>
+<td><p>Run a gql API query on Github</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_org_id" title="dvcurator.github_projectv2.get_org_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_org_id</span></code></a>(endpoint[, token])</p></td>
+<td><p>Get the ID of an organization</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_team_id" title="dvcurator.github_projectv2.get_team_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_team_id</span></code></a>(team, token[, org])</p></td>
+<td><p>Get node ID of a team</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_repo" title="dvcurator.github_projectv2.get_repo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_repo</span></code></a>(token[, repo])</p></td>
+<td><p>Get the ID of a repository</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_proj" title="dvcurator.github_projectv2.get_proj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_proj</span></code></a>(token)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_repo" title="dvcurator.github_projectv2.get_repo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_repo</span></code></a>(token)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.alter_column" title="dvcurator.github_projectv2.alter_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alter_column</span></code></a>(project_id, item_id, field_id, option_id, ...)</p></td>
+<td><p>Put a created issue into a different column</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_columns" title="dvcurator.github_projectv2.get_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_columns</span></code></a>(token)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_proj" title="dvcurator.github_projectv2.get_proj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_proj</span></code></a>(token)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.draft_issue" title="dvcurator.github_projectv2.draft_issue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draft_issue</span></code></a>(pid, template, token)</p></td>
+<td><p>Create a draft issue in a project based on a template</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.alter_column" title="dvcurator.github_projectv2.alter_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alter_column</span></code></a>(project_id, item_id, field_id, option_id, ...)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.new_projectv2" title="dvcurator.github_projectv2.new_projectv2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_projectv2</span></code></a>(dv, title, token)</p></td>
+<td><p>Create new github project (version 2)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.get_columns" title="dvcurator.github_projectv2.get_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_columns</span></code></a>(token)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.generate_templatev2" title="dvcurator.github_projectv2.generate_templatev2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_templatev2</span></code></a>(dv, project_name, token)</p></td>
+<td><p>Create new github project and associated tickets for a project</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.draft_issue" title="dvcurator.github_projectv2.draft_issue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draft_issue</span></code></a>(pid, template, token)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.new_projectv2" title="dvcurator.github_projectv2.new_projectv2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_projectv2</span></code></a>(dv, title, token)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.generate_templatev2" title="dvcurator.github_projectv2.generate_templatev2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_templatev2</span></code></a>(dv, project_name, token)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.add_issue" title="dvcurator.github_projectv2.add_issue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_issue</span></code></a>(project_name, template, repo, pid, token)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github_projectv2.add_issue" title="dvcurator.github_projectv2.add_issue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_issue</span></code></a>(project_name, template, repo, pid, token)</p></td>
+<td><p>Create an issue and associate it with a project v2</p></td>
 </tr>
 </tbody>
 </table>
@@ -107,17 +110,81 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.gql_query">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">gql_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.gql_query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run a gql API query on Github</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>string</em>) – The gql query</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+<li><p><strong>params</strong> – Parameters (variables) to pass to the gql query</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The response from the API</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.get_org_id">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">get_org_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.get_org_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the ID of an organization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> (<em>string</em>) – Name of the organization</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Organization github ID</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.github_projectv2.get_team_id">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">get_team_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">team</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.get_team_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get node ID of a team</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team</strong> (<em>string</em>) – Name of the team (slug format, i.e. “Curation and recruitment” becomes “curation-and-recruitment”)</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+<li><p><strong>org</strong> (<em>string</em>) – Github organization, defaults to <cite>github_org</cite> in <cite>hosts.py</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Node ID of the team</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.get_repo">
-<span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">get_repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.get_repo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">get_repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.get_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ID of a repository</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+<li><p><strong>repo</strong> (<em>string</em>) – Github repository (e.g. QualitativeDataRepository/dvcurator-python)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ID of the repository</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.get_proj">
@@ -127,7 +194,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.alter_column">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">alter_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.alter_column" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Put a created issue into a different column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>string</em>) – Project ID</p></li>
+<li><p><strong>item_id</strong> (<em>string</em>) – Issue ID</p></li>
+<li><p><strong>field_id</strong> (<em>string</em>) – ID of the columns option</p></li>
+<li><p><strong>option_id</strong> (<em>string</em>) – ID of the option to change to (i.e. which column)</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.get_columns">
@@ -137,22 +216,79 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.draft_issue">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">draft_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.draft_issue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a draft issue in a project based on a template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pid</strong> (<em>String</em>) – Github project ID</p></li>
+<li><p><strong>template</strong> (<em>Path</em><em>, </em><em>as string</em>) – Path to template txt file</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ID of draft issue</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.new_projectv2">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">new_projectv2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.new_projectv2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create new github project (version 2)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dv</strong> – Dataverse metadata block from <cite>get_metadata()</cite></p></li>
+<li><p><strong>title</strong> (<em>string</em>) – Title of the project</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ProjectV2 object from API</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.generate_templatev2">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">generate_templatev2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.generate_templatev2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create new github project and associated tickets for a project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dv</strong> – Dataverse metadata block from <cite>get_metadata()</cite></p></li>
+<li><p><strong>project_name</strong> (<em>string</em>) – Project name (used as prefix)</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github_projectv2.add_issue">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github_projectv2.</span></span><span class="sig-name descname"><span class="pre">add_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github_projectv2.add_issue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create an issue and associate it with a project v2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_name</strong> (<em>string</em>) – Prefix to attach to the ticket name</p></li>
+<li><p><strong>template</strong> (<em>Path</em><em>, </em><em>as string</em>) – Path to the issue template that will be the body of the issue</p></li>
+<li><p><strong>repo</strong> (<em>string</em>) – Github repository (e.g. QualitativeDataRepository/dvcurator-python)</p></li>
+<li><p><strong>pid</strong> (<em>string</em>) – Project ID</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – Github API token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ID of the newly created issue, or the API error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string or list[str]</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 </div>
@@ -177,6 +313,7 @@
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev.html">Developers overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 
