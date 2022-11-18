@@ -55,6 +55,19 @@
 <p><cite>github.py</cite> has functions to handle all github API calls. <cite>github_projectsv2.py</cite> replicates these calls for the new ProjectsV2 api.</p>
 <p><cite>version.py</cite> is set to git-development by default, which gets overwritten when one compiles a pyinstaller binary. This is used for checking whether or not dvcurator is up to date</p>
 </div>
+<div class="section" id="compilation-process">
+<h2>Compilation process<a class="headerlink" href="#compilation-process" title="Permalink to this heading">¶</a></h2>
+<p>This program is meant to be run as a compiled .exe or .app file, and run natively. These binaries are created with github actions.</p>
+<p>The compilation process is not triggered by regular pushes. Any time a new <strong>tag</strong> is pushed, Github will compile a new executable. These executables are uploaded as draft <strong>releases</strong>, not immediately available. To make a new release publicly available, publish the draft release.</p>
+<p>To summarize, the following steps compile a new native executable and make it available:</p>
+<ul class="simple">
+<li><p>Push a new tag</p></li>
+<li><p>Wait for the compilation process to finish (check github actions)</p></li>
+<li><p>Test the new draft executable (if you want) under releases</p></li>
+<li><p>Publish the draft release</p></li>
+</ul>
+<p>dvcurator checks for new <em>tags</em> (because of API limitations) every time it is launched to alert users when there is a new version available.</p>
+</div>
 </div>
 
 
@@ -79,6 +92,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developers overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#running-compiling">Running/compiling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#program-organization">Program organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation-process">Compilation process</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>

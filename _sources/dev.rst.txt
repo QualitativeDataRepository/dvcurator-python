@@ -32,3 +32,19 @@ dvcurator is organized with `gui.py` as the top-level file, which calls on funct
 `github.py` has functions to handle all github API calls. `github_projectsv2.py` replicates these calls for the new ProjectsV2 api.
 
 `version.py` is set to git-development by default, which gets overwritten when one compiles a pyinstaller binary. This is used for checking whether or not dvcurator is up to date
+
+Compilation process
+===================
+
+This program is meant to be run as a compiled .exe or .app file, and run natively. These binaries are created with github actions. 
+
+The compilation process is not triggered by regular pushes. Any time a new **tag** is pushed, Github will compile a new executable. These executables are uploaded as draft **releases**, not immediately available. To make a new release publicly available, publish the draft release.
+
+To summarize, the following steps compile a new native executable and make it available:
+
+* Push a new tag
+* Wait for the compilation process to finish (check github actions)
+* Test the new draft executable (if you want) under releases
+* Publish the draft release
+
+dvcurator checks for new *tags* (because of API limitations) every time it is launched to alert users when there is a new version available.
