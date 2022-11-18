@@ -86,7 +86,7 @@ class MainApp(tk.Frame):
 		self.gh_token.set(config['default']['github_token'])
 		self.dropbox.set(config['default']['dropbox'])
 		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-		#self.new_projects = config['default']['new_projects']
+		self.new_projects.set(config['default']['old_projects'])
 		print("Loaded settings: " + path)
 
 	# function to save settings as .ini file
@@ -110,7 +110,7 @@ class MainApp(tk.Frame):
 		config['default'] = {"dataverse_token": self.dv_token.get(),
 							"github_token": self.gh_token.get(),
 							"dropbox": self.dropbox.get(),
-							"new_projects": self.new_projects}
+							"old_projects": self.new_projects.get()}
 		with open(path, 'w') as config_file:
 			config.write(config_file)
 		print("Written: " + path)
