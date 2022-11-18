@@ -4,20 +4,6 @@
 
 github_api='https://api.github.com'
 
-def test_gql(token):
-	from gql import gql
-	query = gql(
-		"""
-		mutation {
-			updateProjectV2ItemFieldValue(input: {projectId: "PVT_kwDOAJK1As4AGfO1", fieldId: "PVTF_lADOAJK1As4AGfO1zgDvTWQ", itemId: "PVTF_lADOAJK1As4AGfO1zgDvTWQ", value: "MDEwOlJlcG9zaXRvcnkyMzQxMTA5MTk="})
-			{projectV2 {id}}
-		}
-		"""
-	)
-	#params = {"pid": project['createProjectV2']['projectV2']['id'], "readme": contact_info, "desc": title}
-	results = gql_query(query, token)
-	return results
-
 def gql_query(query, token, params=None):
 	"""
 	Run a gql API query on Github
@@ -26,11 +12,14 @@ def gql_query(query, token, params=None):
 	:type query: string
 	:param token: Github API token
 	:type token: string
-	:param params: Parameters (variables) to pass to the gql query
+	:param params: Parameters to pass to the gql query
+	:type params: dict
 	:return: The response from the API
 	"""
-	from gql import Client
+	from gql import Client, gql
 	from gql.transport.aiohttp import AIOHTTPTransport
+
+	query = gql(query)
 
 	transport = AIOHTTPTransport(
 		url = github_api + "/graphql",
@@ -91,63 +80,59 @@ def get_team_id(team, token, org=None):
 	token = {'Authorization': "token " + token}
 	info = requests.get(url, headers=token)
 
-	return info.json()
+	#return info.json()
+	teams = info.json()
+	slugs = []
+	ids = []
+	for t in teams:
+		slugs += [t['slug']]
+		ids += [t['node_id']]
 
-def get_repo(token, repo=None):
+	return ids[slugs.index(team)]
+
+def get_repo(token, search, repo=None):
 	"""
 	Get the ID of a repository
 
 	:param token: Github API token
 	:type token: string
+	:param search: Name of a project to search for an existing one
+	:type search: string
 	:param repo: Github repository (e.g. QualitativeDataRepository/dvcurator-python)
 	:type repo: string
-	:return: ID of the repository
+	:return: ID of the repository, or none if an existing project is detected
 	:rtype: string
 	"""
-	from gql import gql
 	import dvcurator.hosts
-	query = gql(
-		"""
-		query ($org: String!, $repo: String!) {
+	print("Checking for existing github projects...")
+	query =	"""
+		query ($org: String!, $repo: String!, $query: String!) {
 			repository(owner: $org, name: $repo) {
 				id
+				projectsV2 (first: 20, query: $query) {
+					nodes {
+						id
+						title
+					}
+				}
 			}
 		}
 		"""
-	)
 
 	if not repo:
 		repo_components = dvcurator.hosts.curation_repo.split("/")
 	else:
 		repo_components = repo.split("/")
 
-	params = {"org": repo_components[0], "repo": repo_components[1]}
+	params = {"org": repo_components[0], "repo": repo_components[1], "query": search}
 	response = gql_query(query, token, params)
-	return response['repository']['id']
 
-# techinically I don't really need this feature (id returns from create)
-# but its useful for testing
-def get_proj(token):
-	from gql import gql
+	if (len(response['repository']['projectsV2']['nodes']) > 0):
+		print("Error: existing github project detected!")
+		return None
+	else:
+		return response['repository']['id']
 
-	query = gql(
-		"""
-		query {
-			organization(login: "QualitativeDataRepository")
-			{projectV2(number: 4) {				
-				... on ProjectV2 { 
-					id
-					fields(first: 20) { 
-						nodes { 
-							... on ProjectV2Field { id name dataType } 
-							... on ProjectV2IterationField { id name configuration { 
-								iterations { startDate id }}} 
-								... on ProjectV2SingleSelectField { id name options { id name }}}}}}}
-		} 
-		"""
-	)
-	project = gql_query(query, token)
-	return project#['organization']['projectV2']['id']
 
 # This function is used to set each generated ticket to "todo" status
 def alter_column(project_id, item_id, field_id, option_id, token):
@@ -164,77 +149,26 @@ def alter_column(project_id, item_id, field_id, option_id, token):
 	:type option_id: string
 	:param token: Github API token
 	:type token: string
+	:return: results of API query
 	"""
 	from gql import gql
 
-	query = gql(
-		"""
+	query = """
 		mutation ($PROJECT_ID: ID!, $ITEM_ID: ID!, $FIELD_ID: ID!, $OPTION_ID: String!) {
 			updateProjectV2ItemFieldValue(input: { 
 				projectId: $PROJECT_ID
 				itemId: $ITEM_ID 
 				fieldId: $FIELD_ID 
-				value: { singleSelectOptionId: $OPTION_ID }}
-			) 
-			{ projectV2Item { id }}}
+				value: { singleSelectOptionId: $OPTION_ID }}) { 
+					projectV2Item { 
+						id 
+					}
+			}
+		}
 		"""
-	)
 
 	params={"PROJECT_ID": project_id, "ITEM_ID": item_id, "FIELD_ID": field_id, "OPTION_ID": option_id}
 	return gql_query(query, token, params)
-
-def get_columns(token):
-	from gql import gql
-
-	query = gql(
-		"""
-		query {
-			organization(login: "QualitativeDataRepository")
-			{projectV2(number: 4) {
-				... on ProjectV2 { 
-					fields(first: 20) { 
-						nodes { 
-							... on ProjectV2Field { id name } 
-							... on ProjectV2IterationField { id name configuration { 
-								iterations { startDate id }}} 
-								... on ProjectV2SingleSelectField { id name options { id name }}}}}}
-			}
-		} 
-		"""
-	)
-	project = gql_query(query, token)
-	return project['organization']['projectV2']['fields']['nodes'][2]# ['options'][0]['id']
-
-# def create_issueV2(pid, title, token, template, repo=None):
-# 	from gql import gql
-# 	import os, re, dvcurator.hosts
-
-# 	repo = dvcurator.hosts.curation_repo if not repo else repo 
-
-# 	# Format issue name from template filename
-# 	issue_name = os.path.basename(template)
-# 	issue_name = re.sub('\.md', '', issue_name)
-# 	issue_name = re.sub('_', ' ', issue_name)
-# 	issue_name = issue_name.title()
-
-# 	# Import the markdown file as the issue body
-# 	f = open(template, "r")
-# 	body = f.readlines()
-
-# 	query = gql(
-# 		"""
-# 		mutation ($repo: ID!, $title: String!, $body: String!) {
-# 			createIssue(input: {repositoryId: $repo, title: $title, body: $body})
-# 			{issue {url}}
-# 		} 
-# 		"""
-# 	)
-
-# 	params={"repo": repo, "title": title, "body": ''.join(body)}
-# 	issue = gql_query(query, token, params)
-# 	print("Added draft issue: " + title)
-# 	return issue
-
 
 def draft_issue(pid, template, token):
 	"""
@@ -249,7 +183,6 @@ def draft_issue(pid, template, token):
 	:return: ID of draft issue
 	:rtype: string
 	"""
-	from gql import gql
 	import os, re
 
 	# Format issue name from template filename
@@ -262,14 +195,12 @@ def draft_issue(pid, template, token):
 	f = open(template, "r")
 	body = f.readlines()
 
-	query = gql(
-		"""
+	query = """
 		mutation ($pid: ID!, $title: String!, $body: String!) {
 			addProjectV2DraftIssue(input: {projectId: $pid, title: $title, body: $body})
 			{projectItem {id}}
 		} 
 		"""
-	)
 
 	params={"pid": pid, "title": issue_name, "body": ''.join(body)}
 
@@ -290,11 +221,13 @@ def new_projectv2(dv, title, token):
 	:type token: string
 	:return: ProjectV2 object from API
 	"""
-	from gql import gql
 	import dvcurator.hosts, dvcurator.dataverse
 
-	query = gql(
-		"""
+	repo = get_repo(token, title)
+	if not repo: # detected existing project
+		return None
+
+	query = """
 		mutation ($id: ID!, $title: String!) {
 			createProjectV2(input: {ownerId: $id, title: $title})
 			{projectV2 {				
@@ -308,38 +241,36 @@ def new_projectv2(dv, title, token):
 								... on ProjectV2SingleSelectField { id name options { id name }}}}}}}
 		} 
 		"""
-	)
 
 	qdr_id = get_org_id("QualitativeDataRepository")
 	params={"id": qdr_id, "title": title}
 	project = gql_query(query, token, params)
+	print("Created project...")
 
 	# Now we run the mutation to change the project description
-
-	contact_info = 'Name:' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
 	doi = dv['data']['latestVersion']['datasetPersistentId']
-	contact_info += 'DV link: ' + dvcurator.hosts.qdr_doi_path + doi
+	link = dvcurator.hosts.qdr_doi_path + doi
+	contact_info = 'Depositor: ' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
+	contact_info += 'DV link: ' + link
 
-	query = gql(
-		"""
-		mutation ($pid: ID!, $readme: String!, $desc: String!) {
-			updateProjectV2( input: {projectId: $pid, readme: $readme, shortDescription: $desc})
-			{projectV2 {id}}
+	query = """
+		mutation ($pid: ID!, $readme: String!, $desc: String!, $team: ID!) {
+			updateProjectV2( input: {projectId: $pid, readme: $readme, shortDescription: $desc}) {
+				projectV2 {id}
+			} linkProjectV2ToRepository( input: {projectId: $pid, repositoryId: $team}) {
+				repository {homepageUrl}
+			}
+
 		}
 		"""
-	)
-	params = {"pid": project['createProjectV2']['projectV2']['id'], "readme": contact_info, "desc": title}
+
+	params = {"pid": project['createProjectV2']['projectV2']['id'], "readme": contact_info, "desc": link, "team": repo}
 	gql_query(query, token, params)
+	print("Added description to project...")
 
-	query = gql(
-		"""
-		mutation($pid: ID!, $team: ID!) {
-			LinkProjectV2ToTeam( input: {projectId: $pid, teamId: $team})
-			{team {name}}
-		}
-		"""
-	)
-
+	# then assign it to the team! (or repo in this case)
+	#team = get_team_id("curation-and-recruitment", token)
+	#		linkProjectV2ToTeam( input: {projectId: $pid, teamId: $team})
 	return project['createProjectV2']['projectV2']
 
 # This is the actual function we run from the buttom
@@ -356,16 +287,14 @@ def generate_templatev2(dv, project_name, token):
 	import os, sys, dvcurator.hosts, dvcurator.github
 	from pkg_resources import resource_filename
 
-	if dvcurator.github.search_existing(project_name, token):
-		print("Error: existing github issues")
-		return None
-
 	# create the project
 	project = new_projectv2(dv, project_name, token)
-	columns = project['fields']['nodes'][2]
-	print("Created project: " + project_name)
+	if not project: # detected existing project
+		return None
 
-	# issues folder location differs depending on whether or not this is run as a pyinstaller compiled file
+	columns = project['fields']['nodes'][2]
+
+	# "issues" folder location differs depending on whether or not this is run as a pyinstaller compiled file
 	folder = os.path.join("assets", "issues")
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		folder = os.path.join(sys._MEIPASS, folder)
@@ -377,8 +306,11 @@ def generate_templatev2(dv, project_name, token):
 
 	# Get internal issue templates
 	for issue in issues:
-		draft = draft_issue(project['id'], issue, token)
-		#draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
+		if issue.endswith("time.md"): # Save time as a real issue, the rest as drafts
+			draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
+		else:
+			draft = draft_issue(project['id'], issue, token)
+		
 		alter_column(project['id'], draft, columns['id'], columns['options'][0]['id'], token)
 
 	print("Completed populating github project!")
@@ -420,15 +352,13 @@ def add_issue(project_name, template, repo, pid, token):
 	if "node_id" in resp.keys():
 		issue = resp['node_id']
 		
-		from gql import gql
-		query = gql(
-			"""
+		query = """
 			mutation ($issue: ID!, $pid: ID!) {
 				addProjectV2ItemById(input: {contentId: $issue, projectId: $pid})
 				{item {id}}
 			} 
 			"""
-		)
+
 		params={"issue": issue, "pid": pid}
 		issue = gql_query(query, token, params)
 

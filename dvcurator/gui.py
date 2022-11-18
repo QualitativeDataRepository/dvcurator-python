@@ -86,7 +86,7 @@ class MainApp(tk.Frame):
 		self.gh_token.set(config['default']['github_token'])
 		self.dropbox.set(config['default']['dropbox'])
 		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-		self.new_projects = config['default']['new_projects']
+		#self.new_projects = config['default']['new_projects']
 		print("Loaded settings: " + path)
 
 	# function to save settings as .ini file
@@ -224,11 +224,12 @@ class MainApp(tk.Frame):
 
 		# Create github project + issues
 		self.disable_buttons()
+
 		if self.new_projects.get():
-			t = threading.Thread(target=dvcurator.github_projectv2.generate_templatev2,
+			t = threading.Thread(target=dvcurator.github.generate_template, 
 				args=(self.metadata, self.project_name, self.gh_token.get()))
 		else:
-			t = threading.Thread(target=dvcurator.github.generate_template, 
+			t = threading.Thread(target=dvcurator.github_projectv2.generate_templatev2,
 				args=(self.metadata, self.project_name, self.gh_token.get()))
 
 		t.start()
@@ -320,7 +321,7 @@ class MainApp(tk.Frame):
 		self.filemenu.add_command(label="Save config As", command=self.save_config_as)
 		self.filemenu.add_command(label="Open config", command=self.open_config)
 		self.new_projects = tk.BooleanVar()
-		self.filemenu.add_checkbutton(label="Use new github projects", onvalue=1, offvalue=0, variable=self.new_projects)
+		self.filemenu.add_checkbutton(label="Use classic github projects", onvalue=True, offvalue=False, variable=self.new_projects)
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
 		self.menubar.add_cascade(label="File", menu=self.filemenu)
 
