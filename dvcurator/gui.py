@@ -32,7 +32,7 @@ class MainApp(tk.Frame):
 		self.cite_button.config(state="disabled")
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
-		self.menubar.entryconfig("Edit", state=tk.DISABLED)
+		self.menubar.entryconfig("File processing", state=tk.DISABLED)
 		self.reset_button.config(state="disabled")
 		self.pb.start()
 
@@ -43,7 +43,7 @@ class MainApp(tk.Frame):
 		self.cite_button.config(state="normal")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
-		self.menubar.entryconfig("Edit", state=tk.NORMAL)
+		self.menubar.entryconfig("File processing", state=tk.NORMAL)
 		self.reset_button.config(state="normal")
 		self.pb.stop()
 
@@ -202,7 +202,7 @@ class MainApp(tk.Frame):
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
-		self.menubar.entryconfig("Edit", state=tk.NORMAL)
+		self.menubar.entryconfig("File processing", state=tk.NORMAL)
 
 	def download_extract(self):
 		"""
@@ -245,7 +245,7 @@ class MainApp(tk.Frame):
 		# Disable all other buttons
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
-		self.menubar.entryconfig("Edit", state=tk.DISABLED)
+		self.menubar.entryconfig("File processing", state=tk.DISABLED)
 		self.out.delete('1.0', tk.END)
 
 	# Edit menu options
@@ -318,12 +318,12 @@ class MainApp(tk.Frame):
 
 		self.filemenu = tk.Menu(self.menubar, tearoff=False)
 		#self.filemenu.add_command(label="Save config", command=self.save_config)
-		self.filemenu.add_command(label="Save config As", command=self.save_config_as)
 		self.filemenu.add_command(label="Open config", command=self.open_config)
+		self.filemenu.add_command(label="Save config as", command=self.save_config_as)
 		self.new_projects = tk.BooleanVar()
 		self.filemenu.add_checkbutton(label="Use classic github projects", onvalue=True, offvalue=False, variable=self.new_projects)
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
-		self.menubar.add_cascade(label="File", menu=self.filemenu)
+		self.menubar.add_cascade(label="dvcurator", menu=self.filemenu)
 
 		self.editmenu = tk.Menu(self.menubar, tearoff=False)
 		self.editmenu.add_command(label="Basic file rename", command=self.rename)
@@ -333,8 +333,8 @@ class MainApp(tk.Frame):
 		self.editmenu.add_separator()
 		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
 		self.editmenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)
-		self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-		self.menubar.entryconfig("Edit", state=tk.DISABLED)
+		self.menubar.add_cascade(label="File processing", menu=self.editmenu)
+		self.menubar.entryconfig("File processing", state=tk.DISABLED)
 		parent.config(menu=self.menubar)
 
 		# Settings
