@@ -13,14 +13,11 @@ Functions
 
 .. autoapisummary::
 
-   dvcurator.github_projectv2.test_gql
    dvcurator.github_projectv2.gql_query
    dvcurator.github_projectv2.get_org_id
    dvcurator.github_projectv2.get_team_id
    dvcurator.github_projectv2.get_repo
-   dvcurator.github_projectv2.get_proj
    dvcurator.github_projectv2.alter_column
-   dvcurator.github_projectv2.get_columns
    dvcurator.github_projectv2.draft_issue
    dvcurator.github_projectv2.new_projectv2
    dvcurator.github_projectv2.generate_templatev2
@@ -41,9 +38,6 @@ Attributes
 
    
 
-.. py:function:: test_gql(token)
-
-
 .. py:function:: gql_query(query, token, params=None)
 
    Run a gql API query on Github
@@ -52,7 +46,8 @@ Attributes
    :type query: string
    :param token: Github API token
    :type token: string
-   :param params: Parameters (variables) to pass to the gql query
+   :param params: Parameters to pass to the gql query
+   :type params: dict
    :return: The response from the API
 
 
@@ -82,19 +77,18 @@ Attributes
    :rtype: string
 
 
-.. py:function:: get_repo(token, repo=None)
+.. py:function:: get_repo(token, search, repo=None)
 
    Get the ID of a repository
 
    :param token: Github API token
    :type token: string
+   :param search: Name of a project to search for an existing one
+   :type search: string
    :param repo: Github repository (e.g. QualitativeDataRepository/dvcurator-python)
    :type repo: string
-   :return: ID of the repository
+   :return: ID of the repository, or none if an existing project is detected
    :rtype: string
-
-
-.. py:function:: get_proj(token)
 
 
 .. py:function:: alter_column(project_id, item_id, field_id, option_id, token)
@@ -111,9 +105,7 @@ Attributes
    :type option_id: string
    :param token: Github API token
    :type token: string
-
-
-.. py:function:: get_columns(token)
+   :return: results of API query
 
 
 .. py:function:: draft_issue(pid, template, token)
