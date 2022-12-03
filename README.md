@@ -34,18 +34,19 @@ To be fully functional, the following parameters must be set:
 * A **project DOI** in the form `doi:10.1234/abcdef`. Once metadata is loaded for that DOI, use the "Reset dvcurator" button to input a different DOI.  
 * A **github token**
   * To create a github token, go to your github developer settings/personal access tokens at https://github.com/settings/tokens
-  * Click on "Generate New Token"
+  * Click on "Generate New Token", and select "Generate New Token (classic)"
   * Give the token a recognizable name such as "QDR Curation" and check the following boxes:
     * repo
     * admin:org 
-    * notifications
-    * write:discussion
+    * project
   * Click "Generate Token" at the bottom of the screen. Make sure to note down your token and keep it safe (you won't be able to access this later)
 * A **dataverse API key** -- this must be for the dataverse installation you will work with.
   * Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=apiTokenTab (substitute the domain if not using QDR)
+ 
+ Both of these tokens are entered on into the main window of dvcurator, under "Github token" and "Dataverse token" respectively.
 
 Other parameters are:
-- Dropbox folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox, but does not necessarily need to be.
+- QDR GA folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox, but does not necessarily need to be. For QDR GA's this should very literally be the "QDR GA" folder within the QDR Dropbox.
 
 ## For developers (i.e. not most users!)
 
