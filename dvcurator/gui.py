@@ -295,6 +295,16 @@ class MainApp(tk.Frame):
 		t.start()
 		self.schedule_check(t)
 
+	def anonymize(self):
+		"""
+		Run anonymization processes
+		"""
+		self.disable_buttons()
+		t = threading.Thread(target=dvcurator.fs.anonymize_project,
+		args=(self.subfolder_path, self.citation))
+		t.start()
+		self.schedule_check(t)
+
 	def close_window(self):
 		"""
 		Save config before killing window
@@ -330,6 +340,7 @@ class MainApp(tk.Frame):
 		self.editmenu.add_command(label="Convert docx to pdf", command=self.convert)
 		self.editmenu.add_command(label="Set PDF metadata", command=self.set_metadata)
 		self.editmenu.add_command(label="Generate README", command=self.create_readme)
+		self.editmenu.add_command(label="Anonymize files", command=self.anonymize)
 		self.editmenu.add_separator()
 		self.editmenu.add_command(label="Open Dropbox subfolder", command=self.open_explorer)
 		self.editmenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)

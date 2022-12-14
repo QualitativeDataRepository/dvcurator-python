@@ -72,7 +72,7 @@ def current_step(folder):
     if not os.path.isdir(folder):
         print("Error: not a folder " + folder)
         return None
-    candidates = glob(os.path.join(folder, "[0-9]_*"))
+    candidates = sorted(glob(os.path.join(folder, "[0-9]_*")))
     if (len(candidates) < 1):
         print("Error: no folders found under " + folder)
         return None
@@ -110,3 +110,23 @@ def copy_new_step(folder, step):
     new_step = str(number) + "_" + step
     copytree(os.path.join(edit_path, current), os.path.join(edit_path, new_step))
     return os.path.join(edit_path, new_step)
+
+def anonymize_project(folder, citation):
+    """
+    Run full anonymization routine. Calls anon routine for filenames and PDF metadata
+
+    :param folder: Project folder
+    :type folder: path, as string
+    :param citation Dataverse citation
+    :return: Path to new folder
+    :rtype: string
+    """
+    import dvcurator.pdf, dvcurator.rename
+    edit_path = copy_new_step(folder, "anonymized")
+    if not edit_path:
+        return None
+
+    dvcurator.rename.anonymize(edit_path, citation)
+    dvcurator.pdf.write_metadata(edit_path, "ANONYMIZED")
+
+    return edit_path

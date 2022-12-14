@@ -153,6 +153,34 @@ class TestPDFMetadata(unittest.TestCase):
 
 		d.cleanup()
 
+	def test_anonmetadata(self):
+		import pikepdf
+
+		d = tempfile.TemporaryDirectory()
+		temp_structure = os.path.normpath(os.path.join(d.name, "QDR Prepared", "5_something"))
+		os.makedirs(temp_structure)
+
+		empty_pdf = pikepdf.Pdf.new()
+
+		for i in range(1, 11):
+			empty_pdf.save(os.path.join(temp_structure, f'test{i}.pdf'))
+
+		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
+		citation = dataverse.get_citation(metadata)
+		self.assertIsNotNone(citation)
+		new_path = rename.basic_rename(d.name, citation)
+
+		new_path = fs.anonymize_project(d.name, citation)
+		one_file = os.listdir(new_path)[4]
+		print(one_file)
+		self.assertTrue(one_file.startswith("ANONYMIZED"))
+		example = pikepdf.open(os.path.join(new_path, one_file))
+		meta = example.open_metadata()
+		self.assertEqual(meta['pdf:Author'], "ANONYMIZED")
+		example.close()
+
+		d.cleanup()
+
 class TestREADME(unittest.TestCase):
 
 	def test_generateREADME(self):
