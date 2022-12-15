@@ -17,6 +17,7 @@ Functions
    dvcurator.fs.recursive_scan
    dvcurator.fs.current_step
    dvcurator.fs.copy_new_step
+   dvcurator.fs.anonymize_project
 
 
 
@@ -64,5 +65,16 @@ Functions
    :return: Path to newly created folder
    :rtype: String
 
+
+
+.. py:function:: anonymize_project(folder, citation)
+
+   Run full anonymization routine. Calls anon routine for filenames and PDF metadata
+
+   :param folder: Project folder
+   :type folder: path, as string
+   :param citation Dataverse citation
+   :return: Path to new folder
+   :rtype: string
 
 

@@ -15,6 +15,7 @@ Functions
 
    dvcurator.pdf.find_pdfs
    dvcurator.pdf.combine_author_names
+   dvcurator.pdf.write_metadata
    dvcurator.pdf.standard_metadata
 
 
@@ -38,6 +39,16 @@ Functions
    :return: Author names formatted to input as PDF metadata
    :rtype: None
 
+
+
+.. py:function:: write_metadata(folder, author)
+
+   Write metadata to PDF files
+
+   :param folder: folder of the PDF files
+   :type folder: string
+   :param author: contents of the new author metadata field
+   :type author: string
 
 
 .. py:function:: standard_metadata(folder, citation)

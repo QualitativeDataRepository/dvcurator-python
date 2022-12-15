@@ -51,7 +51,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.pdf.combine_author_names" title="dvcurator.pdf.combine_author_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_author_names</span></code></a>(citation)</p></td>
 <td><p>Generate the string for the PDF metadata field &quot;author&quot;. Separate with semicolons between full names for &gt; 1 author</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.pdf.standard_metadata" title="dvcurator.pdf.standard_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_metadata</span></code></a>(folder, citation)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.pdf.write_metadata" title="dvcurator.pdf.write_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_metadata</span></code></a>(folder, author)</p></td>
+<td><p>Write metadata to PDF files</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.pdf.standard_metadata" title="dvcurator.pdf.standard_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_metadata</span></code></a>(folder, citation)</p></td>
 <td><p>Standardize PDF metadata according to QDR specifications</p></td>
 </tr>
 </tbody>
@@ -86,6 +89,20 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.pdf.write_metadata">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.pdf.</span></span><span class="sig-name descname"><span class="pre">write_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.pdf.write_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write metadata to PDF files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>string</em>) – folder of the PDF files</p></li>
+<li><p><strong>author</strong> (<em>string</em>) – contents of the new author metadata field</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

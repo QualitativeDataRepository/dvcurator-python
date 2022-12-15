@@ -145,6 +145,11 @@ Functions
       Run `generate_readme()`
 
 
+   .. py:method:: anonymize()
+
+      Run anonymization processes
+
+
    .. py:method:: close_window()
 
       Save config before killing window

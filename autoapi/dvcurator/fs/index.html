@@ -57,6 +57,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.fs.copy_new_step" title="dvcurator.fs.copy_new_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_new_step</span></code></a>(folder, step)</p></td>
 <td><p>Copy QDR Prepared latest step (i.e. 3_rename) to a new step (i.e. 4_metadata), incrementing step number</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.fs.anonymize_project" title="dvcurator.fs.anonymize_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anonymize_project</span></code></a>(folder, citation)</p></td>
+<td><p>Run full anonymization routine. Calls anon routine for filenames and PDF metadata</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -125,6 +128,20 @@
 <dd class="field-odd"><p>String</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.fs.anonymize_project">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.fs.</span></span><span class="sig-name descname"><span class="pre">anonymize_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.fs.anonymize_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run full anonymization routine. Calls anon routine for filenames and PDF metadata</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>folder</strong> (<em>path</em><em>, </em><em>as string</em>) – Project folder</p>
+</dd>
+</dl>
+<p>:param citation Dataverse citation
+:return: Path to new folder
+:rtype: string</p>
 </dd></dl>
 
 </div>
