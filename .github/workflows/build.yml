@@ -7,28 +7,11 @@ name: Build
 jobs:
 
   build:
-    name: Build (${{ matrix.python-version }}, ${{ matrix.os }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            TARGET: macos
-            CMD_BUILD: >
-                pyinstaller mac.spec &&
-                cd dist/ &&
-                zip -r9 dvcurator_mac dvcurator.app/
-            OUT_FILE_NAME: dvcurator_mac.zip
-            ASSET_MIME: application/zip
-          - os: windows-latest
-            TARGET: windows
-            CMD_BUILD: pyinstaller win.spec
-            OUT_FILE_NAME: dvcurator_win.exe
-            ASSET_MIME: application/vnd.microsoft.portable-executable
-    runs-on: ${{ matrix.os }}
+    name: Build windows
+    runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get the version
@@ -42,13 +25,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build with pyinstaller for ${{matrix.TARGET}}
-        run: ${{matrix.CMD_BUILD}}
+      - name: Build with pyinstaller
+        run: pyinstaller win.spec
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            dist/dvcurator_mac.zip
-            dist/dvcurator_win.exe
+          files: dist/dvcurator_win.exe
           draft: true
