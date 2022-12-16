@@ -28,7 +28,7 @@ Module Contents
    
 
 .. py:data:: curation_repo
-   :annotation: = QualitativeDataRepository/testing-demos
+   :annotation: = QualitativeDataRepository/Project-Curation
 
    
 
