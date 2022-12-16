@@ -17,7 +17,7 @@ Functions
 
 
 
-.. py:function:: docx_pdf(folder)
+.. py:function:: docx_pdf(folder, extra=None)
 
    Convert all docx files in a folder to PDFs
 
