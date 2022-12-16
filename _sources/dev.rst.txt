@@ -6,9 +6,9 @@ Running/compiling
 
 dvcurator is written to be run either as a native python program or compiled with pyinstaller.
 
-To run as an interpreted program, dvcurator is a python package. From within a freshly cloned repo, you can run the program with `python -m .` or install with `python -m pip install .`
+To run as an interpreted program, dvcurator is a python package. From within a freshly cloned repo, you can run the program with `python -m dvcurator` or install with `python -m pip install dvcurator`
 
-There are two spec files, `win.spec` and `mac.spec` to create native Windows or Mac applications with pyinstaller. NOTE: you need to be on the platform in question to compile a native executable!
+There are two spec files, `win.spec` and `mac.spec` to create native Windows or Mac applications with pyinstaller, e.g. `pyinstaller mac.spec`. NOTE: you need to be on the platform in question to compile a native executable!
 
 Program organization
 ====================
