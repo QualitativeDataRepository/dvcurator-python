@@ -31,5 +31,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dvcurator_win.exe
+          files: dist/dvcurator_win.exe
           draft: true
