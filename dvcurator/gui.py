@@ -267,7 +267,7 @@ class MainApp(tk.Frame):
 		pythoncom.CoInitialize()
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.convert.docx_pdf, 
-			args=(self.subfolder_path))
+			args=(self.subfolder_path, None))
 		t.start()
 		self.schedule_check(t)
 

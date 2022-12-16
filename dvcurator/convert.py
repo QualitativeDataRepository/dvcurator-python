@@ -6,7 +6,7 @@
 #  Copyright 2022 Michael McCall <mimccall@syr.edu>
 #
 
-def docx_pdf(folder):
+def docx_pdf(folder, extra=None):
     """
     Convert all docx files in a folder to PDFs
 
