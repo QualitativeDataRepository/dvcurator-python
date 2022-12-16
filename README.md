@@ -16,7 +16,7 @@ This program executes four main tasks:
 
 Most users will want to use the applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). 
 
-*NOTE:* Syracuse University office computers cannot run this program directly. You need to create a folder directly on the C: drive called "Apps-SU" (case sensitive). The full path to this directory should be "C:\Apps-SU". Drag and drop the `dvcurator_win.exe` file into this new folder from your downloads folder, and run it from there. 
+*NOTE:* Syracuse University office computers cannot run this program directly. You should download the [SU Lab Install.bat](https://github.com/QualitativeDataRepository/dvcurator-python/blob/master/SU%20Lab%20Install.bat) file (right click "Raw" and the top and Save Link As), and run that instead. This will install the program properly and create a shortcut on your desktop.
 
 # Running dvcurator-python
 
