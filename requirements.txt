@@ -4,3 +4,4 @@ simplejson
 pyinstaller
 docx2pdf
 gql
+aiohttp
