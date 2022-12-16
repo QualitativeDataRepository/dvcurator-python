@@ -1,6 +1,6 @@
 Not all of these need to be completed, but check if available/possible
 
-  - [ ] Assign depositor to project
+  - [ ] Assign curator
   - [ ] Review metadata entry
   - [ ] Enter QDR vocabulary (ICPSR Thesaurus)
   - [ ] Upload files
