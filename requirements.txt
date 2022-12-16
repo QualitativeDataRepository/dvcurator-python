@@ -3,3 +3,4 @@ requests
 simplejson
 pyinstaller
 docx2pdf
+gql
