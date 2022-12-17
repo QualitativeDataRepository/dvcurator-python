@@ -12,6 +12,8 @@ def docx_pdf(folder, extra=None):
 
     :param folder: Folder to convert docx files in
     :type folder: Path, as String
+    :param extra: This is needed in the function for some reason in order to placate the GUI which would otherwise pass 110 arguments. Do not actually pass any information here.
+    :type extra: None
     """
     import dvcurator.fs, os, glob, pythoncom
     from docx2pdf import convert

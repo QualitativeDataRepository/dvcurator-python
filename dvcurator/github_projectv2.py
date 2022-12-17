@@ -23,7 +23,7 @@ def gql_query(query, token, params=None):
 
 	transport = AIOHTTPTransport(
 		url = github_api + "/graphql",
-		headers = {'Authorization': "token " + token}
+		headers = {'Authorization': "token " + token.strip()}
 	)
 	client = Client(transport=transport, fetch_schema_from_transport=True)
 
@@ -50,7 +50,7 @@ def get_org_id(endpoint, token=None):
 	if not token:
 		info = requests.get(url)
 	else:
-		token = {'Authorization': "token " + token}
+		token = {'Authorization': "token " + token.strip()}
 		info = requests.get(url, headers=token)
 
 	if not info.ok:

@@ -28,7 +28,7 @@ def get_metadata(doi, token=None, host=None):
 	if (not token):
 		dataset = requests.get(dataset_url)
 	else:
-		key = {'X-Dataverse-Key': token}
+		key = {'X-Dataverse-Key': token.strip()}
 		dataset = requests.get(dataset_url, headers=key)
 	
 	try: 
@@ -82,7 +82,7 @@ def get_biblio_citation(doi, token=None, host=None):
 	if (not token):
 		query = requests.get(search_api)
 	else:
-		key = {'X-Dataverse-Key': token}
+		key = {'X-Dataverse-Key': token.strip()}
 		query = requests.get(search_api, headers=key)
 
 	if not query.ok:
@@ -127,7 +127,7 @@ def download_dataset(metadata, folder, token=None, host=None):
 	zip_path = os.path.join(folder, "Original Deposit.zip")
 	opener = urllib.request.build_opener()
 	if token:
-		opener.addheaders = [('X-Dataverse-Key', token)]
+		opener.addheaders = [('X-Dataverse-Key', token.strip())]
 	urllib.request.install_opener(opener)
 	urllib.request.urlretrieve(zip_url, zip_path)
 	print("Done!")

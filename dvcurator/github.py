@@ -44,7 +44,7 @@ def check_repo(key=None, repo=None):
 	if (not key):
 		projects = requests.get(project_url + "?per_page=100")
 	else:
-		key = {'Authorization': "token " + key}
+		key = {'Authorization': "token " + key.strip()}
 		projects = requests.get(project_url + "?per_page=100", headers=key)
 
 	if (projects.status_code==404):
@@ -78,7 +78,7 @@ def search_existing(project_name, key=None, repo=None):
 	if (not key):
 		projects = requests.get(project_url + "?per_page=100")
 	else:
-		key = {'Authorization': "token " + key}
+		key = {'Authorization': "token " + key.strip()}
 		projects = requests.get(project_url + "?per_page=100", headers=key)
 				
 	# Take the first three words ("lastname - first-of-title") to search
@@ -110,7 +110,7 @@ def create_project(dv_metadata, folder_name, repo, key):
 	"""
 	import json, requests, dvcurator.hosts, dvcurator.dataverse
 
-	key = {'Authorization': "token " + key}
+	key = {'Authorization': "token " + key.strip()}
 
 	project_url = github_api + "/repos/" + repo + "/projects"
 
@@ -150,7 +150,7 @@ def add_issue(project_name, template, repo, project, key):
 	"""
 	import os, json, requests, re
 	
-	key = {'Authorization': "token " + key}
+	key = {'Authorization': "token " + key.strip()}
 
 	# Format issue name from template filename
 	issue_name = os.path.basename(template)
