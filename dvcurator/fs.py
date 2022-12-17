@@ -127,6 +127,7 @@ def anonymize_project(folder, citation):
         return None
 
     dvcurator.rename.anonymize(edit_path, citation)
+    print("\n")
     dvcurator.pdf.write_metadata(edit_path, "ANONYMIZED")
 
     return edit_path
