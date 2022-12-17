@@ -122,7 +122,7 @@ class MainApp(tk.Frame):
 		"""
 		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
 		if not self.subfolder_path:
-			self.subfolder_path = os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name)
+			self.subfolder_path = os.path.normpath(os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name))
 			print("You need to download/extract or manually specify a subfolder.")
 		if os.path.exists(self.subfolder_path):
 			print("Existing extracted project detected at: " + self.subfolder_path)
@@ -153,7 +153,7 @@ class MainApp(tk.Frame):
 		subfolder = filedialog.askdirectory()
 		if not subfolder:
 			return
-		self.subfolder_path = subfolder
+		self.subfolder_path = os.path.normpath(subfolder)
 		print("Subfolder set to: " + self.subfolder_path)
 
 	# Open project directory (edit menu)
@@ -170,11 +170,11 @@ class MainApp(tk.Frame):
 
 		# Windows, Mac and Linux require different handlers
 		if sys.platform == "win32":
-			os.startfile(self.subfolder_path)
+			os.startfile(os.path.normpath(self.subfolder_path))
 		else:
 			import subprocess
 			opener = "open" if sys.platform == "darwin" else "xdg-open"
-			subprocess.call([opener, self.subfolder_path])
+			subprocess.call([opener, os.path.normpath(self.subfolder_path]))
 
 	# Main window buttons
 	def load_citation(self):
