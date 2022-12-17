@@ -174,7 +174,7 @@ class MainApp(tk.Frame):
 		else:
 			import subprocess
 			opener = "open" if sys.platform == "darwin" else "xdg-open"
-			subprocess.call([opener, os.path.normpath(self.subfolder_path)]))
+			subprocess.call([opener, os.path.normpath(self.subfolder_path)])
 
 	# Main window buttons
 	def load_citation(self):
