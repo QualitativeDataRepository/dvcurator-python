@@ -8,32 +8,31 @@ Module Contents
 ---------------
 
 .. py:data:: qdr_dataverse
-   :annotation: = https://data.qdr.syr.edu
+   :value: 'https://data.qdr.syr.edu'
 
    
 
 .. py:data:: qdr_doi_path
-   
 
    
 
 .. py:data:: github_api
-   :annotation: = https://api.github.com
+   :value: 'https://api.github.com'
 
    
 
 .. py:data:: github_org
-   :annotation: = QualitativeDataRepository
+   :value: 'QualitativeDataRepository'
 
    
 
 .. py:data:: curation_repo
-   :annotation: = QualitativeDataRepository/Project-Curation
+   :value: 'QualitativeDataRepository/Project-Curation'
 
    
 
 .. py:data:: pkg_repo
-   :annotation: = QualitativeDataRepository/dvcurator-python
+   :value: 'QualitativeDataRepository/dvcurator-python'
 
    
 

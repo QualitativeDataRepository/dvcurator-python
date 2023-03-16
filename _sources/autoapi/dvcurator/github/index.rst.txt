@@ -31,7 +31,7 @@ Attributes
 
 
 .. py:data:: github_api
-   :annotation: = https://api.github.com
+   :value: 'https://api.github.com'
 
    
 

@@ -4,15 +4,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>dvcurator.dataverse &#8212; dvcurator 1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -33,17 +31,13 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-dvcurator.dataverse">
+  <section id="module-dvcurator.dataverse">
 <span id="dvcurator-dataverse"></span><h1><a class="reference internal" href="#module-dvcurator.dataverse" title="dvcurator.dataverse"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dvcurator.dataverse</span></code></a><a class="headerlink" href="#module-dvcurator.dataverse" title="Permalink to this heading">¶</a></h1>
-<div class="section" id="module-contents">
+<section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
-<div class="section" id="functions">
+<section id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.dataverse.get_metadata" title="dvcurator.dataverse.get_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata</span></code></a>(doi[, token, host])</p></td>
 <td><p>Scrape all available metadata for a project from Dataverse</p></td>
@@ -64,17 +58,17 @@
 <span class="sig-prename descclassname"><span class="pre">dvcurator.dataverse.</span></span><span class="sig-name descname"><span class="pre">get_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.dataverse.get_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scrape all available metadata for a project from Dataverse</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>doi</strong> (<em>String</em>) – The persistent ID of the project (doi:xxxx/xxxxxx)</p></li>
 <li><p><strong>token</strong> (<em>String</em><em>, or </em><em>None</em>) – Dataverse token, necessary if the project is unpublished</p></li>
 <li><p><strong>host</strong> (<em>String</em>) – Hostname of the dataverse instance (i.e. data.qdr.syr.edu), or None for the default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Metadata block from Dataverse API, or None if error</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
@@ -85,13 +79,13 @@
 <span class="sig-prename descclassname"><span class="pre">dvcurator.dataverse.</span></span><span class="sig-name descname"><span class="pre">get_citation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.dataverse.get_citation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract and format the citation metadata block from the main metadata object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>metadata</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Metadata block from <cite>get_metadata()</cite></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Index of metadata name:value combos</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -102,17 +96,17 @@
 <span class="sig-prename descclassname"><span class="pre">dvcurator.dataverse.</span></span><span class="sig-name descname"><span class="pre">get_biblio_citation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.dataverse.get_biblio_citation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the recommended citation from Dataverse</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>doi</strong> (<em>String</em>) – The persistent ID of the project (doi:xxxx/xxxxxx)</p></li>
 <li><p><strong>token</strong> (<em>String</em><em>, or </em><em>None</em>) – Dataverse token, necessary if the project is unpublished</p></li>
 <li><p><strong>host</strong> (<em>String</em>) – Hostname of the dataverse instance (i.e. data.qdr.syr.edu), or None for the default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Recommended citation, as generated by dataverse</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>String</p>
 </dd>
 </dl>
@@ -123,7 +117,7 @@
 <span class="sig-prename descclassname"><span class="pre">dvcurator.dataverse.</span></span><span class="sig-name descname"><span class="pre">download_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.dataverse.download_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download and extract dataset from Dataverse</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metadata</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Metadata block from <code class="docutils literal notranslate"><span class="pre">`get_metadata()`</span></code></p></li>
 <li><p><strong>token</strong> (<em>String</em><em>, or </em><em>None</em>) – Dataverse token, necessary if the project is unpublished</p></li>
@@ -133,9 +127,9 @@
 </dl>
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>
@@ -193,7 +187,7 @@
       &copy;2022, QDR.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
