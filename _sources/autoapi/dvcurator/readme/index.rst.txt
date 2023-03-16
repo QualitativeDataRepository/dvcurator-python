@@ -31,7 +31,7 @@ Functions
 
 .. py:function:: generate_readme(metadata, folder, token=None)
 
-   Generate README.md file. 
+   Generate README.txt file. 
 
    This function uses the template assets/README.txt
 
