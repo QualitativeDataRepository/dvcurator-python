@@ -1,4 +1,4 @@
-Not all of these need to be completed, but check if available/possible
+Not all of these need to be completed, but check if available/possible. Mark _all_ categories after reviewing
 
   - [ ] Funder
   - [ ] depositor ORCID

@@ -1,4 +1,6 @@
   ## General Considerations
+Mark _all_ categories after reviewing
+
   - [ ] Project is in Scope
   - [ ] Project is journal supplement
   - If yes: deadline?

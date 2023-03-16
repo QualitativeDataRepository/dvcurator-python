@@ -1,12 +1,12 @@
-Not all of these need to be completed, but check if available/possible
+Mark _all_ categories after reviewing
 
-  - [ ] Create Dropbox Folder
+  - [x] Create Dropbox Folder 
+  - [ ]  Share Dropbox Folder with team
   - [ ] Redactions
   - [ ] Rename Files
   - [ ] Enter File Metadata
   - [ ] OCR
-  - [ ] Check PDFs meet accessibility requirements
+  - [ ] Check accessibility requirements
   - [ ] Convert to PDF/A
-  - [ ] Create Permanent Record of Web Sources
+  - [ ] Create permanent Record of Web Sources
   - [ ] Create Readme File
-  - [ ] Archive Files
