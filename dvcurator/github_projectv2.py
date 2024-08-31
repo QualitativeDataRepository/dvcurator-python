@@ -306,7 +306,7 @@ def generate_templatev2(dv, project_name, token):
 
 	# Get internal issue templates
 	for issue in issues:
-			draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
+		draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
 		
 		alter_column(project['id'], draft, columns['id'], columns['options'][0]['id'], token)
 
