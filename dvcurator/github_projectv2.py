@@ -306,10 +306,7 @@ def generate_templatev2(dv, project_name, token):
 
 	# Get internal issue templates
 	for issue in issues:
-		if issue.endswith("time.md"): # Save time as a real issue, the rest as drafts
 			draft = add_issue(project_name, issue, dvcurator.hosts.curation_repo, project['id'], token)
-		else:
-			draft = draft_issue(project['id'], issue, token)
 		
 		alter_column(project['id'], draft, columns['id'], columns['options'][0]['id'], token)
 
