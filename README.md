@@ -11,6 +11,7 @@ This program executes four main tasks:
 2. Downloading the .zip file for the full data project to the Original Deposit folder and an unzipped version to QDR Prepared for further Curation
 3. Creating github issues for standard curation tasks and associating them with a github Project for the curation of the data project.
 4. Automatically setting metadata for PDF files based on Dataverse metadata
+5. Anoynymizing PDFs by stripping the beginning of filenames and metadata
 
 # Installing dvcurator-python
 
