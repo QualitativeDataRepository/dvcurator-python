@@ -104,7 +104,7 @@ def get_repo(token, search, repo=None):
 	:rtype: string
 	"""
 	import dvcurator.hosts
-	print("Checking for existing github projects...")
+	print("Currently skipping duplicates check for existing github projects...")
 	query =	"""
 		query ($org: String!, $repo: String!, $query: String!) {
 			repository(owner: $org, name: $repo) {
@@ -127,11 +127,11 @@ def get_repo(token, search, repo=None):
 	params = {"org": repo_components[0], "repo": repo_components[1], "query": search}
 	response = gql_query(query, token, params)
 
-	if (len(response['repository']['projectsV2']['nodes']) > 0):
-		print("Error: existing github project detected!")
-		return None
-	else:
-		return response['repository']['id']
+	#if (len(response['repository']['projectsV2']['nodes']) > 0):
+	#	print("Error: existing github project detected!")
+	#	return None
+	#else:
+	return response['repository']['id']
 
 
 # This function is used to set each generated ticket to "todo" status
