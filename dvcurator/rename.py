@@ -21,7 +21,8 @@ def project_name(citation):
     title = citation['title']
     title = re.sub("Data for: ", '', title)
     title = re.sub("(Replication )?[Dd]ata for ", '', title)
-    title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
+    # What did this line do?
+    # title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
     title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
     title = re.sub(":.+", '', title)
     
@@ -48,7 +49,7 @@ def last_name_prefix(citation):
         two = citation['author'][1]['authorName']['value'].split(", ")[0]
         return one + "-" + two
     else:
-        return one + "-etal"
+        return one + "-et-al"
 
 # All the below functions are for the rename process
 def add_filename_prefix(folder, prefix):
