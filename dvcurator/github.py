@@ -94,125 +94,22 @@ def search_existing(project_name, key=None, repo=None):
 	# Return false if nothing was found
 	return False
 
-def create_project(dv_metadata, folder_name, repo, key):
-	"""
-	Create a github project (classic) in kanban format with metadata from dataverse
-
-	:param dv_metadata: Dataverse metadata, from `get_metadata()`
-	:param folder_name: Name of the dropbox folder, used a a prefix for the project title
-	:type folder_name: string
-	:param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-	:type repo: string
-	:param key: Github API token
-	:type key: string
-	:return: ID of the Todo column in the project
-	:rtype: string
-	"""
-	import json, requests, dvcurator.hosts, dvcurator.dataverse
-
-	key = {'Authorization': "token " + key.strip()}
-
-	project_url = github_api + "/repos/" + repo + "/projects"
-
-	contact_info = 'Name:' + dvcurator.dataverse.get_citation(dv_metadata)['depositor'] + '\n'
-	doi = dv_metadata['data']['latestVersion']['datasetPersistentId']
-	contact_info += 'DV link: ' + dvcurator.hosts.qdr_doi_path + doi
-
-	proj_metadata = { 'name': folder_name, 'body': contact_info }
-	project = requests.post(project_url, json.dumps(proj_metadata), headers=key)
-	project_id = project.json()['id']
-	#print("Created github project: " + folder_name)
-	
-	# Make a Todo, in progress and done column
-	column_url = github_api + "/projects/%d/columns" % (project_id)
-	columns = []
-	for column in ['To Do', 'In Progress', 'Done']:
-		col_metadata = { 'name': column }
-		resp = requests.post(column_url, json.dumps(col_metadata), headers=key)
-		columns += [resp.json()['id']]
-
-	return columns[0] # This is the ID of the todo column, for assigning issue cards
-
-def add_issue(project_name, template, repo, project, key):
-	"""
-	Add an issue to a project based on a template
-
-	:param project_name: Name of the project, prefix on the issue name
-	:type project_name: string
-	:param template: Path to the template file for the issue body
-	:type template: string
-	:param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-	:type repo: string
-	:param project: ID to add the issue to, use column ID from `create_project()`
-	:type project: string
-	:param key: Github API token
-	:type key: string
-	"""
-	import os, json, requests, re
-	
-	key = {'Authorization': "token " + key.strip()}
-
-	# Format issue name from template filename
-	issue_name = os.path.basename(template)
-	issue_name = re.sub('\.md', '', issue_name)
-	issue_name = re.sub('_', ' ', issue_name)
-	issue_name = issue_name.title()
-
-	# Import the markdown file as the issue body
-	f = open(template, "r")
-	body = f.readlines()
-	issue_url = github_api + "/repos/" + repo + "/issues"
-	metadata = {'title': project_name + " - " + issue_name, 'body': ''.join(body) }
-	resp = requests.post(issue_url, json.dumps(metadata), headers=key)
-	issue = resp.json()['id']
-
-	metadata = {'content_type': "Issue", 'content_id': issue}
-	card_url = github_api + "/projects/columns/%d/cards" % (project)
-	resp = requests.post(card_url, json.dumps(metadata), headers=key)
-
-	print("Issue added: " + issue_name)
-
-# This is the actual function we run from the buttom
-def generate_template(metadata, project_name, token, repo=None):
-	"""
-	Generate a github project (classic) with issues for a curation project
-
-	:param metadata: Dataverse metadata from `get_metadata()`
-	:param folder_name: Name of the dropbox folder, used a a prefix for the project title
-	:type folder_name: string
-	:param token: Github API token
-	:type token: string
-	:param repo: Optional. Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-	:type repo: string
-	"""
-	import os, sys, dvcurator.hosts
-	from pkg_resources import resource_filename
-
+def create_project(project_name, token, repo=None):
+	import requests, dvcurator.hosts
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
 
-	if not check_repo(token):
-		print("Error: github repository doesn't exist (" + repo + ")")
-		return None
+	url = "https://api.github.com/repos/" + repo + "/dispatches"
+	headers = {
+		"Accept": "application/vnd.github.everest-preview+json",
+		"Content-Type": "application/json",
+		"Authorization": f"token {token}"
+	}
+	data = {
+		"event_type": "trigger-event",
+		"client_payload": {
+			"title": project_name
+		}
+	}
 
-	if search_existing(project_name, token):
-		print("Error: existing github issues")
-		return None
-	project = create_project(metadata, project_name, repo, token)
-	print("Created project: " + project_name)
-
-	# folder with issue templates depends on whether or not this is a pyinstaller compiled version
-	folder = os.path.join("assets", "issues")
-	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-		folder = os.path.join(sys._MEIPASS, folder)
-		issues = [os.path.join(folder, f) for f in os.listdir(folder)]
-	else:
-		folder += "/"
-		from pkg_resources import resource_listdir, resource_filename
-		issues = [resource_filename(__name__, folder + f) for f in resource_listdir(__name__, folder)]
-
-	# Get internal issue templates
-	for issue in issues:
-		add_issue(project_name, issue, repo, project, token)
-
-	print("Completed populating github project!")
-	
+	response = requests.post(url, headers=headers, json=data)
+	response.raise_for_status()  # Raise an exception for HTTP errors
