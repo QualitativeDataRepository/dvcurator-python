@@ -82,6 +82,9 @@ class MainApp(tk.Frame):
 		import configparser
 		config = configparser.ConfigParser()
 		config.read(path)
+		self.dataverse_host.set(config['default']['dataverse_host'])
+		self.curation_repo.set(config['default']['curation_repo'])
+		self.github_org.set(config['default']['github_org'])
 		self.dv_token.set(config['default']['dataverse_token'])
 		self.gh_token.set(config['default']['github_token'])
 		self.dropbox.set(config['default']['dropbox'])
@@ -101,12 +104,23 @@ class MainApp(tk.Frame):
 
 	def save_config(self, path=None):
 		"""
-		Save variables to a 
+		Save variables to a ini file
 		"""
 		path = self.local_ini if not path else path
+		import dvcurator.hosts
+		if (self.dataverse_host.get() == ""):
+			self.dataverse_host.set(dvcurator.hosts.qdr_dataverse"")
+		if (self.curation_repo.get() == ""):
+			self.curation_repo.set(dvcurator.hosts.curation_repo)
+		if (self.github_org.get() == ""):
+			self.github_org.set(dvcurator.host)
+
 		import configparser
 		config = configparser.ConfigParser()
-		config['default'] = {"dataverse_token": self.dv_token.get(),
+		config['default'] = {"dataverse_host": self.dataverse_host.get(),
+							"curation_repo": self.curation_repo.get(),
+							"github_org": self.github_org.get(),
+							"dataverse_token": self.dv_token.get(),
 							"github_token": self.gh_token.get(),
 							"dropbox": self.dropbox.get()}
 		with open(path, 'w') as config_file:
@@ -186,7 +200,7 @@ class MainApp(tk.Frame):
 			print("Error: Set valid Dropbox folder first")
 			return
 		# Grab the citation
-		self.metadata = dvcurator.dataverse.get_metadata(self.doi.get(), self.dv_token.get())
+		self.metadata = dvcurator.dataverse.get_metadata(self.doi.get(), self.dv_token.get(), self.dataverse_host.get())
 		if (not self.metadata):
 			print("Error: citation failed to load.")
 			return
@@ -224,7 +238,7 @@ class MainApp(tk.Frame):
 		self.disable_buttons()
 
 		t = threading.Thread(target=dvcurator.github.create_project, 
-			args=(self.project_name, self.gh_token.get()))
+			args=(self.project_name, self.gh_token.get(), self.curation_repo.get()))
 
 		t.start()
 		self.schedule_check(t)
@@ -338,9 +352,14 @@ class MainApp(tk.Frame):
 		self.editmenu.add_command(label="Select project subfolder manually", command=self.set_subfolder)
 		self.menubar.add_cascade(label="File processing", menu=self.editmenu)
 		self.menubar.entryconfig("File processing", state=tk.DISABLED)
+
 		parent.config(menu=self.menubar)
 
 		# Settings
+		self.github_org = tk.StringVar()
+		self.curator_repo = tk.StringVar()
+		self.dataverse_host = tk.StringVar()
+		
 		settings = tk.Frame(self)
 
 		self.doi=tk.StringVar()
