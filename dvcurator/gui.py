@@ -90,6 +90,7 @@ class MainApp(tk.Frame):
 		self.dropbox.set(config['default']['dropbox'])
 		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
 		print("Loaded settings: " + path)
+		print("Curation repo: " + self.curation_repo.get())
 
 	# function to save settings as .ini file
 	def save_config_as(self):
@@ -109,11 +110,11 @@ class MainApp(tk.Frame):
 		path = self.local_ini if not path else path
 		import dvcurator.hosts
 		if (self.dataverse_host.get() == ""):
-			self.dataverse_host.set(dvcurator.hosts.qdr_dataverse"")
+			self.dataverse_host.set(dvcurator.hosts.qdr_dataverse)
 		if (self.curation_repo.get() == ""):
 			self.curation_repo.set(dvcurator.hosts.curation_repo)
 		if (self.github_org.get() == ""):
-			self.github_org.set(dvcurator.host)
+			self.github_org.set(dvcurator.hosts.github_org)
 
 		import configparser
 		config = configparser.ConfigParser()
@@ -299,7 +300,7 @@ class MainApp(tk.Frame):
 
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.readme.generate_readme, 
-			args=(self.metadata, os.path.join(self.subfolder_path, "QDR Prepared"), self.dv_token.get()))
+			args=(self.metadata, os.path.join(self.subfolder_path, "QDR Prepared"), self.dv_token.get(), self.curation_repo.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -357,7 +358,7 @@ class MainApp(tk.Frame):
 
 		# Settings
 		self.github_org = tk.StringVar()
-		self.curator_repo = tk.StringVar()
+		self.curation_repo = tk.StringVar()
 		self.dataverse_host = tk.StringVar()
 		
 		settings = tk.Frame(self)
@@ -418,6 +419,7 @@ class MainApp(tk.Frame):
 			# Set working directory to the folder the executable is in
 			self.local_ini = os.path.join(os.path.dirname(sys.executable), "dvcurator.ini")
 			icon = os.path.join(sys._MEIPASS, "assets", "qdr.ico")
+			parent.iconbitmap(bitmap=icon)
 		else:
 			self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
 			from pkg_resources import resource_filename
@@ -426,12 +428,9 @@ class MainApp(tk.Frame):
 		if os.path.exists(self.local_ini):
 			self.load_config(self.local_ini)		
 
-		parent.iconbitmap(default=icon)
 
 		# save config on exit
 		parent.protocol("WM_DELETE_WINDOW", self.close_window)
-
-
 
 def main():
 	root=tk.Tk()

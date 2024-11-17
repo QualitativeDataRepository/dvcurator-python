@@ -13,7 +13,7 @@ def clean_html_tags(text):
     clean_text = re.sub(tags, '', text)
     return clean_text
 
-def generate_readme(metadata, folder, token=None):
+def generate_readme(metadata, folder, token=None, repo=None):
     """
     Generate README.txt file. 
     
@@ -31,8 +31,8 @@ def generate_readme(metadata, folder, token=None):
 
     """
     from string import Template
-    from pkg_resources import resource_filename
-    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, sys, re, unicodedata
+    import os, dvcurator.dataverse, dvcurator.fs, dvcurator.rename, dvcurator.hosts 
+    import requests, sys, re, unicodedata
     citation = dvcurator.dataverse.get_citation(metadata)
     folder = dvcurator.fs.current_step(folder)
 
@@ -79,17 +79,22 @@ def generate_readme(metadata, folder, token=None):
     }
 
     # the location of the template differs if this is a compiled pyinstaller file or run directly
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        path = os.path.join(sys._MEIPASS, "assets", "README.txt")
-    else:
-        path = resource_filename("dvcurator", "assets/README.txt")
-        
+    
+    ## Download readme template from github
+    host = "https://raw.githubusercontent.com/"
+    repo = dvcurator.hosts.curation_repo if not repo else repo
+    readme_url = host + repo + "/refs/heads/master/README_template.txt"
+
+    response = requests.get(readme_url)
+    response.raise_for_status()
+    readme_template = response.text
+    print("Downloaded README template...")
+    
     # write the actual file
-    with open(path, 'r') as f:
-        src = Template(f.read())
-        text = src.safe_substitute(d)
-        with open(new_path, 'w', encoding="utf-8") as n:
-            n.write(text)
-            print("Written: " + new_path)
+    src = Template(readme_template)
+    text = src.safe_substitute(d)
+    with open(new_path, 'w', encoding="utf-8") as n:
+        n.write(text)
+        print("Written: " + new_path)
 
     return new_path

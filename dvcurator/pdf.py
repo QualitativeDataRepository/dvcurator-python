@@ -15,7 +15,7 @@ def find_pdfs(path):
 	pdfs = []
 	for root, dirs, files in os.walk(path):
 		for name in files:
-			if re.search('\.(pdf|PDF)', name):
+			if re.search('.(pdf|PDF)', name):
 				pdfs += [os.path.join(root, name)]
 
 	return pdfs
