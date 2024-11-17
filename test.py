@@ -5,6 +5,7 @@ from dvcurator import dataverse, github, pdf, rename, readme, fs
 harvard_host = "https://dataverse.harvard.edu"
 harvard_doi = "doi:10.7910/DVN/CZYY1N"
 qdr_doi = "doi:10.5064/F6YYA3O3"
+curation_repo = "QualitativeDataRepository/testing-demos"
 
 class TestFs(unittest.TestCase):
 
@@ -191,7 +192,7 @@ class TestREADME(unittest.TestCase):
 		with open(os.path.join(subfolder, "a_file.txt"), 'w') as f:
 			pass
 		
-		generated = readme.generate_readme(metadata, d.name)
+		generated = readme.generate_readme(metadata, d.name, repo=curation_repo)
 		self.assertTrue(os.path.exists(generated))
 		# Fail on the second time
 		self.assertIsNone(readme.generate_readme(metadata, d.name))

@@ -85,10 +85,8 @@ def get_biblio_citation(doi, token=None, host=None):
 		key = {'X-Dataverse-Key': token.strip()}
 		query = requests.get(search_api, headers=key)
 
-	if not query.ok:
-		print("HTTP error " + query.status_code + ": " + query.reason)
-		return None
-
+	query.raise_for_status()
+	
 	return query.json()['data']['items'][0]['citation']
 	
 # Actually download and extract the dataset
