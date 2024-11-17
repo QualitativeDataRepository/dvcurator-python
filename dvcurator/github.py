@@ -54,14 +54,14 @@ def check_repo(key=None, repo=None):
 
 # Search if tickets already exist in the repo for this project
 # True = tickets exist, False = they don't exist
-def search_existing(project_name, key=None, repo=None):
+def search_existing(project_name, token=None, repo=None):
 	"""
 	Check if a project has existing github tickets
 
 	:param project_name: Project name to check for existing tickets
 	:type project_name: String
-	:param key: Github API key, or None for public repository
-	:type key: String or None
+	:param token: Github token key, or None for public repository
+	:type token: String or None
 	:param repo: Github repository path (e.g. QualitativeDataRepository/dvcurator-python), or None for default
 	:type repo: String or None
 	:return: Whether or not there are any existing tickets with the specified project name
@@ -70,17 +70,19 @@ def search_existing(project_name, key=None, repo=None):
 	import json, requests, dvcurator.hosts
 
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
-	project_url = github_api + "/repos/" + repo + "/issues"
+	project_url = dvcurator.hosts.github_api + "/repos/" + repo + "/issues"
 
 	# Ideally we would use the project API endpoint here.
 	# We can't, because it requires an OAuth token for all calls
 	# even on public repositories. So we go directly to the issues
-	if (not key):
+	if (not token):
 		projects = requests.get(project_url + "?per_page=100")
 	else:
-		key = {'Authorization': "token " + key.strip()}
-		projects = requests.get(project_url + "?per_page=100", headers=key)
-				
+		token = {'Authorization': "token " + token.strip()}
+		projects = requests.get(project_url + "?per_page=100", headers=token)
+
+	projects.raise_for_status()
+
 	# Take the first three words ("lastname - first-of-title") to search
 	project_name = ' '.join(project_name.split()[:3])
 
@@ -94,9 +96,51 @@ def search_existing(project_name, key=None, repo=None):
 	# Return false if nothing was found
 	return False
 
+def search_issues(search_string, repo, token):
+	url = "https://api.github.com/graphql"
+	repo_owner, repo_name = repo.split('/')
+
+	headers = {
+		"Authorization": f"Bearer {token}",
+		"Content-Type": "application/json"
+	}
+	query = """
+	query($repoOwner: String!, $repoName: String!, $searchString: String!) {
+		repository(owner: $repoOwner, name: $repoName) {
+		issues(first: 100, filterBy: {states: OPEN}, query: $searchString) {
+			edges {
+			node {
+				title
+				url
+			}
+			}
+		}
+		}
+	}
+	"""
+
+	variables = {
+		"repoOwner": repo_owner,
+		"repoName": repo_name,
+		"searchString": se
+	}
+	response = requests.post(url, headers=headers, json={"query": query, "variables": variables})
+	response.raise_for_status()
+	return response.json()
+
 def create_project(project_name, token, repo=None):
-	import requests, dvcurator.hosts
+	import requests, dvcurator.hosts, dvcurator.dataverse
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
+
+	if (search_existing(project_name, token, repo)):
+		print("Project already exists")
+		return
+
+	doi = dv['data']['latestVersion']['datasetPersistentId']
+	link = dvcurator.hosts.qdr_doi_path + doi
+	contact_info = 'Depositor: ' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
+	contact_info += 'DV link: ' + link
+
 
 	url = "https://api.github.com/repos/" + repo + "/dispatches"
 	headers = {
@@ -107,7 +151,9 @@ def create_project(project_name, token, repo=None):
 	data = {
 		"event_type": "trigger-event",
 		"client_payload": {
-			"title": project_name
+			"title": project_name,
+			"desc": link,
+			"readme": contact_info
 		}
 	}
 
