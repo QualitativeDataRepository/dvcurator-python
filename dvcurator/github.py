@@ -4,7 +4,7 @@
 
 github_api='https://api.github.com'
 
-# Is there a more recent version of 
+# Is there a more recent version of the program?
 def check_version():
 	"""
 	Check whether the running version is the same as the newest github tag
@@ -96,39 +96,20 @@ def search_existing(project_name, token=None, repo=None):
 	# Return false if nothing was found
 	return False
 
-def search_issues(search_string, repo, token):
-	url = "https://api.github.com/graphql"
-	repo_owner, repo_name = repo.split('/')
-
-	headers = {
-		"Authorization": f"Bearer {token}",
-		"Content-Type": "application/json"
-	}
-	query = """
-	query($repoOwner: String!, $repoName: String!, $searchString: String!) {
-		repository(owner: $repoOwner, name: $repoName) {
-		issues(first: 100, filterBy: {states: OPEN}, query: $searchString) {
-			edges {
-			node {
-				title
-				url
-			}
-			}
-		}
-		}
-	}
+def create_project(dv, project_name, token, repo=None):
 	"""
+    Trigger a "create a project" workflow in a GitHub repository.
 
-	variables = {
-		"repoOwner": repo_owner,
-		"repoName": repo_name,
-		"searchString": se
-	}
-	response = requests.post(url, headers=headers, json={"query": query, "variables": variables})
-	response.raise_for_status()
-	return response.json()
-
-def create_project(project_name, token, repo=None):
+    :param project_name: The name of the project to be created.
+    :type project_name: str
+    :param token: The GitHub API token for authentication.
+    :type token: str
+    :param repo: The repository where the project will be created. If not provided, the default repository will be used.
+    :type repo: str, optional
+    :return: A dictionary containing the response from the GitHub API.
+    :rtype: dict
+    :raises requests.exceptions.RequestException: If there is an error with the HTTP request.
+    """
 	import requests, dvcurator.hosts, dvcurator.dataverse
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
 
@@ -158,4 +139,4 @@ def create_project(project_name, token, repo=None):
 	}
 
 	response = requests.post(url, headers=headers, json=data)
-	response.raise_for_status()  # Raise an exception for HTTP errors
+	response.raise_for_status() 
