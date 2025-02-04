@@ -1,15 +1,19 @@
-:py:mod:`dvcurator.github`
-==========================
+dvcurator.github
+================
 
 .. py:module:: dvcurator.github
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   dvcurator.github.github_api
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,23 +21,14 @@ Functions
    dvcurator.github.check_repo
    dvcurator.github.search_existing
    dvcurator.github.create_project
-   dvcurator.github.add_issue
-   dvcurator.github.generate_template
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   dvcurator.github.github_api
-
+Module Contents
+---------------
 
 .. py:data:: github_api
    :value: 'https://api.github.com'
 
-   
 
 .. py:function:: check_version()
 
@@ -55,61 +50,32 @@ Attributes
    :rtype: boolean
 
 
-.. py:function:: search_existing(project_name, key=None, repo=None)
+.. py:function:: search_existing(project_name, token=None, repo=None)
 
    Check if a project has existing github tickets
 
    :param project_name: Project name to check for existing tickets
    :type project_name: String
-   :param key: Github API key, or None for public repository
-   :type key: String or None
+   :param token: Github token key, or None for public repository
+   :type token: String or None
    :param repo: Github repository path (e.g. QualitativeDataRepository/dvcurator-python), or None for default
    :type repo: String or None
    :return: Whether or not there are any existing tickets with the specified project name
    :rtype: boolean
 
 
-.. py:function:: create_project(dv_metadata, folder_name, repo, key)
+.. py:function:: create_project(dv, project_name, token, repo=None)
 
-   Create a github project (classic) in kanban format with metadata from dataverse
+   Trigger a "create a project" workflow in a GitHub repository.
 
-   :param dv_metadata: Dataverse metadata, from `get_metadata()`
-   :param folder_name: Name of the dropbox folder, used a a prefix for the project title
-   :type folder_name: string
-   :param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-   :type repo: string
-   :param key: Github API token
-   :type key: string
-   :return: ID of the Todo column in the project
-   :rtype: string
-
-
-.. py:function:: add_issue(project_name, template, repo, project, key)
-
-   Add an issue to a project based on a template
-
-   :param project_name: Name of the project, prefix on the issue name
-   :type project_name: string
-   :param template: Path to the template file for the issue body
-   :type template: string
-   :param repo: Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-   :type repo: string
-   :param project: ID to add the issue to, use column ID from `create_project()`
-   :type project: string
-   :param key: Github API token
-   :type key: string
-
-
-.. py:function:: generate_template(metadata, project_name, token, repo=None)
-
-   Generate a github project (classic) with issues for a curation project
-
-   :param metadata: Dataverse metadata from `get_metadata()`
-   :param folder_name: Name of the dropbox folder, used a a prefix for the project title
-   :type folder_name: string
-   :param token: Github API token
-   :type token: string
-   :param repo: Optional. Github repository to put the project in (e.g. QualitativeDataRepository/dvcurator-python)
-   :type repo: string
+   :param project_name: The name of the project to be created.
+   :type project_name: str
+   :param token: The GitHub API token for authentication.
+   :type token: str
+   :param repo: The repository where the project will be created. If not provided, the default repository will be used.
+   :type repo: str, optional
+   :return: A dictionary containing the response from the GitHub API.
+   :rtype: dict
+   :raises requests.exceptions.RequestException: If there is an error with the HTTP request.
 
 

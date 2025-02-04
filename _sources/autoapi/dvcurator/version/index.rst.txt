@@ -1,7 +1,15 @@
-:py:mod:`dvcurator.version`
-===========================
+dvcurator.version
+=================
 
 .. py:module:: dvcurator.version
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   dvcurator.version.version
 
 
 Module Contents
@@ -10,5 +18,4 @@ Module Contents
 .. py:data:: version
    :value: 'git-development'
 
-   
 

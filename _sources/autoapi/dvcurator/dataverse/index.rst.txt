@@ -1,15 +1,11 @@
-:py:mod:`dvcurator.dataverse`
-=============================
+dvcurator.dataverse
+===================
 
 .. py:module:: dvcurator.dataverse
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -19,6 +15,8 @@ Functions
    dvcurator.dataverse.download_dataset
 
 
+Module Contents
+---------------
 
 .. py:function:: get_metadata(doi, token=None, host=None)
 

@@ -1,15 +1,11 @@
-:py:mod:`dvcurator.rename`
-==========================
+dvcurator.rename
+================
 
 .. py:module:: dvcurator.rename
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -22,6 +18,8 @@ Functions
    dvcurator.rename.anonymize
 
 
+Module Contents
+---------------
 
 .. py:function:: project_name(citation)
 

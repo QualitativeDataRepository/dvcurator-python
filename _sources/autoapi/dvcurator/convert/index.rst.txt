@@ -1,21 +1,19 @@
-:py:mod:`dvcurator.convert`
-===========================
+dvcurator.convert
+=================
 
 .. py:module:: dvcurator.convert
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    dvcurator.convert.docx_pdf
 
 
+Module Contents
+---------------
 
 .. py:function:: docx_pdf(folder, extra=None)
 

@@ -1,15 +1,11 @@
-:py:mod:`dvcurator.readme`
-==========================
+dvcurator.readme
+================
 
 .. py:module:: dvcurator.readme
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,6 +13,8 @@ Functions
    dvcurator.readme.generate_readme
 
 
+Module Contents
+---------------
 
 .. py:function:: clean_html_tags(text)
 
@@ -29,7 +27,7 @@ Functions
 
 
 
-.. py:function:: generate_readme(metadata, folder, token=None)
+.. py:function:: generate_readme(metadata, folder, token=None, repo=None)
 
    Generate README.txt file. 
 

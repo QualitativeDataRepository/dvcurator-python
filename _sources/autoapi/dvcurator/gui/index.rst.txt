@@ -1,14 +1,11 @@
-:py:mod:`dvcurator.gui`
-=======================
+dvcurator.gui
+=============
 
 .. py:module:: dvcurator.gui
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,21 +13,27 @@ Classes
    dvcurator.gui.MainApp
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    dvcurator.gui.main
 
 
+Module Contents
+---------------
 
 .. py:class:: redirect_text(text_ctrl)
 
    Bases: :py:obj:`object`
 
+
    Redirect standard output to a text box in the GUI
+
+
+   .. py:attribute:: output
+
 
    .. py:method:: write(string)
 
@@ -38,16 +41,18 @@ Functions
    .. py:method:: flush()
 
 
-
 .. py:class:: MainApp(parent, *args, **kwargs)
 
    Bases: :py:obj:`tkinter.Frame`
 
+
    Frame widget which may contain other widgets and can have a 3D border.
+
 
    .. py:method:: disable_buttons()
 
       Disable most GUI buttons, for while an operation is in progress
+
 
 
    .. py:method:: enable_buttons()
@@ -55,9 +60,11 @@ Functions
       Re-enable most GUI buttons, for once an operation has finished
 
 
+
    .. py:method:: schedule_check(t)
 
       Check if an in-progress operation has finished after 1 second 
+
 
 
    .. py:method:: check_if_done(t)
@@ -65,9 +72,11 @@ Functions
       Enable buttons again if an operation is done, or run `schedule_check()` again
 
 
+
    .. py:method:: open_config()
 
       Manually select a config file 
+
 
 
    .. py:method:: load_config(path=None)
@@ -75,14 +84,17 @@ Functions
       Load the variables from a config file into the program
 
 
+
    .. py:method:: save_config_as()
 
       Manually save a config file (save-as)
 
 
+
    .. py:method:: save_config(path=None)
 
-      Save variables to a 
+      Save variables to a ini file
+
 
 
    .. py:method:: check_subfolder()
@@ -90,9 +102,11 @@ Functions
       Check if a folder in dropbox for the loaded project already exists
 
 
+
    .. py:method:: set_dropbox()
 
       Set the top-level Dropbox folder
+
 
 
    .. py:method:: set_subfolder()
@@ -100,9 +114,11 @@ Functions
       Manually set a Dropbox project subfolder, for when `check_subfolder()` can't detect it but a folder does exist
 
 
+
    .. py:method:: open_explorer()
 
       Open the Dropbox project subfolder in the native file explorer
+
 
 
    .. py:method:: load_citation()
@@ -110,9 +126,11 @@ Functions
       Load project metadata from Dataverse, mainly runs `get_citaiton()`
 
 
+
    .. py:method:: download_extract()
 
       Run `download_extract()`
+
 
 
    .. py:method:: make_github()
@@ -120,9 +138,11 @@ Functions
       Run `generate_template()`
 
 
+
    .. py:method:: reset_all()
 
       Unload project metadata
+
 
 
    .. py:method:: rename()
@@ -130,9 +150,11 @@ Functions
       Run `basic_rename()`
 
 
+
    .. py:method:: convert()
 
       Run `docx_pdf()`
+
 
 
    .. py:method:: set_metadata()
@@ -140,14 +162,17 @@ Functions
       Run `standard_metadata()`
 
 
+
    .. py:method:: create_readme()
 
       Run `generate_readme()`
 
 
+
    .. py:method:: anonymize()
 
       Run anonymization processes
+
 
 
    .. py:method:: close_window()
@@ -156,6 +181,62 @@ Functions
 
 
 
-.. py:function:: main()
+   .. py:attribute:: parent
 
+
+   .. py:attribute:: menubar
+
+
+   .. py:attribute:: filemenu
+
+
+   .. py:attribute:: editmenu
+
+
+   .. py:attribute:: github_org
+
+
+   .. py:attribute:: curation_repo
+
+
+   .. py:attribute:: dataverse_host
+
+
+   .. py:attribute:: doi
+
+
+   .. py:attribute:: doi_entry
+
+
+   .. py:attribute:: dv_token
+
+
+   .. py:attribute:: gh_token
+
+
+   .. py:attribute:: dropbox
+
+
+   .. py:attribute:: dropbox_entry
+
+
+   .. py:attribute:: cite_button
+
+
+   .. py:attribute:: download_button
+
+
+   .. py:attribute:: makeproject_button
+
+
+   .. py:attribute:: reset_button
+
+
+   .. py:attribute:: pb
+
+
+   .. py:attribute:: out
+
+
+.. py:function:: main()
 

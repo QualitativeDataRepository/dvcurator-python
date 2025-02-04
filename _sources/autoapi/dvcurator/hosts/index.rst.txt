@@ -1,7 +1,20 @@
-:py:mod:`dvcurator.hosts`
-=========================
+dvcurator.hosts
+===============
 
 .. py:module:: dvcurator.hosts
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   dvcurator.hosts.qdr_dataverse
+   dvcurator.hosts.github_org
+   dvcurator.hosts.curation_repo
+   dvcurator.hosts.qdr_doi_path
+   dvcurator.hosts.github_api
+   dvcurator.hosts.pkg_repo
 
 
 Module Contents
@@ -10,29 +23,24 @@ Module Contents
 .. py:data:: qdr_dataverse
    :value: 'https://data.qdr.syr.edu'
 
-   
-
-.. py:data:: qdr_doi_path
-
-   
-
-.. py:data:: github_api
-   :value: 'https://api.github.com'
-
-   
 
 .. py:data:: github_org
    :value: 'QualitativeDataRepository'
 
-   
 
 .. py:data:: curation_repo
    :value: 'QualitativeDataRepository/Project-Curation'
 
-   
+
+.. py:data:: qdr_doi_path
+   :value: 'https://data.qdr.syr.edu/dataset.xhtml?persistentId='
+
+
+.. py:data:: github_api
+   :value: 'https://api.github.com'
+
 
 .. py:data:: pkg_repo
    :value: 'QualitativeDataRepository/dvcurator-python'
 
-   
 

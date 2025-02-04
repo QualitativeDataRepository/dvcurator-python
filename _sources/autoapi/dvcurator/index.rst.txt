@@ -1,26 +1,25 @@
-:py:mod:`dvcurator`
-===================
+dvcurator
+=========
 
 .. py:module:: dvcurator
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   __main__/index.rst
-   convert/index.rst
-   dataverse/index.rst
-   fs/index.rst
-   github/index.rst
-   github_projectv2/index.rst
-   gui/index.rst
-   hosts/index.rst
-   pdf/index.rst
-   readme/index.rst
-   rename/index.rst
-   version/index.rst
+   /autoapi/dvcurator/__main__/index
+   /autoapi/dvcurator/convert/index
+   /autoapi/dvcurator/dataverse/index
+   /autoapi/dvcurator/fs/index
+   /autoapi/dvcurator/github/index
+   /autoapi/dvcurator/gui/index
+   /autoapi/dvcurator/hosts/index
+   /autoapi/dvcurator/pdf/index
+   /autoapi/dvcurator/readme/index
+   /autoapi/dvcurator/rename/index
+   /autoapi/dvcurator/version/index
 
 
