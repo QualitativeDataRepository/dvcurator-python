@@ -113,9 +113,9 @@ def create_project(dv, project_name, token, repo=None):
 	import requests, dvcurator.hosts, dvcurator.dataverse
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
 
-	if (search_existing(project_name, token, repo)):
-		print("Project already exists")
-		return
+	# if (search_existing(project_name, token, repo)):
+	# 	print("Project already exists")
+	# 	return
 
 	doi = dv['data']['latestVersion']['datasetPersistentId']
 	link = dvcurator.hosts.qdr_doi_path + doi
