@@ -117,10 +117,10 @@ def create_project(dv, project_name, token, repo=None):
 	# 	print("Project already exists")
 	# 	return
 
-	doi = dv['data']['latestVersion']['datasetPersistentId']
-	link = dvcurator.hosts.qdr_doi_path + doi
-	contact_info = 'Depositor: ' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
-	contact_info += 'DV link: ' + link
+	# doi = dv['data']['latestVersion']['datasetPersistentId']
+	# link = dvcurator.hosts.qdr_doi_path + doi
+	# contact_info = 'Depositor: ' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
+	# contact_info += 'DV link: ' + link
 
 
 	url = "https://api.github.com/repos/" + repo + "/dispatches"
@@ -133,8 +133,8 @@ def create_project(dv, project_name, token, repo=None):
 		"event_type": "trigger-event",
 		"client_payload": {
 			"title": project_name,
-			"desc": link,
-			"readme": contact_info
+			"desc": "Temporarily missing",
+			"readme": "temporarilty missing"
 		}
 	}
 
