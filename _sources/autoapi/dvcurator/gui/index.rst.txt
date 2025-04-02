@@ -135,7 +135,7 @@ Module Contents
 
    .. py:method:: make_github()
 
-      Run `generate_template()`
+      Run `create_project()`
 
 
 
