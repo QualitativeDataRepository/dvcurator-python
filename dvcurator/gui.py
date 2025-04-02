@@ -229,7 +229,7 @@ class MainApp(tk.Frame):
 
 	def make_github(self):
 		"""
-		Run `generate_template()`
+		Run `create_project()`
 		"""
 		if (not self.gh_token.get()):
 			print("Error: no github token specified")
@@ -239,7 +239,7 @@ class MainApp(tk.Frame):
 		self.disable_buttons()
 
 		t = threading.Thread(target=dvcurator.github.create_project, 
-			args=(self.project_name, self.gh_token.get(), self.curation_repo.get()))
+			args=(self.metadata, self.project_name, self.gh_token.get(), self.curation_repo.get()))
 
 		t.start()
 		self.schedule_check(t)

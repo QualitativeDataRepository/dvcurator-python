@@ -81,7 +81,15 @@ def search_existing(project_name, token=None, repo=None):
 		token = {'Authorization': "token " + token.strip()}
 		projects = requests.get(project_url + "?per_page=100", headers=token)
 
-	projects.raise_for_status()
+	try:
+		projects.raise_for_status()		
+	except requests.exceptions.HTTPError as http_err:
+		print(f"HTTP error occurred: {http_err}")
+		print(f"Response Content: {projects.content}")
+		return True
+	except Exception as err:
+		print(f"Other error occurred: {err}")
+		return True
 
 	# Take the first three words ("lastname - first-of-title") to search
 	project_name = ' '.join(project_name.split()[:3])
@@ -113,30 +121,41 @@ def create_project(dv, project_name, token, repo=None):
 	import requests, dvcurator.hosts, dvcurator.dataverse
 	repo = dvcurator.hosts.curation_repo if not repo else repo 
 
-	# if (search_existing(project_name, token, repo)):
-	# 	print("Project already exists")
-	# 	return
+	if (search_existing(project_name, token, repo)):
+		print("Error: Project already exists or search failed")
+		return
 
-	# doi = dv['data']['latestVersion']['datasetPersistentId']
-	# link = dvcurator.hosts.qdr_doi_path + doi
-	# contact_info = 'Depositor: ' + dvcurator.dataverse.get_citation(dv)['depositor'] + '\n'
-	# contact_info += 'DV link: ' + link
+	doi = dv['data']['latestVersion']['datasetPersistentId']
+	dataset_contact = dvcurator.dataverse.get_citation(dv)['datasetContact'][0]['datasetContactName']['value']
+	link = dvcurator.hosts.qdr_doi_path + doi
+	contact_info = 'Depositor: ' + dataset_contact + '\n'
+	contact_info += 'DV link: ' + link
 
+	print(f"Project Name: {project_name}")
+	print(f"Link: {link}")
+	print(f"Contact Info: {contact_info}")
 
-	url = "https://api.github.com/repos/" + repo + "/dispatches"
+	url = f"https://api.github.com/repos/{repo}/actions/workflows/new_project.yml/dispatches"
 	headers = {
-		"Accept": "application/vnd.github.everest-preview+json",
+		"Accept": "application/vnd.github.v3+json",
 		"Content-Type": "application/json",
+		"X-GitHub-Api-Version": "2022-11-28",
 		"Authorization": f"token {token}"
 	}
 	data = {
-		"event_type": "trigger-event",
-		"client_payload": {
+		"ref": "master",
+		"inputs": {
 			"title": project_name,
-			"desc": "Temporarily missing",
-			"readme": "temporarilty missing"
+			"desc": link,
+			"readme": contact_info
 		}
 	}
-
-	response = requests.post(url, headers=headers, json=data)
-	response.raise_for_status() 
+	
+	try:
+		response = requests.post(url, headers=headers, json=data)
+		response.raise_for_status()
+	except requests.exceptions.HTTPError as http_err:
+		print(f"HTTP error occurred: {http_err}")
+		print(f"Response Content: {response.content}")
+	except Exception as err:
+		print(f"Other error occurred: {err}")
