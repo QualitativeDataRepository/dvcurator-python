@@ -23,6 +23,54 @@ class redirect_text(object):
 	def flush(self):
 		pass
 
+# Add this new class after the redirect_text class and before MainApp
+class TokenConfig(tk.Toplevel):
+    """
+    Token configuration window for Dataverse and GitHub tokens
+    """
+    def __init__(self, parent):
+        tk.Toplevel.__init__(self, parent)
+        self.title("API Tokens")
+        
+        # Make window modal
+        self.transient(parent)
+        self.grab_set()
+        
+        # Create frame
+        frame = ttk.Frame(self, padding="10")
+        frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Dataverse token
+        ttk.Label(frame, text="Dataverse token:").grid(column=0, row=0, sticky=tk.W, pady=5)
+        self.dv_token = tk.StringVar(value=parent.dv_token.get())
+        ttk.Entry(frame, textvariable=self.dv_token, width=40).grid(column=1, row=0, padx=5)
+        
+        # GitHub token
+        ttk.Label(frame, text="GitHub token:").grid(column=0, row=1, sticky=tk.W, pady=5)
+        self.gh_token = tk.StringVar(value=parent.gh_token.get())
+        ttk.Entry(frame, textvariable=self.gh_token, width=40).grid(column=1, row=1, padx=5)
+        
+        # Buttons
+        button_frame = ttk.Frame(frame)
+        button_frame.grid(column=0, row=2, columnspan=2, pady=10)
+        
+        ttk.Button(button_frame, text="Save", command=self.save).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Cancel", command=self.cancel).pack(side=tk.LEFT, padx=5)
+        
+        self.parent = parent
+        
+        # Center the window
+        self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+                                 parent.winfo_rooty()+50))
+        
+    def save(self):
+        self.parent.dv_token.set(self.dv_token.get())
+        self.parent.gh_token.set(self.gh_token.get())
+        self.destroy()
+        
+    def cancel(self):
+        self.destroy()
+
 class MainApp(tk.Frame):
 	def disable_buttons(self):
 		"""
@@ -215,6 +263,7 @@ class MainApp(tk.Frame):
 		self.doi_entry.config(state="disabled")
 		self.download_button.config(state="normal")
 		self.makeproject_button.config(state="normal")
+		self.open_folder_button.config(state="normal")
 		self.menubar.entryconfig("File processing", state=tk.NORMAL)
 
 	def download_extract(self):
@@ -254,6 +303,7 @@ class MainApp(tk.Frame):
 		# Disable all other buttons
 		self.download_button.config(state="disabled")
 		self.makeproject_button.config(state="disabled")
+		self.open_folder_button.config(state="disabled")
 		self.menubar.entryconfig("File processing", state=tk.DISABLED)
 		self.out.delete('1.0', tk.END)
 
@@ -324,6 +374,10 @@ class MainApp(tk.Frame):
 			pass
 			
 		self.parent.destroy()
+		
+	def configure_tokens(self):
+		"""Open the token configuration window"""
+		TokenConfig(self)
 
 	def __init__(self, parent, *args, **kwargs):
 		"""
@@ -334,13 +388,15 @@ class MainApp(tk.Frame):
 		
 		# Start with the menu
 		self.menubar = tk.Menu(self)
-
+		
 		self.filemenu = tk.Menu(self.menubar, tearoff=False)
-		#self.filemenu.add_command(label="Save config", command=self.save_config)
+		self.filemenu.add_command(label="Configure tokens", command=self.configure_tokens)
+		self.filemenu.add_separator()
 		self.filemenu.add_command(label="Open config", command=self.open_config)
 		self.filemenu.add_command(label="Save config as", command=self.save_config_as)
+		self.filemenu.add_separator()
 		self.filemenu.add_command(label="Exit dvcurator", command=parent.destroy)
-		self.menubar.add_cascade(label="dvcurator", menu=self.filemenu)
+		self.menubar.add_cascade(label="DVCurator", menu=self.filemenu)
 
 		self.editmenu = tk.Menu(self.menubar, tearoff=False)
 		self.editmenu.add_command(label="Basic file rename", command=self.rename)
@@ -357,39 +413,34 @@ class MainApp(tk.Frame):
 		parent.config(menu=self.menubar)
 
 		# Settings
+		self.dv_token = tk.StringVar()
+		self.gh_token = tk.StringVar()
 		self.github_org = tk.StringVar()
 		self.curation_repo = tk.StringVar()
 		self.dataverse_host = tk.StringVar()
 		
 		settings = tk.Frame(self)
 
+		# Main boxes
 		self.doi=tk.StringVar()
 		doi_label = ttk.Label(settings, text="Persistent ID (DOI): ")
 		self.doi_entry = ttk.Entry(settings, textvariable=self.doi)
 		doi_label.grid(column=1, row=2)
 		self.doi_entry.grid(column=2, row=2)
-			
-		self.dv_token = tk.StringVar()
-		dv_label = ttk.Label(settings, text="Dataverse token: ")
-		dv_entry = ttk.Entry(settings, textvariable=self.dv_token)
-		dv_label.grid(column=1, row=3)
-		dv_entry.grid(column=2, row=3)
-			
-		self.gh_token = tk.StringVar()
-		gh_label = ttk.Label(settings, text="Github token: ")
-		gh_entry = ttk.Entry(settings, textvariable=self.gh_token)
-		gh_label.grid(column=1, row=4)
-		gh_entry.grid(column=2, row=4)
-		
+					
 		self.dropbox=tk.StringVar()
 		dropbox_label = ttk.Label(settings, text="QDR GA folder: ")
 		self.dropbox_entry = ttk.Button(settings, width=20, text="Select folder", command=self.set_dropbox)
 		dropbox_label.grid(column=1, row=5)
 		self.dropbox_entry.grid(column=2, row=5, sticky="w")
 
+		self.open_folder_button = ttk.Button(settings, width=20, text="Open project folder", 
+									   command=self.open_explorer, state="disabled")
+		self.open_folder_button.grid(column=2, row=6, sticky="w")
+
 		process = tk.Frame(self)
 		pb_width = 25
-		self.cite_button = ttk.Button(process, width=pb_width, text="(Re)load metadata", command=self.load_citation)
+		self.cite_button = ttk.Button(process, width=pb_width, text="Load metadata", command=self.load_citation)
 		self.cite_button.grid(row=1, column=1, sticky="e")
 		self.download_button = ttk.Button(process, width=pb_width, text="Download and extract", state="disabled", command=self.download_extract)
 		self.download_button.grid(row=2, column=1, sticky="e")
@@ -405,7 +456,7 @@ class MainApp(tk.Frame):
 		self.pb = ttk.Progressbar(self, orient="horizontal", length=300, mode="indeterminate")
 		self.pb.grid(column=1, row=2, columnspan=2, pady=3)
 
-		self.out = tk.Text(self, width=50, height=15,
+		self.out = tk.Text(self, width=70, height=15,
 			font=("Courier", "10"))
 		redir = redirect_text(self.out)
 		sys.stdout = redir
@@ -427,7 +478,6 @@ class MainApp(tk.Frame):
 
 		if os.path.exists(self.local_ini):
 			self.load_config(self.local_ini)		
-
 
 		# save config on exit
 		parent.protocol("WM_DELETE_WINDOW", self.close_window)
