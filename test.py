@@ -54,12 +54,18 @@ class TestDataverseAPI(unittest.TestCase):
 		self.assertTrue(os.path.isdir(path))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
 		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
-
 		self.assertTrue(os.path.exists(os.path.join(path, "README_VandeVusse-Mueller.txt")))
-	
 		# Try again, we should fail the second time
 		self.assertIsNone(dataverse.download_dataset(metadata, f.name))
+		f.cleanup()
 
+		# try a harder example, with messed up filenames
+		f = tempfile.TemporaryDirectory()
+		metadata = dataverse.get_metadata("doi:10.5064/F68G8HMM")
+		path = dataverse.download_dataset(metadata, f.name)
+		self.assertTrue(os.path.isdir(path))
+		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original Deposit.zip")))
+		self.assertTrue(os.path.exists(os.path.join(path, os.pardir, os.pardir, "Original metadata.json")))
 		f.cleanup()
 
 class TestGithubAPI(unittest.TestCase):
@@ -77,10 +83,28 @@ class TestGithubAPI(unittest.TestCase):
 class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
+		# test limiting to before the first colon and removing "Data for:"
 		metadata = dataverse.get_metadata("doi:10.5064/F6AQGERV")
 		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		self.assertEqual(rename.project_name(citation), "Haney - Child Support Adjudication")
+		# try the limiting to 5 words feature
+		metadata = dataverse.get_metadata("doi:10.5064/F6ZXIJS5")
+		citation = dataverse.get_citation(metadata)
+		self.assertIsNotNone(citation)
+		self.assertEqual(rename.project_name(citation), "Guastaferro - Adapting a Selective Parent-Focused Child")
+		# test special character removal
+		metadata = dataverse.get_metadata("doi:10.5064/F6MBCJ8M")
+		citation = dataverse.get_citation(metadata)
+		self.assertIsNotNone(citation)
+		self.assertEqual(rename.project_name(citation), "Berntzen - Monster or Hero Far-right Responses")
+		# make a temporary directory named the citation and test it exists
+		d = tempfile.TemporaryDirectory()
+		new_folder_name = rename.project_name(citation)
+		new_folder_path = os.path.join(d.name, new_folder_name, "QDR Prepared", "1_extract")
+		os.makedirs(new_folder_path)
+		self.assertTrue(os.path.exists(new_folder_path))  # Ensure it was successfully made
+		d.cleanup()
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()

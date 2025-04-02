@@ -24,13 +24,22 @@ def project_name(citation):
     # What did this line do?
     # title = re.match("^(.+?\\s){1,5}", title).group(0).rstrip()
     title = re.sub("^[^a-zA-Z]?", "", title) # get rid of any beginning non-letter chars
+    # limit to only the content before the first colon
     title = re.sub(":.+", '', title)
-    
+    # if there's more than 5 words, limit it to the first 5
+    words = title.split()
+    if len(words) > 5:
+        title = ' '.join(words[:5])
+
     folder_name = author1_last_name + " - " + title
 
-    special_characters = ['!','#','$','%', '&','@','[',']',']','_',':',';',"'"]
-    for i in special_characters:
-        folder_name = folder_name.replace(i,'')
+    # remove special characters that are not allowed in folder names
+    invalid_chars = r'[<>:"/\\|?*\'\[\]\{\}!#$%&@;=+,]'
+    folder_name = re.sub(invalid_chars, '', folder_name)
+
+    # replace multiple spaces with one space
+    folder_name = re.sub(r'\s+', ' ', folder_name).strip()
+    folder_name = folder_name.strip()  # Remove leading/trailing whitespace
         
     return folder_name
 
