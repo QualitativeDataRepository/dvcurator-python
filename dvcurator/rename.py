@@ -15,7 +15,7 @@ def project_name(citation):
     :rtype: String
 
     """
-    import re
+    import re, unicodedata
 
     author1_last_name = citation['author'][0]['authorName']['value'].split(', ')[0]
     title = citation['title']
@@ -40,6 +40,10 @@ def project_name(citation):
     # replace multiple spaces with one space
     folder_name = re.sub(r'\s+', ' ', folder_name).strip()
     folder_name = folder_name.strip()  # Remove leading/trailing whitespace
+
+    # revert accented characters to their ascii equivalents. 
+    # also totally strips unicode characters
+    folder_name = unicodedata.normalize('NFKD', folder_name).encode('ascii', 'ignore').decode('ascii')
         
     return folder_name
 

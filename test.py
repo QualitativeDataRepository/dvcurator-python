@@ -37,8 +37,12 @@ class TestFs(unittest.TestCase):
 class TestDataverseAPI(unittest.TestCase):
 	
 	def test_citation(self):
+		# these should all fail
 		self.assertIsNone(dataverse.get_metadata("foobar", host=harvard_host))
 		self.assertIsNone(dataverse.get_metadata("doi:foobar", host=harvard_host))
+		self.assertIsNone(dataverse.get_metadata("doi:10.5064/F6FHTB9H"))
+		self.assertIsNone(dataverse.get_metadata("doi:doi:doi:10.5064/F6FHTB9E"))
+		# now let's test a success case
 		metadata = dataverse.get_metadata(harvard_doi, host=harvard_host)
 		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
@@ -76,6 +80,7 @@ class TestGithubAPI(unittest.TestCase):
 		
 	def test_search(self):
 		self.assertTrue(github.search_existing("Karcher - Anonymous Peer Review", repo="QualitativeDataRepository/testing-demos"))
+		self.assertFalse(github.search_existing("Nobody - Project that doesnt exist", repo="QualitativeDataRepository/testing-demos"))
 
 	def test_version(self):
 		self.assertFalse(github.check_version())
@@ -105,6 +110,11 @@ class TestRename(unittest.TestCase):
 		os.makedirs(new_folder_path)
 		self.assertTrue(os.path.exists(new_folder_path))  # Ensure it was successfully made
 		d.cleanup()
+		# test accented character removal
+		metadata = dataverse.get_metadata("doi:10.5064/F6FHTB9E")
+		citation = dataverse.get_citation(metadata)
+		self.assertIsNotNone(citation)
+		self.assertEqual(rename.project_name(citation), "Rabello Sodre - Memories about Colegio Sao Vicente")
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()

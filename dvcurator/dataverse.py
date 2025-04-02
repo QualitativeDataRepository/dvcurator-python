@@ -15,12 +15,20 @@ def get_metadata(doi, token=None, host=None):
 	:return: Metadata block from Dataverse API, or None if error
 	:rtype: list[str]
 	"""
-	import requests, dvcurator.hosts
+	import re, requests, dvcurator.hosts
 
 	doi = doi.strip()
 	if not doi.startswith("doi:"):
 		print("Error: DOIs should start with \"doi:\"")
 		return None
+	
+	# check for invalid DOI
+	doi_suffix = doi[4:]  # Remove the "doi:" prefix
+	doi_pattern = r"^10\.\d{4,9}/[-._;()/:A-Z0-9]+$"
+	if not re.match(doi_pattern, doi_suffix, re.IGNORECASE):
+		print(f"Error: Invalid DOI format: {doi}")
+		return None
+
 	
 	# Scrape data and metadata from dataverse
 	host = dvcurator.hosts.qdr_dataverse if not host else host 
