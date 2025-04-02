@@ -11,7 +11,6 @@ This program executes four main tasks:
 2. Downloading the .zip file for the full data project to the Original Deposit folder and an unzipped version to QDR Prepared for further Curation
 3. Creating github issues for standard curation tasks and associating them with a github Project for the curation of the data project.
 4. Automatically setting metadata for PDF files based on Dataverse metadata
-5. Anoynymizing PDFs by stripping the beginning of filenames and metadata
 
 # Installing dvcurator-python
 
@@ -31,22 +30,41 @@ Some functions, like downloading public datasets, will operate without API token
 
 # Tokens
 
-To be fully functional, the following parameters must be set:
-* A **project DOI** in the form `doi:10.1234/abcdef`. Once metadata is loaded for that DOI, use the "Reset dvcurator" button to input a different DOI.  
-* A **github token**
-  * To create a github token, go to your github developer settings/personal access tokens at https://github.com/settings/tokens
-  * Click on "Generate New Token", and select "Generate New Token (classic)"
-  * Give the token a recognizable name such as "QDR Curation" and check the following boxes:
-    * repo
-    * admin:org 
-    * project
-  * Click "Generate Token" at the bottom of the screen. Make sure to note down your token and keep it safe (you won't be able to access this later)
-* A **dataverse API key** -- this must be for the dataverse installation you will work with.
-  * Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=apiTokenTab (substitute the domain if not using QDR)
- 
- Both of these tokens are entered on into the main window of dvcurator, under "Github token" and "Dataverse token" respectively.
+## Creating a Dataverse API key
+  - This must be for the dataverse installation you will work with.
+  - Find or create this under https://data.qdr.syr.edu/dataverseuser.xhtml?selectTab=apiTokenTab (substitute the domain if not using QDR)
 
-Other parameters are:
+## Creating a Fine-Grained GitHub Personal Access Token
+
+1. Go to your GitHub account settings
+   - Click your profile photo in the top right
+   - Select **Settings**
+
+2. Navigate to Developer settings
+   - Scroll to the bottom of the left sidebar
+   - Click **Developer settings**
+   - Select **Personal access tokens**
+   - Click **Fine-grained tokens**
+   - Click **Generate new token**
+
+3. Configure token settings
+   - Give your token a descriptive name (e.g., "DVCurator Access")
+   - Choose "QualitativeDataRepository" as the resource owner
+   - Select the repository "Project-Curation"
+   - Under "Repository permissions", enable:
+     - [x] **Actions** (Read and write)
+       - Needed for triggering workflow dispatches
+     - [x] **Issues** (Read)
+       - Needed for checking existing tickets, to make sure we don't create duplicates
+
+4. Generate and save the token
+   - Click **Request** at the bottom and ask the admin to approve
+   - **IMPORTANT**: Copy and save the token immediately
+
+5. Using the token
+   - In DVCurator, paste the token in the GitHub token field (under "DVCurator -> Configure Tokens")
+
+# Other parameters
 - QDR GA folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox, but does not necessarily need to be. For QDR GA's this should very literally be the "QDR GA" folder within the QDR Dropbox.
 
 ## For developers (i.e. not most users!)
