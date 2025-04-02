@@ -10,6 +10,7 @@ Classes
 .. autoapisummary::
 
    dvcurator.gui.redirect_text
+   dvcurator.gui.TokenConfig
    dvcurator.gui.MainApp
 
 
@@ -39,6 +40,29 @@ Module Contents
 
 
    .. py:method:: flush()
+
+
+.. py:class:: TokenConfig(parent)
+
+   Bases: :py:obj:`tkinter.Toplevel`
+
+
+   Token configuration window for Dataverse and GitHub tokens
+
+
+   .. py:attribute:: dv_token
+
+
+   .. py:attribute:: gh_token
+
+
+   .. py:attribute:: parent
+
+
+   .. py:method:: save()
+
+
+   .. py:method:: cancel()
 
 
 .. py:class:: MainApp(parent, *args, **kwargs)
@@ -181,6 +205,12 @@ Module Contents
 
 
 
+   .. py:method:: configure_tokens()
+
+      Open the token configuration window
+
+
+
    .. py:attribute:: parent
 
 
@@ -191,6 +221,12 @@ Module Contents
 
 
    .. py:attribute:: editmenu
+
+
+   .. py:attribute:: dv_token
+
+
+   .. py:attribute:: gh_token
 
 
    .. py:attribute:: github_org
@@ -208,16 +244,13 @@ Module Contents
    .. py:attribute:: doi_entry
 
 
-   .. py:attribute:: dv_token
-
-
-   .. py:attribute:: gh_token
-
-
    .. py:attribute:: dropbox
 
 
    .. py:attribute:: dropbox_entry
+
+
+   .. py:attribute:: open_folder_button
 
 
    .. py:attribute:: cite_button

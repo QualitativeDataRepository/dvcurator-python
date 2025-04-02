@@ -41,7 +41,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.gui.redirect_text" title="dvcurator.gui.redirect_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">redirect_text</span></code></a></p></td>
 <td><p>Redirect standard output to a text box in the GUI</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.gui.MainApp" title="dvcurator.gui.MainApp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainApp</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.gui.TokenConfig" title="dvcurator.gui.TokenConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenConfig</span></code></a></p></td>
+<td><p>Token configuration window for Dataverse and GitHub tokens</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.gui.MainApp" title="dvcurator.gui.MainApp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainApp</span></code></a></p></td>
 <td><p>Frame widget which may contain other widgets and can have a 3D border.</p></td>
 </tr>
 </tbody>
@@ -77,6 +80,38 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="dvcurator.gui.redirect_text.flush">
 <span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.redirect_text.flush" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dvcurator.gui.</span></span><span class="sig-name descname"><span class="pre">TokenConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.TokenConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tkinter.Toplevel</span></code></p>
+<p>Token configuration window for Dataverse and GitHub tokens</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig.dv_token">
+<span class="sig-name descname"><span class="pre">dv_token</span></span><a class="headerlink" href="#dvcurator.gui.TokenConfig.dv_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig.gh_token">
+<span class="sig-name descname"><span class="pre">gh_token</span></span><a class="headerlink" href="#dvcurator.gui.TokenConfig.gh_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig.parent">
+<span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#dvcurator.gui.TokenConfig.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.TokenConfig.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.TokenConfig.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.TokenConfig.cancel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -218,6 +253,12 @@
 <dd><p>Save config before killing window</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.configure_tokens">
+<span class="sig-name descname"><span class="pre">configure_tokens</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.gui.MainApp.configure_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the token configuration window</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dvcurator.gui.MainApp.parent">
 <span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.parent" title="Permalink to this definition">¶</a></dt>
@@ -236,6 +277,16 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dvcurator.gui.MainApp.editmenu">
 <span class="sig-name descname"><span class="pre">editmenu</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.editmenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.dv_token">
+<span class="sig-name descname"><span class="pre">dv_token</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.dv_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.gh_token">
+<span class="sig-name descname"><span class="pre">gh_token</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.gh_token" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -264,16 +315,6 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="dvcurator.gui.MainApp.dv_token">
-<span class="sig-name descname"><span class="pre">dv_token</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.dv_token" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dvcurator.gui.MainApp.gh_token">
-<span class="sig-name descname"><span class="pre">gh_token</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.gh_token" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="dvcurator.gui.MainApp.dropbox">
 <span class="sig-name descname"><span class="pre">dropbox</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.dropbox" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -281,6 +322,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dvcurator.gui.MainApp.dropbox_entry">
 <span class="sig-name descname"><span class="pre">dropbox_entry</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.dropbox_entry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dvcurator.gui.MainApp.open_folder_button">
+<span class="sig-name descname"><span class="pre">open_folder_button</span></span><a class="headerlink" href="#dvcurator.gui.MainApp.open_folder_button" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
