@@ -137,7 +137,7 @@ class MainApp(tk.Frame):
 		self.gh_token.set(config['default']['github_token'])
 		self.dropbox.set(config['default']['dropbox'])
 		self.dropbox_entry.config(text=os.path.split(self.dropbox.get())[1])
-		print("Loaded settings: " + path)
+		print("Loaded settings: " + os.path.basename(path))
 		print("Curation repo: " + self.curation_repo.get())
 
 	# function to save settings as .ini file

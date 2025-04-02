@@ -131,10 +131,6 @@ def create_project(dv, project_name, token, repo=None):
 	contact_info = 'Depositor: ' + dataset_contact + '\n'
 	contact_info += 'DV link: ' + link
 
-	print(f"Project Name: {project_name}")
-	print(f"Link: {link}")
-	print(f"Contact Info: {contact_info}")
-
 	url = f"https://api.github.com/repos/{repo}/actions/workflows/new_project.yml/dispatches"
 	headers = {
 		"Accept": "application/vnd.github.v3+json",
@@ -159,3 +155,5 @@ def create_project(dv, project_name, token, repo=None):
 		print(f"Response Content: {response.content}")
 	except Exception as err:
 		print(f"Other error occurred: {err}")
+
+	print("Project creation request sent successfully.")
