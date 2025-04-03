@@ -16,7 +16,7 @@ This program executes four main tasks:
 
 Most users will want to use the applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). The release gets built by pushing to a new tag.
 
-*NOTE:* Syracuse University office computers cannot run this program directly. You should download the [SU Lab Install.bat](https://github.com/QualitativeDataRepository/dvcurator-python/blob/master/SU%20Lab%20Install.bat) file (right click "Raw" and the top and Save Link As), and run that instead. This will install the program properly and create a shortcut on your desktop.
+*NOTE:* Syracuse University office computers cannot run this program directly because of security policies. You should download the [SU Lab Install.ps1](https://github.com/QualitativeDataRepository/dvcurator-python/blob/master/SU%20Lab%20Install.ps1) file (right click "Raw" and the top and Save Link As), and run that instead by right-clicking and selecting "Run with PowerShell". This will install the program properly and create a shortcut on your desktop.
 
 # Running dvcurator-python
 
