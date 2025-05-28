@@ -59,6 +59,7 @@ Some functions, like downloading public datasets, will operate without API token
 
 4. Generate and save the token
    - Click **Request** at the bottom and ask the admin to approve
+       - Admins: [Approve the token here](https://github.com/organizations/QualitativeDataRepository/settings/personal-access-token-requests)   
    - **IMPORTANT**: Copy and save the token immediately
 
 5. Using the token
