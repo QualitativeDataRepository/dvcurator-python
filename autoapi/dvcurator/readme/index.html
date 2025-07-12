@@ -41,7 +41,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.readme.clean_html_tags" title="dvcurator.readme.clean_html_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_html_tags</span></code></a>(text)</p></td>
 <td><p>Remove all HTML tags from text</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.readme.generate_readme" title="dvcurator.readme.generate_readme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_readme</span></code></a>(metadata, folder[, token, repo])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.readme.generate_readme" title="dvcurator.readme.generate_readme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_readme</span></code></a>(metadata, folder[, token, key, repo])</p></td>
 <td><p>Generate README.txt file.</p></td>
 </tr>
 </tbody>
@@ -68,15 +68,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.readme.generate_readme">
-<span class="sig-prename descclassname"><span class="pre">dvcurator.readme.</span></span><span class="sig-name descname"><span class="pre">generate_readme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.readme.generate_readme" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">dvcurator.readme.</span></span><span class="sig-name descname"><span class="pre">generate_readme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.readme.generate_readme" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate README.txt file.</p>
-<p>This function uses the template assets/README.txt</p>
+<p>This function uses the file README_template.txt in the repository root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metadata</strong> (<em>list</em>) – Project metadata from <cite>get_metadata()</cite></p></li>
 <li><p><strong>folder</strong> (<em>String</em>) – Path to QDR Prepared folder for project</p></li>
 <li><p><strong>token</strong> (<em>string</em>) – Dataverse token (required if the project is unpublished)</p></li>
+<li><p><strong>key</strong> (<em>String</em><em> or </em><em>None</em>) – Github API key, or None for public repository</p></li>
+<li><p><strong>repo</strong> (<em>String</em><em> or </em><em>None</em>) – Repository to use for the README template, defaults to dvcurator.hosts.curation_repo</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

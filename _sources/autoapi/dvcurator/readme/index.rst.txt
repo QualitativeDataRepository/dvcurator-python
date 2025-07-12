@@ -27,11 +27,11 @@ Module Contents
 
 
 
-.. py:function:: generate_readme(metadata, folder, token=None, repo=None)
+.. py:function:: generate_readme(metadata, folder, token=None, key=None, repo=None)
 
    Generate README.txt file. 
 
-   This function uses the template assets/README.txt
+   This function uses the file README_template.txt in the repository root.
 
    :param metadata: Project metadata from `get_metadata()`
    :type metadata: list
@@ -39,6 +39,10 @@ Module Contents
    :type folder: String
    :param token: Dataverse token (required if the project is unpublished)
    :type token: string
+   :param key: Github API key, or None for public repository
+   :type key: String or None
+   :param repo: Repository to use for the README template, defaults to dvcurator.hosts.curation_repo
+   :type repo: String or None
 
    :return: Path to newly generated README file
    :rtype: string
