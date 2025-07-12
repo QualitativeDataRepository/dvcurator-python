@@ -350,7 +350,7 @@ class MainApp(tk.Frame):
 
 		self.disable_buttons()
 		t = threading.Thread(target=dvcurator.readme.generate_readme, 
-			args=(self.metadata, os.path.join(self.subfolder_path, "QDR Prepared"), self.dv_token.get(), self.curation_repo.get()))
+			args=(self.metadata, os.path.join(self.subfolder_path, "QDR Prepared"), self.dv_token.get(), self.gh_token.get(), self.curation_repo.get()))
 		t.start()
 		self.schedule_check(t)
 
@@ -473,8 +473,16 @@ class MainApp(tk.Frame):
 			parent.iconbitmap(bitmap=icon)
 		else:
 			self.local_ini = os.path.join(os.getcwd(), "dvcurator.ini")
-			from pkg_resources import resource_filename
-			icon = resource_filename("dvcurator", "assets/qdr.ico")
+			try:
+                # Modern approach using importlib.resources
+				from importlib import resources
+				with resources.path("dvcurator", "assets") as assets_path:
+					icon = str(assets_path / "qdr.ico")
+			except ImportError:
+				# Fallback for Python < 3.9
+				from importlib_resources import files
+				icon = str(files("dvcurator") / "assets" / "qdr.ico")
+			parent.iconbitmap(bitmap=icon)
 
 		if os.path.exists(self.local_ini):
 			self.load_config(self.local_ini)		

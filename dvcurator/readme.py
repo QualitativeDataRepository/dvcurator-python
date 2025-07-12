@@ -13,11 +13,11 @@ def clean_html_tags(text):
     clean_text = re.sub(tags, '', text)
     return clean_text
 
-def generate_readme(metadata, folder, token=None, repo=None):
+def generate_readme(metadata, folder, token=None, key=None, repo=None):
     """
     Generate README.txt file. 
     
-    This function uses the template assets/README.txt
+    This function uses the file README_template.txt in the repository root.
 
     :param metadata: Project metadata from `get_metadata()`
     :type metadata: list
@@ -25,6 +25,10 @@ def generate_readme(metadata, folder, token=None, repo=None):
     :type folder: String
     :param token: Dataverse token (required if the project is unpublished)
     :type token: string
+    :param key: Github API key, or None for public repository
+    :type key: String or None
+    :param repo: Repository to use for the README template, defaults to dvcurator.hosts.curation_repo
+    :type repo: String or None
 
     :return: Path to newly generated README file
     :rtype: string
@@ -78,14 +82,22 @@ def generate_readme(metadata, folder, token=None, repo=None):
         'files': dvcurator.fs.recursive_scan(folder) #"\n".join(os.listdir(folder))
     }
 
-    # the location of the template differs if this is a compiled pyinstaller file or run directly
-    
+
     ## Download readme template from github
+
+    
     host = "https://raw.githubusercontent.com/"
     repo = dvcurator.hosts.curation_repo if not repo else repo
     readme_url = host + repo + "/refs/heads/master/README_template.txt"
 
-    response = requests.get(readme_url)
+    if (not key):
+        print("No github token set -- this will fail on private repo")
+        response = requests.get(readme_url)
+    else:
+        print("Trying to download README template from private repository...")
+        key = {'Authorization': "token " + key.strip()}
+        response = requests.get(readme_url, headers=key)
+
     response.raise_for_status()
     readme_template = response.text
     print("Downloaded README template...")

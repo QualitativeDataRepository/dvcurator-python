@@ -54,6 +54,8 @@ Some functions, like downloading public datasets, will operate without API token
    - Under "Repository permissions", enable:
      - [x] **Actions** (Read and write)
        - Needed for triggering workflow dispatches
+     - [x] **Contents** (Read)
+       - Needed to download the README template  
      - [x] **Issues** (Read)
        - Needed for checking existing tickets, to make sure we don't create duplicates
 
