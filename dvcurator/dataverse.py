@@ -122,7 +122,7 @@ def download_dataset(metadata, folder, token=None, host=None):
 
 	# Write metadata
 	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
-		json.dump(metadata['data']['latestVersion']['files'], outfile, indent=4)
+		json.dump(metadata['data']['latestVersion'], outfile, indent=4)
 
 	# Write the zip file
 	doi = metadata['data']['latestVersion']['datasetPersistentId']
