@@ -8,11 +8,14 @@ Releases are driven by tags: pushing a "v*" tag triggers
 builds the Windows executable with pyinstaller, and opens a DRAFT release with
 the .exe attached.
 
-This script does the checking and the tagging. It deliberately does not push
-anything -- it prints the commands to run once you have looked the tag over.
+This script checks the repository over, tags it, and pushes, which is what
+starts the build. It confirms before pushing, since that is the point of no
+return.
 
     python release.py v1.1.3
     python release.py 1.1.3 --skip-tests
+    python release.py v1.1.3 --yes        # don't ask before pushing
+    python release.py v1.1.3 --no-push    # tag only, push it yourself
 """
 
 import argparse
@@ -22,6 +25,7 @@ import subprocess
 import sys
 
 RELEASES = "https://github.com/QualitativeDataRepository/dvcurator-python/releases"
+ACTIONS = "https://github.com/QualitativeDataRepository/dvcurator-python/actions"
 
 def fail(message):
     """Print an error and stop, leaving the repository as we found it"""
@@ -150,12 +154,66 @@ def run_tests():
 
     print("Tests passed.")
 
+def confirm_push(version, ahead):
+    """
+    Last check before the irreversible part
+
+    :param version: Tag about to be pushed
+    :type version: String
+    :param ahead: How many commits master is ahead of origin
+    :type ahead: int
+    :return: Whether to go ahead
+    :rtype: boolean
+    """
+    print("\nAbout to push:")
+    if ahead:
+        print("  master (" + str(ahead) + " commit(s))")
+    print("  " + version + "  -- this starts the build")
+
+    try:
+        answer = input("\nPush now? [y/N] ").strip().lower()
+    except EOFError:
+        # No one there to ask, so don't assume yes
+        return False
+
+    return answer in ("y", "yes")
+
+def push(version, ahead):
+    """
+    Push master if it's ahead, then the tag. Pushing the tag starts the build.
+
+    :param version: Tag to push
+    :type version: String
+    :param ahead: How many commits master is ahead of origin
+    :type ahead: int
+    """
+    step("Pushing")
+
+    # master first, or the release gets built from commits that aren't on it
+    if ahead:
+        result = run_git("push", "origin", "master")
+        if (result.returncode != 0):
+            fail("Couldn't push master:\n" + result.stderr.strip() + "\n\n"
+                "Nothing else was pushed. " + version + " is still only local -- "
+                "remove it with 'git tag -d " + version + "' if you need to start over.")
+        print("Pushed master.")
+
+    result = run_git("push", "origin", version)
+    if (result.returncode != 0):
+        fail("Couldn't push " + version + ":\n" + result.stderr.strip() + "\n\n"
+            "The tag is still local. Remove it with 'git tag -d " + version + "'.")
+    print("Pushed " + version + ".")
+
 def main():
     parser = argparse.ArgumentParser(
         description="Check the repository over and tag a new dvcurator release.")
     parser.add_argument("version", help="version to tag, e.g. v1.1.3")
     parser.add_argument("--skip-tests", action="store_true",
         help="don't run the test suite first")
+    parser.add_argument("--yes", "-y", action="store_true",
+        help="don't ask for confirmation before pushing")
+    parser.add_argument("--no-push", action="store_true",
+        help="create the tag but leave pushing to you")
     args = parser.parse_args()
 
     # Always work from the repository, not wherever the shell happens to be
@@ -177,17 +235,23 @@ def main():
     git("tag", "-a", version, "-m", "dvcurator " + version)
     print("Created " + version + " at " + git("rev-parse", "--short", "HEAD"))
 
-    print("\nNothing has been pushed.\n")
-    print("To release:")
-    if ahead:
-        print("  git push origin master")
-    print("  git push origin " + version)
-    print("\nThat starts the build. When it finishes it leaves a DRAFT release:")
+    if (args.no_push or not (args.yes or confirm_push(version, ahead))):
+        print("\nNothing pushed. To do it yourself:")
+        if ahead:
+            print("  git push origin master")
+        print("  git push origin " + version)
+        print("\nOr drop the tag again with: git tag -d " + version)
+        return
+
+    push(version, ahead)
+
+    print("\nThe build is running:")
+    print("  " + ACTIONS)
+    print("\nWhen it finishes it leaves a DRAFT release:")
     print("  " + RELEASES)
     print("\nPublish the draft. 'SU Lab Install.ps1' resolves /releases/latest, which")
     print("ignores drafts, so an unpublished release quietly keeps handing out the")
     print("previous version.")
-    print("\nTo undo the tag before pushing: git tag -d " + version)
 
 if __name__ == "__main__":
     main()

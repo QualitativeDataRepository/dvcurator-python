@@ -158,16 +158,13 @@ that has the requirements installed -- e.g. `.venv\Scripts\python release.py v1.
 checks the dependencies are importable before running anything and tells you what to
 install if they aren't.
 
-The script does not push. It prints the commands to run once you're happy with the tag:
-
-```
-git push origin master
-git push origin v1.1.3
-```
-
-Push `master` before the tag if you have unreleased commits, or the release gets built
-from commits that aren't on the branch yet. To undo a tag before pushing it,
+It then shows you what it's about to push and asks before doing it. `--yes` skips the
+question; `--no-push` creates the tag and stops, printing the commands so you can push by
+hand. Answering no leaves the tag in place, which you can drop again with
 `git tag -d v1.1.3`.
+
+If master has commits that aren't on origin yet, it pushes the branch before the tag --
+otherwise the release gets built from commits that aren't on the branch.
 
 **Then publish the draft release.** This is easy to forget and fails quietly:
 `SU Lab Install.ps1` resolves `/releases/latest`, which ignores drafts, so until you
