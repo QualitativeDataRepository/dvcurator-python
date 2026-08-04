@@ -64,13 +64,23 @@ Step "Releasing $Version"
 
 Step "Checking the working tree"
 
-$dirty = git status --porcelain
+# Only tracked changes matter: those are the difference between the working tree
+# and the commit we are about to tag
+$modified = git status --porcelain --untracked-files=no
 if ($LASTEXITCODE -ne 0) {
     Fail "git status failed. Is this a git repository?"
 }
-if ($dirty) {
-    $dirty | ForEach-Object { Write-Host "  $_" }
-    Fail "Working tree is not clean. Commit or stash before releasing."
+if ($modified) {
+    $modified | ForEach-Object { Write-Host "  $_" }
+    Fail "Working tree has uncommitted changes. Commit or stash before releasing."
+}
+
+# Untracked files aren't in the commit, so they don't block the release. Worth
+# pointing out though, in case one of them was meant to be part of it
+$untracked = git ls-files --others --exclude-standard
+if ($untracked) {
+    Write-Host "Untracked files, not part of this release:" -ForegroundColor Yellow
+    $untracked | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
 }
 
 $branch = (git rev-parse --abbrev-ref HEAD).Trim()
