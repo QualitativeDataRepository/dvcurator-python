@@ -1,7 +1,8 @@
-pikepdf
+# Runtime
 requests
-simplejson
-pyinstaller
+pikepdf
 docx2pdf
-gql
-aiohttp
+pywin32; sys_platform == "win32"
+
+# Building the release binaries (see .github/workflows/build.yml)
+pyinstaller
