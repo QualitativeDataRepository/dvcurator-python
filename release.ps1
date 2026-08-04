@@ -77,10 +77,14 @@ if ($modified) {
 
 # Untracked files aren't in the commit, so they don't block the release. Worth
 # pointing out though, in case one of them was meant to be part of it
-$untracked = git ls-files --others --exclude-standard
-if ($untracked) {
+$untracked = @(git ls-files --others --exclude-standard)
+if ($untracked.Count -gt 0) {
     Write-Host "Untracked files, not part of this release:" -ForegroundColor Yellow
-    $untracked | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+    $untracked | Select-Object -First 10 | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+    if ($untracked.Count -gt 10) {
+        # An un-ignored directory can run to thousands of files
+        Write-Host "  ... and $($untracked.Count - 10) more" -ForegroundColor Yellow
+    }
 }
 
 $branch = (git rev-parse --abbrev-ref HEAD).Trim()
