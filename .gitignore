@@ -3,5 +3,5 @@ build/
 dvcurator/__pycache__/
 dvcurator.egg-info/
 dvcurator.ini
-
+.venv/
 docs/_build/
