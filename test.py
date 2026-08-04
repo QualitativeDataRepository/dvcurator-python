@@ -21,6 +21,20 @@ class TestFs(unittest.TestCase):
 
 		f.cleanup()
 
+	def test_older_folder(self):
+		f = tempfile.TemporaryDirectory()
+		older = os.path.join(f.name, "QDR Project - Rabello Sodre - Memories about Colegio")
+		os.makedirs(older)
+		# a folder from before the "Lastname - YYYYMMDD" convention still gets found
+		self.assertEqual(fs.check_dropbox(f.name, "Rabello Sodre - 20240402"), os.path.normpath(older))
+		self.assertFalse(fs.check_dropbox(f.name, "Somebody - 20240402"))
+
+		# ambiguous: don't guess between two folders for the same author
+		os.makedirs(os.path.join(f.name, "QDR Project - Rabello Sodre - Another project"))
+		self.assertFalse(fs.check_dropbox(f.name, "Rabello Sodre - 20240402"))
+
+		f.cleanup()
+
 	def test_new_step(self):
 		self.assertFalse(fs.copy_new_step("/notarealfolder", "test"))
 
@@ -47,6 +61,13 @@ class TestDataverseAPI(unittest.TestCase):
 		citation = dataverse.get_citation(metadata)
 		self.assertIsNotNone(citation)
 		self.assertEqual(citation['title'], "Replication Data for: Data policies of highly-ranked social science journals")
+
+	def test_deposit_date(self):
+		metadata = dataverse.get_metadata(qdr_doi)
+		self.assertEqual(dataverse.get_deposit_date(metadata), "20210803")
+		# this one only records a year, so we fall back on the create time
+		metadata = dataverse.get_metadata("doi:10.5064/F68G8HMM")
+		self.assertEqual(dataverse.get_deposit_date(metadata), "20191021")
 
 	def test_biblio(self):
 		self.assertTrue(dataverse.get_biblio_citation(qdr_doi).startswith("VandeVusse"))
@@ -88,33 +109,24 @@ class TestGithubAPI(unittest.TestCase):
 class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
-		# test limiting to before the first colon and removing "Data for:"
+		# name is "Lastname - YYYYMMDD", from the Deposit Date
 		metadata = dataverse.get_metadata("doi:10.5064/F6AQGERV")
-		citation = dataverse.get_citation(metadata)
-		self.assertIsNotNone(citation)
-		self.assertEqual(rename.project_name(citation), "Haney - Child Support Adjudication")
-		# try the limiting to 5 words feature
+		self.assertEqual(rename.project_name(metadata), "Haney - 20220608")
 		metadata = dataverse.get_metadata("doi:10.5064/F6ZXIJS5")
-		citation = dataverse.get_citation(metadata)
-		self.assertIsNotNone(citation)
-		self.assertEqual(rename.project_name(citation), "Guastaferro - Adapting a Selective Parent-Focused Child")
+		self.assertEqual(rename.project_name(metadata), "Guastaferro - 20240326")
 		# test special character removal
 		metadata = dataverse.get_metadata("doi:10.5064/F6MBCJ8M")
-		citation = dataverse.get_citation(metadata)
-		self.assertIsNotNone(citation)
-		self.assertEqual(rename.project_name(citation), "Berntzen - Monster or Hero Far-right Responses")
+		self.assertEqual(rename.project_name(metadata), "Berntzen - 20210423")
 		# make a temporary directory named the citation and test it exists
 		d = tempfile.TemporaryDirectory()
-		new_folder_name = rename.project_name(citation)
+		new_folder_name = rename.project_name(metadata)
 		new_folder_path = os.path.join(d.name, new_folder_name, "QDR Prepared", "1_extract")
 		os.makedirs(new_folder_path)
 		self.assertTrue(os.path.exists(new_folder_path))  # Ensure it was successfully made
 		d.cleanup()
-		# test accented character removal
+		# test accented character removal in a two-word last name
 		metadata = dataverse.get_metadata("doi:10.5064/F6FHTB9E")
-		citation = dataverse.get_citation(metadata)
-		self.assertIsNotNone(citation)
-		self.assertEqual(rename.project_name(citation), "Rabello Sodre - Memories about Colegio Sao Vicente")
+		self.assertEqual(rename.project_name(metadata), "Rabello Sodre - 20240402")
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()

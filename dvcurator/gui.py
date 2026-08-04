@@ -254,7 +254,7 @@ class MainApp(tk.Frame):
 			print("Error: citation failed to load.")
 			return
 		self.citation = dvcurator.dataverse.get_citation(self.metadata)
-		self.project_name = dvcurator.rename.project_name(self.citation)
+		self.project_name = dvcurator.rename.project_name(self.metadata)
 		print("Loaded: " + self.project_name)
 
 		self.check_subfolder()

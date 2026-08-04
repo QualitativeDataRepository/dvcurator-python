@@ -91,16 +91,15 @@ def search_existing(project_name, token=None, repo=None):
 		print(f"Other error occurred: {err}")
 		return True
 
-	# Take the first three words ("lastname - first-of-title") to search
-	project_name = ' '.join(project_name.split()[:3])
+	# Issue titles are "<project name> - <task>", so match on the project name.
+	# Collapse whitespace, since existing tickets aren't consistent about it
+	project_name = ' '.join(project_name.split())
 
 	for project in projects.json():
-		name = project['title']
-		# Tokenize all the project names the same way (first 3 words)
-		search_token = ' '.join(name.split()[:3])
-		if (project_name == search_token): # Return column ID if found
+		name = ' '.join(project['title'].split())
+		if (name == project_name or name.startswith(project_name + " - ")):
 			return True
-			
+
 	# Return false if nothing was found
 	return False
 

@@ -67,7 +67,43 @@ def get_citation(metadata):
 	for entry in citation:
 		fields.append(entry['typeName'])
 		values.append(entry['value'])
-	return dict(zip(fields, values)) 
+	return dict(zip(fields, values))
+
+def get_deposit_date(metadata):
+	"""
+	Get the "Deposit Date" (dateOfDeposit) of a project, formatted as YYYYMMDD
+
+	Some older projects only record a year, or no deposit date at all. In those
+	cases we fall back on the version create time, then the publication date.
+
+	:param metadata: Metadata block from `get_metadata()`
+	:type metadata: list[str]
+	:return: Deposit date as YYYYMMDD, or None if no usable date was found
+	:rtype: String, or None
+	"""
+	import re
+
+	citation = get_citation(metadata)
+	version = metadata['data']['latestVersion']
+
+	# In preference order: the deposit date proper, then the next best thing
+	candidates = [("Deposit Date", citation.get('dateOfDeposit')),
+		("version create time", version.get('createTime')),
+		("publication date", metadata['data'].get('publicationDate'))]
+
+	for label, value in candidates:
+		if not value:
+			continue
+		# Dates are YYYY-MM-DD, timestamps are YYYY-MM-DDTHH:MM:SSZ
+		match = re.match(r"^(\d{4})-(\d{2})-(\d{2})", str(value))
+		if not match:
+			continue
+		if (label != "Deposit Date"):
+			print("Warning: no usable Deposit Date, using " + label + " instead")
+		return ''.join(match.groups())
+
+	print("Warning: could not determine a deposit date for this project")
+	return None
 
 # This pulls the "recommended citation" field
 def get_biblio_citation(doi, token=None, host=None):
@@ -120,9 +156,10 @@ def download_dataset(metadata, folder, token=None, host=None):
 		print("Error: extract folder already exists!")
 		return None
 
-	# Write metadata
-	with open(os.path.join(folder, "Original metadata.json"), "w") as outfile:
-		json.dump(metadata['data']['latestVersion'], outfile, indent=4)
+	# Write metadata: the whole dataset block, so we keep the file metadata
+	# (latestVersion.files) alongside the project metadata (latestVersion.metadataBlocks)
+	with open(os.path.join(folder, "Original metadata.json"), "w", encoding="utf-8") as outfile:
+		json.dump(metadata['data'], outfile, indent=4, ensure_ascii=False)
 
 	# Write the zip file
 	doi = metadata['data']['latestVersion']['datasetPersistentId']
