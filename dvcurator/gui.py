@@ -183,7 +183,7 @@ class MainApp(tk.Frame):
 		"""
 		self.subfolder_path = dvcurator.fs.check_dropbox(self.dropbox.get(), self.project_name)
 		if not self.subfolder_path:
-			self.subfolder_path = os.path.normpath(os.path.join(self.dropbox.get(),  'QDR Project - ' + self.project_name))
+			self.subfolder_path = os.path.normpath(os.path.join(self.dropbox.get(), self.project_name))
 			print("You need to download/extract or manually specify a subfolder.")
 		if os.path.exists(self.subfolder_path):
 			print("Existing extracted project detected at: " + self.subfolder_path)

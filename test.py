@@ -13,10 +13,11 @@ class TestFs(unittest.TestCase):
 		self.assertFalse(fs.check_dropbox("/notarealfolder"))
 
 		f = tempfile.TemporaryDirectory()
-		os.makedirs(os.path.join(f.name, "QDR Project - Foobar"))
-		self.assertTrue(fs.check_dropbox(f.name, "Foobar"))
+		# folders are named for the project, with no "QDR Project - " prefix
+		os.makedirs(os.path.join(f.name, "20240402 - Foobar"))
+		self.assertTrue(fs.check_dropbox(f.name, "20240402 - Foobar"))
 
-		self.assertFalse(fs.check_dropbox(f.name, "Foobar-DoesntExist"))
+		self.assertFalse(fs.check_dropbox(f.name, "20240402 - DoesntExist"))
 		self.assertTrue(fs.check_dropbox(f.name))
 
 		f.cleanup()

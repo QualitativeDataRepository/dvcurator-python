@@ -86,8 +86,9 @@ workflow run and its logs.
 
 Projects and Dropbox folders are named `YYYYMMDD - Lastname`, using the **Deposit Date**
 from Dataverse and the first author's last name. Leading with the date means folders sort
-chronologically. Dropbox folders get a `QDR Project - ` prefix, so a full folder name
-looks like `QDR Project - 20220608 - Haney`.
+chronologically. The folder is named exactly that, e.g. `20220608 - Haney`. The old
+`QDR Project - ` prefix is gone, which gives back 14 characters of headroom on every path
+inside a project against Windows' 260 character path limit.
 
 A few deposits, mostly older migrated ones, record only a year as their deposit date. In
 those cases dvcurator falls back to the date the version was created and prints a warning

@@ -15,16 +15,17 @@ def check_dropbox(dropbox, project_name=None):
         print("Dropbox folder not found: " + dropbox) 
         return None
     if not project_name:
-        # check if there's any existing "QDR Project - " folders
-        test_folders = glob(os.path.join(dropbox, "QDR Project - *"))
+        # check for project folders, under either the current "YYYYMMDD - Lastname"
+        # naming or the older "QDR Project - Lastname - Title"
+        test_folders = glob(os.path.join(dropbox, ("[0-9]" * 8) + " - *"))
+        test_folders += glob(os.path.join(dropbox, "QDR Project - *"))
         if (len(test_folders) < 1):
             print("ALERT: No existing QDR project folders found in: " + dropbox)
             print("Continuing anyway...")
         # return true as long as the dropbox path exists if we're not checking for the subfolder
         return True
 
-    folder_name = 'QDR Project - ' + project_name
-    path = os.path.normpath(os.path.join(dropbox, folder_name))
+    path = os.path.normpath(os.path.join(dropbox, project_name))
     if os.path.exists(path):
         return path
 
@@ -40,7 +41,8 @@ def check_dropbox(dropbox, project_name=None):
 def find_older_folder(dropbox, project_name):
     """
     Look for a project folder named before we switched to "YYYYMMDD - Lastname".
-    Those folders are named "Lastname - Title", so search on the author only.
+    Those folders are named "QDR Project - Lastname - Title", so search on the
+    author only, and keep the prefix that new folders no longer carry.
 
     :param dropbox: Path to dropbox folder
     :type dropbox: path as a string
