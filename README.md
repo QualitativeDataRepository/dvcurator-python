@@ -121,3 +121,51 @@ Installations through pip can be run directly, e.g.
 
 `python3 -m dvcurator`
 
+To run from a checkout without installing, install the requirements and run the module
+from the repository root:
+
+```
+python -m pip install -r requirements.txt
+python -m dvcurator
+```
+
+Run it from the repository root specifically: settings are read from and written to
+`dvcurator.ini` in the *current working directory*, so launching from elsewhere gives you
+a different config. If you already use the packaged .exe, copying its `dvcurator.ini`
+into the repository root brings your tokens and folder across.
+
+`config.ini.default` is a template you can copy to `dvcurator.ini` and fill in by hand.
+
+### Making a release
+
+Releases are driven by tags. Pushing a tag starting with `v` triggers
+`.github/workflows/build.yml`, which rewrites `dvcurator/version.py` from the tag, builds
+the Windows executable with pyinstaller, and opens a **draft** release with the .exe
+attached. Only Windows is built -- `mac.spec` exists but no workflow uses it.
+
+Use `release.ps1`, which checks the repository over and creates the tag:
+
+```
+.\release.ps1 v1.1.3
+```
+
+It refuses to tag unless the working tree is clean, you are on `master`, the version isn't
+already tagged locally or on origin, and the test suite passes. Pass `-SkipTests` to skip
+the last of those. It uses `.venv\Scripts\python.exe` for the tests if that exists,
+otherwise whatever `python` resolves to.
+
+The script does not push. It prints the commands to run once you're happy with the tag:
+
+```
+git push origin master
+git push origin v1.1.3
+```
+
+Push `master` before the tag if you have unreleased commits, or the release gets built
+from commits that aren't on the branch yet. To undo a tag before pushing it,
+`git tag -d v1.1.3`.
+
+**Then publish the draft release.** This is easy to forget and fails quietly:
+`SU Lab Install.ps1` resolves `/releases/latest`, which ignores drafts, so until you
+publish, the lab installer keeps handing out the previous version without any error.
+

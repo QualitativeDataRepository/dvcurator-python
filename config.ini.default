@@ -1,8 +1,24 @@
+# Template configuration for dvcurator.
+#
+# Copy this to "dvcurator.ini" and fill in the blanks. dvcurator looks for that
+# file next to the executable, or in the working directory when you run from
+# source. You can also write one out from the GUI with "Save config as".
+
 [default]
-dataverse_host = data.qdr.syr.edu
+
+# Must include the scheme. This is used as-is to build API URLs, so a bare
+# "data.qdr.syr.edu" will fail.
+dataverse_host = https://data.qdr.syr.edu
+
 curation_repo = QualitativeDataRepository/Project-Curation
 github_org = QualitativeDataRepository
-dropbox = /home/michael/temp
-dataverse_token = 
-github_token = 
 
+# Where projects get downloaded and extracted. For QDR GAs this is the "QDR GA"
+# folder inside the QDR Dropbox. Easiest to set with "QDR GA folder" in the GUI,
+# which fills in the full path for you.
+dropbox =
+
+# Generated from your Dataverse and GitHub accounts -- see the README. Both can
+# also be set from "DVCurator -> Configure tokens".
+dataverse_token =
+github_token =
