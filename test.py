@@ -25,13 +25,13 @@ class TestFs(unittest.TestCase):
 		f = tempfile.TemporaryDirectory()
 		older = os.path.join(f.name, "QDR Project - Rabello Sodre - Memories about Colegio")
 		os.makedirs(older)
-		# a folder from before the "Lastname - YYYYMMDD" convention still gets found
-		self.assertEqual(fs.check_dropbox(f.name, "Rabello Sodre - 20240402"), os.path.normpath(older))
-		self.assertFalse(fs.check_dropbox(f.name, "Somebody - 20240402"))
+		# a folder from before the "YYYYMMDD - Lastname" convention still gets found
+		self.assertEqual(fs.check_dropbox(f.name, "20240402 - Rabello Sodre"), os.path.normpath(older))
+		self.assertFalse(fs.check_dropbox(f.name, "20240402 - Somebody"))
 
 		# ambiguous: don't guess between two folders for the same author
 		os.makedirs(os.path.join(f.name, "QDR Project - Rabello Sodre - Another project"))
-		self.assertFalse(fs.check_dropbox(f.name, "Rabello Sodre - 20240402"))
+		self.assertFalse(fs.check_dropbox(f.name, "20240402 - Rabello Sodre"))
 
 		f.cleanup()
 
@@ -109,14 +109,14 @@ class TestGithubAPI(unittest.TestCase):
 class TestRename(unittest.TestCase):
 	
 	def test_projectname(self):
-		# name is "Lastname - YYYYMMDD", from the Deposit Date
+		# name is "YYYYMMDD - Lastname", from the Deposit Date
 		metadata = dataverse.get_metadata("doi:10.5064/F6AQGERV")
-		self.assertEqual(rename.project_name(metadata), "Haney - 20220608")
+		self.assertEqual(rename.project_name(metadata), "20220608 - Haney")
 		metadata = dataverse.get_metadata("doi:10.5064/F6ZXIJS5")
-		self.assertEqual(rename.project_name(metadata), "Guastaferro - 20240326")
+		self.assertEqual(rename.project_name(metadata), "20240326 - Guastaferro")
 		# test special character removal
 		metadata = dataverse.get_metadata("doi:10.5064/F6MBCJ8M")
-		self.assertEqual(rename.project_name(metadata), "Berntzen - 20210423")
+		self.assertEqual(rename.project_name(metadata), "20210423 - Berntzen")
 		# make a temporary directory named the citation and test it exists
 		d = tempfile.TemporaryDirectory()
 		new_folder_name = rename.project_name(metadata)
@@ -126,7 +126,7 @@ class TestRename(unittest.TestCase):
 		d.cleanup()
 		# test accented character removal in a two-word last name
 		metadata = dataverse.get_metadata("doi:10.5064/F6FHTB9E")
-		self.assertEqual(rename.project_name(metadata), "Rabello Sodre - 20240402")
+		self.assertEqual(rename.project_name(metadata), "20240402 - Rabello Sodre")
 
 	def test_rename(self):
 		f = tempfile.TemporaryDirectory()

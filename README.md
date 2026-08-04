@@ -84,9 +84,10 @@ workflow run and its logs.
 
 # Naming
 
-Projects and Dropbox folders are named `Lastname - YYYYMMDD`, using the first author's
-last name and the **Deposit Date** from Dataverse. Dropbox folders get a `QDR Project - `
-prefix, so a full folder name looks like `QDR Project - Haney - 20220608`.
+Projects and Dropbox folders are named `YYYYMMDD - Lastname`, using the **Deposit Date**
+from Dataverse and the first author's last name. Leading with the date means folders sort
+chronologically. Dropbox folders get a `QDR Project - ` prefix, so a full folder name
+looks like `QDR Project - 20220608 - Haney`.
 
 A few deposits, mostly older migrated ones, record only a year as their deposit date. In
 those cases dvcurator falls back to the date the version was created and prints a warning

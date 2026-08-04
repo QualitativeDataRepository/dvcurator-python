@@ -39,7 +39,7 @@ def check_dropbox(dropbox, project_name=None):
 
 def find_older_folder(dropbox, project_name):
     """
-    Look for a project folder named before we switched to "Lastname - YYYYMMDD".
+    Look for a project folder named before we switched to "YYYYMMDD - Lastname".
     Those folders are named "Lastname - Title", so search on the author only.
 
     :param dropbox: Path to dropbox folder
@@ -51,8 +51,9 @@ def find_older_folder(dropbox, project_name):
     """
     import os.path
     from glob import glob
-    # Everything before the date, so multi-word last names survive
-    author = project_name.rsplit(" - ", 1)[0]
+    # Everything after the date, so multi-word last names survive.
+    # Takes the whole name if there was no usable deposit date to lead with
+    author = project_name.split(" - ", 1)[-1]
     matches = [m for m in glob(os.path.join(dropbox, "QDR Project - " + author + " - *"))
                if os.path.isdir(m)]
 

@@ -10,7 +10,8 @@ def project_name(metadata):
     """
     Generate project name string, used in dropbox folder name and github project name.
 
-    The format is "Lastname - YYYYMMDD", where the date is the Dataverse "Deposit Date".
+    The format is "YYYYMMDD - Lastname", where the date is the Dataverse "Deposit Date".
+    Leading with the date means the folders sort chronologically.
 
     :param metadata: Metadata block from `get_metadata()`
     :return: String to use as the folder name or project name
@@ -25,7 +26,7 @@ def project_name(metadata):
 
     folder_name = author1_last_name
     if deposit_date:
-        folder_name += " - " + deposit_date
+        folder_name = deposit_date + " - " + author1_last_name
 
     # remove special characters that are not allowed in folder names
     invalid_chars = r'[<>:"/\\|?*\'\[\]\{\}!#$%&@;=+,]'
