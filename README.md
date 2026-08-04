@@ -67,6 +67,37 @@ Some functions, like downloading public datasets, will operate without API token
 5. Using the token
    - In DVCurator, paste the token in the GitHub token field (under "DVCurator -> Configure Tokens")
 
+# How project creation works
+
+"Make github project" does not create the project directly. It triggers a workflow in the
+curation repository, which creates the GitHub Project and its issues on your behalf.
+
+This is why your own token only needs Actions read/write: creating an organization-level
+Project needs broader permissions than we hand out to curators, so that credential stays
+in the curation repository and is never distributed with dvcurator.
+
+One consequence worth knowing: **"Project creation request sent successfully" only means
+the request was accepted**, not that the project was created. If no project appears
+afterwards, the workflow failed on the server side. That is not a problem with your token
+and regenerating it will not help -- contact a repository admin, who can check the
+workflow run and its logs.
+
+# Naming
+
+Projects and Dropbox folders are named `Lastname - YYYYMMDD`, using the first author's
+last name and the **Deposit Date** from Dataverse. Dropbox folders get a `QDR Project - `
+prefix, so a full folder name looks like `QDR Project - Haney - 20220608`.
+
+A few deposits, mostly older migrated ones, record only a year as their deposit date. In
+those cases dvcurator falls back to the date the version was created and prints a warning
+saying so.
+
+If you have folders from before this convention, which were named after the deposit title,
+dvcurator will still find them: when it can't locate a folder with the current name it
+looks for any folder matching the author. It only does this when exactly one folder
+matches -- if there are several it lists them and asks you to pick one from
+"File processing -> Select project subfolder manually".
+
 # Other parameters
 - QDR GA folder: Where the archive will be downloaded and extracted to. Usually points to a folder that syncs with Dropbox, but does not necessarily need to be. For QDR GA's this should very literally be the "QDR GA" folder within the QDR Dropbox.
 
