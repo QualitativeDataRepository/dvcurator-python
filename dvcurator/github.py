@@ -103,6 +103,110 @@ def search_existing(project_name, token=None, repo=None):
 	# Return false if nothing was found
 	return False
 
+def wait_for_project_run(repo, headers, since, timeout=180):
+	"""
+	Wait for the workflow run that our dispatch just started.
+
+	A workflow_dispatch returns no run id, so we look for the newest run
+	created since we sent the request and then follow that one.
+
+	:param repo: Github repository path (e.g. QualitativeDataRepository/Project-Curation)
+	:type repo: String
+	:param headers: Request headers, including the authorization token
+	:type headers: dict
+	:param since: Ignore any run created before this
+	:type since: datetime, timezone aware
+	:param timeout: Seconds to wait before giving up
+	:type timeout: int
+	:return: The completed run, or None if it never finished
+	:rtype: dict, or None
+	"""
+	import requests, time
+	from datetime import datetime
+
+	runs_url = github_api + "/repos/" + repo + "/actions/workflows/new_project.yml/runs"
+	deadline = time.time() + timeout
+	run_id = None
+
+	# First find the run. It takes a few seconds to show up in the API
+	while (time.time() < deadline and not run_id):
+		try:
+			runs = requests.get(runs_url + "?event=workflow_dispatch&per_page=10", headers=headers)
+			runs.raise_for_status()
+			runs = runs.json()['workflow_runs']
+		except Exception as err:
+			print(f"Could not check on the workflow run: {err}")
+			return None
+
+		# The API returns these newest first
+		for run in runs:
+			created = datetime.fromisoformat(run['created_at'].replace("Z", "+00:00"))
+			if (created >= since):
+				run_id = run['id']
+				break
+		if not run_id:
+			time.sleep(3)
+
+	if not run_id:
+		print("Timed out waiting for the workflow to start.")
+		return None
+
+	# Then wait for it to finish
+	run_url = github_api + "/repos/" + repo + "/actions/runs/" + str(run_id)
+	while (time.time() < deadline):
+		try:
+			run = requests.get(run_url, headers=headers)
+			run.raise_for_status()
+			run = run.json()
+		except Exception as err:
+			print(f"Could not check on the workflow run: {err}")
+			return None
+
+		if (run['status'] == "completed"):
+			return run
+		time.sleep(5)
+
+	print("Timed out waiting for the workflow to finish.")
+	return None
+
+def project_url_from_run(repo, run, headers):
+	"""
+	Dig the project number out of a completed run's log and build its URL.
+
+	The workflow echoes "Made project number: N", which is the only place
+	the number is exposed to us.
+
+	:param repo: Github repository path
+	:type repo: String
+	:param run: Completed run, as returned by `wait_for_project_run()`
+	:type run: dict
+	:param headers: Request headers, including the authorization token
+	:type headers: dict
+	:return: URL of the new project, or None if the log didn't have it
+	:rtype: String, or None
+	"""
+	import requests, re
+
+	try:
+		jobs = requests.get(github_api + "/repos/" + repo + "/actions/runs/" + str(run['id']) + "/jobs",
+			headers=headers)
+		jobs.raise_for_status()
+		job = jobs.json()['jobs'][0]
+
+		log = requests.get(github_api + "/repos/" + repo + "/actions/jobs/" + str(job['id']) + "/logs",
+			headers=headers)
+		log.raise_for_status()
+	except Exception as err:
+		print(f"Could not read the workflow log: {err}")
+		return None
+
+	number = re.search(r"Made project number: (\d+)", log.text)
+	if not number:
+		return None
+
+	org = repo.split("/")[0]
+	return "https://github.com/orgs/" + org + "/projects/" + number.group(1)
+
 def create_project(dv, project_name, token, repo=None):
 	"""
     Trigger a "create a project" workflow in a GitHub repository.
@@ -113,12 +217,12 @@ def create_project(dv, project_name, token, repo=None):
     :type token: str
     :param repo: The repository where the project will be created. If not provided, the default repository will be used.
     :type repo: str, optional
-    :return: A dictionary containing the response from the GitHub API.
-    :rtype: dict
-    :raises requests.exceptions.RequestException: If there is an error with the HTTP request.
+    :return: URL of the new project, or None if it wasn't created
+    :rtype: String, or None
     """
 	import requests, dvcurator.hosts, dvcurator.dataverse
-	repo = dvcurator.hosts.curation_repo if not repo else repo 
+	from datetime import datetime, timezone, timedelta
+	repo = dvcurator.hosts.curation_repo if not repo else repo
 
 	if (search_existing(project_name, token, repo)):
 		print("Error: Project already exists or search failed")
@@ -130,7 +234,7 @@ def create_project(dv, project_name, token, repo=None):
 	contact_info = 'Depositor: ' + dataset_contact + '\n'
 	contact_info += 'DV link: ' + link
 
-	url = f"https://api.github.com/repos/{repo}/actions/workflows/new_project.yml/dispatches"
+	url = github_api + "/repos/" + repo + "/actions/workflows/new_project.yml/dispatches"
 	headers = {
 		"Accept": "application/vnd.github.v3+json",
 		"Content-Type": "application/json",
@@ -146,13 +250,42 @@ def create_project(dv, project_name, token, repo=None):
 		}
 	}
 	
+	# Note the time before dispatching, so we can pick our run out afterwards.
+	# Back it off a little to allow for clock differences
+	since = datetime.now(timezone.utc) - timedelta(seconds=10)
+
 	try:
 		response = requests.post(url, headers=headers, json=data)
 		response.raise_for_status()
 	except requests.exceptions.HTTPError as http_err:
 		print(f"HTTP error occurred: {http_err}")
 		print(f"Response Content: {response.content}")
+		return None
 	except Exception as err:
 		print(f"Other error occurred: {err}")
+		return None
 
-	print("Project creation request sent successfully.")
+	# A dispatch only means github accepted the request. The project is created
+	# by the workflow, which can still fail, so wait and report what happened
+	print("Request sent, waiting for github to create the project...")
+	run = wait_for_project_run(repo, headers, since)
+	if not run:
+		print("Couldn't confirm whether the project was created.")
+		print("Check the repository's Actions tab before trying again.")
+		return None
+
+	if (run['conclusion'] != "success"):
+		print("Error: project creation failed on github.")
+		print("Run log: " + run['html_url'])
+		print("This is usually an expired credential, not a problem with your")
+		print("own token. Contact a repository admin.")
+		return None
+
+	project = project_url_from_run(repo, run, headers)
+	if not project:
+		print("Project created, but its number wasn't in the log.")
+		print("Run log: " + run['html_url'])
+		return None
+
+	print("Created project: " + project)
+	return project
