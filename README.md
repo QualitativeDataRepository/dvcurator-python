@@ -143,16 +143,20 @@ Releases are driven by tags. Pushing a tag starting with `v` triggers
 the Windows executable with pyinstaller, and opens a **draft** release with the .exe
 attached. Only Windows is built -- `mac.spec` exists but no workflow uses it.
 
-Use `release.ps1`, which checks the repository over and creates the tag:
+Use `release.py`, which checks the repository over and creates the tag:
 
 ```
-.\release.ps1 v1.1.3
+python release.py v1.1.3
 ```
 
-It refuses to tag unless the working tree is clean, you are on `master`, the version isn't
-already tagged locally or on origin, and the test suite passes. Pass `-SkipTests` to skip
-the last of those. It uses `.venv\Scripts\python.exe` for the tests if that exists,
-otherwise whatever `python` resolves to.
+It refuses to tag unless tracked files are all committed, you are on `master`, the version
+isn't already tagged locally or on origin, master isn't behind origin, and the test suite
+passes. Pass `--skip-tests` to skip the last of those.
+
+Tests run with the same interpreter you invoke the script with, so run it with the Python
+that has the requirements installed -- e.g. `.venv\Scripts\python release.py v1.1.3`. It
+checks the dependencies are importable before running anything and tells you what to
+install if they aren't.
 
 The script does not push. It prints the commands to run once you're happy with the tag:
 
