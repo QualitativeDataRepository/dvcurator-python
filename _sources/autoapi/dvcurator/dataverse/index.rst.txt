@@ -11,6 +11,7 @@ Functions
 
    dvcurator.dataverse.get_metadata
    dvcurator.dataverse.get_citation
+   dvcurator.dataverse.get_deposit_date
    dvcurator.dataverse.get_biblio_citation
    dvcurator.dataverse.download_dataset
 
@@ -40,6 +41,19 @@ Module Contents
    :type metadata: list[str]
    :return: Index of metadata name:value combos
    :rtype: dict
+
+
+.. py:function:: get_deposit_date(metadata)
+
+   Get the "Deposit Date" (dateOfDeposit) of a project, formatted as YYYYMMDD
+
+   Some older projects only record a year, or no deposit date at all. In those
+   cases we fall back on the version create time, then the publication date.
+
+   :param metadata: Metadata block from `get_metadata()`
+   :type metadata: list[str]
+   :return: Deposit date as YYYYMMDD, or None if no usable date was found
+   :rtype: String, or None
 
 
 .. py:function:: get_biblio_citation(doi, token=None, host=None)

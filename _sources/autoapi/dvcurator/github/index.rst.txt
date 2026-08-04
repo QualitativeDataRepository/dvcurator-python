@@ -20,6 +20,8 @@ Functions
    dvcurator.github.check_version
    dvcurator.github.check_repo
    dvcurator.github.search_existing
+   dvcurator.github.wait_for_project_run
+   dvcurator.github.project_url_from_run
    dvcurator.github.create_project
 
 
@@ -64,6 +66,42 @@ Module Contents
    :rtype: boolean
 
 
+.. py:function:: wait_for_project_run(repo, headers, since, timeout=180)
+
+   Wait for the workflow run that our dispatch just started.
+
+   A workflow_dispatch returns no run id, so we look for the newest run
+   created since we sent the request and then follow that one.
+
+   :param repo: Github repository path (e.g. QualitativeDataRepository/Project-Curation)
+   :type repo: String
+   :param headers: Request headers, including the authorization token
+   :type headers: dict
+   :param since: Ignore any run created before this
+   :type since: datetime, timezone aware
+   :param timeout: Seconds to wait before giving up
+   :type timeout: int
+   :return: The completed run, or None if it never finished
+   :rtype: dict, or None
+
+
+.. py:function:: project_url_from_run(repo, run, headers)
+
+   Dig the project number out of a completed run's log and build its URL.
+
+   The workflow echoes "Made project number: N", which is the only place
+   the number is exposed to us.
+
+   :param repo: Github repository path
+   :type repo: String
+   :param run: Completed run, as returned by `wait_for_project_run()`
+   :type run: dict
+   :param headers: Request headers, including the authorization token
+   :type headers: dict
+   :return: URL of the new project, or None if the log didn't have it
+   :rtype: String, or None
+
+
 .. py:function:: create_project(dv, project_name, token, repo=None)
 
    Trigger a "create a project" workflow in a GitHub repository.
@@ -74,8 +112,7 @@ Module Contents
    :type token: str
    :param repo: The repository where the project will be created. If not provided, the default repository will be used.
    :type repo: str, optional
-   :return: A dictionary containing the response from the GitHub API.
-   :rtype: dict
-   :raises requests.exceptions.RequestException: If there is an error with the HTTP request.
+   :return: URL of the new project, or None if it wasn't created
+   :rtype: String, or None
 
 

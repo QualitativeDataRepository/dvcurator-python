@@ -44,10 +44,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.dataverse.get_citation" title="dvcurator.dataverse.get_citation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_citation</span></code></a>(metadata)</p></td>
 <td><p>Extract and format the citation metadata block from the main metadata object</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.dataverse.get_biblio_citation" title="dvcurator.dataverse.get_biblio_citation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_biblio_citation</span></code></a>(doi[, token, host])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.dataverse.get_deposit_date" title="dvcurator.dataverse.get_deposit_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deposit_date</span></code></a>(metadata)</p></td>
+<td><p>Get the &quot;Deposit Date&quot; (dateOfDeposit) of a project, formatted as YYYYMMDD</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.dataverse.get_biblio_citation" title="dvcurator.dataverse.get_biblio_citation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_biblio_citation</span></code></a>(doi[, token, host])</p></td>
 <td><p>Get the recommended citation from Dataverse</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.dataverse.download_dataset" title="dvcurator.dataverse.download_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_dataset</span></code></a>(metadata, folder[, token, host])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.dataverse.download_dataset" title="dvcurator.dataverse.download_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_dataset</span></code></a>(metadata, folder[, token, host])</p></td>
 <td><p>Download and extract dataset from Dataverse</p></td>
 </tr>
 </tbody>
@@ -89,6 +92,25 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.dataverse.get_deposit_date">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.dataverse.</span></span><span class="sig-name descname"><span class="pre">get_deposit_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.dataverse.get_deposit_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the “Deposit Date” (dateOfDeposit) of a project, formatted as YYYYMMDD</p>
+<p>Some older projects only record a year, or no deposit date at all. In those
+cases we fall back on the version create time, then the publication date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metadata</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Metadata block from <cite>get_metadata()</cite></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Deposit date as YYYYMMDD, or None if no usable date was found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String, or None</p>
 </dd>
 </dl>
 </dd></dl>

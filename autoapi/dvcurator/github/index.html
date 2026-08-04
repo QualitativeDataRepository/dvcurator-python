@@ -57,6 +57,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github.search_existing" title="dvcurator.github.search_existing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search_existing</span></code></a>(project_name[, token, repo])</p></td>
 <td><p>Check if a project has existing github tickets</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github.wait_for_project_run" title="dvcurator.github.wait_for_project_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_for_project_run</span></code></a>(repo, headers, since[, timeout])</p></td>
+<td><p>Wait for the workflow run that our dispatch just started.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#dvcurator.github.project_url_from_run" title="dvcurator.github.project_url_from_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project_url_from_run</span></code></a>(repo, run, headers)</p></td>
+<td><p>Dig the project number out of a completed run's log and build its URL.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#dvcurator.github.create_project" title="dvcurator.github.create_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_project</span></code></a>(dv, project_name, token[, repo])</p></td>
 <td><p>Trigger a &quot;create a project&quot; workflow in a GitHub repository.</p></td>
 </tr>
@@ -126,6 +132,53 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.github.wait_for_project_run">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.github.</span></span><span class="sig-name descname"><span class="pre">wait_for_project_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github.wait_for_project_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the workflow run that our dispatch just started.</p>
+<p>A workflow_dispatch returns no run id, so we look for the newest run
+created since we sent the request and then follow that one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repo</strong> (<em>String</em>) – Github repository path (e.g. QualitativeDataRepository/Project-Curation)</p></li>
+<li><p><strong>headers</strong> (<em>dict</em>) – Request headers, including the authorization token</p></li>
+<li><p><strong>since</strong> (<em>datetime</em><em>, </em><em>timezone aware</em>) – Ignore any run created before this</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – Seconds to wait before giving up</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The completed run, or None if it never finished</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dvcurator.github.project_url_from_run">
+<span class="sig-prename descclassname"><span class="pre">dvcurator.github.</span></span><span class="sig-name descname"><span class="pre">project_url_from_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github.project_url_from_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dig the project number out of a completed run’s log and build its URL.</p>
+<p>The workflow echoes “Made project number: N”, which is the only place
+the number is exposed to us.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repo</strong> (<em>String</em>) – Github repository path</p></li>
+<li><p><strong>run</strong> (<em>dict</em>) – Completed run, as returned by <cite>wait_for_project_run()</cite></p></li>
+<li><p><strong>headers</strong> (<em>dict</em>) – Request headers, including the authorization token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>URL of the new project, or None if the log didn’t have it</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String, or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="dvcurator.github.create_project">
 <span class="sig-prename descclassname"><span class="pre">dvcurator.github.</span></span><span class="sig-name descname"><span class="pre">create_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dvcurator.github.create_project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trigger a “create a project” workflow in a GitHub repository.</p>
@@ -138,13 +191,10 @@
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary containing the response from the GitHub API.</p>
+<dd class="field-even"><p>URL of the new project, or None if it wasn’t created</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>requests.exceptions.RequestException</strong> – If there is an error with the HTTP request.</p>
+<dd class="field-odd"><p>String, or None</p>
 </dd>
 </dl>
 </dd></dl>
