@@ -14,9 +14,18 @@ This program executes four main tasks:
 
 # Installing dvcurator-python
 
-Most users will want to use the applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). The release gets built by pushing to a new tag.
+Most users will want to use the applications available in the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/). 
 
-*NOTE:* Syracuse University office computers cannot run this program directly because of security policies. You should download the [SU Lab Install.ps1](https://github.com/QualitativeDataRepository/dvcurator-python/blob/master/SU%20Lab%20Install.ps1) file (right click "Raw" and the top and Save Link As), and run that instead by right-clicking and selecting "Run with PowerShell". This will install the program properly and create a shortcut on your desktop.
+*NOTE:* There is no Mac application. Macs run dvcurator from source instead -- see
+[Running on a Mac](#running-on-a-mac) below.
+
+*NOTE:* Syracuse University office computers cannot run this program directly because of security policies. It needs to be placed into a dedicated `apps-su` folder. There are two install options, try these in sequence:
+1. **Automated**: Download the [SU Lab Install.ps1](https://github.com/QualitativeDataRepository/dvcurator-python/blob/master/SU%20Lab%20Install.ps1) file (right click "Raw" and the top and Save Link As), and run that instead by right-clicking and selecting "Run with PowerShell". This will install the program properly and create a shortcut on your desktop.
+2. **Manual**: 
+   - Create a folder "apps-su" either directly in the `C:` directory on your computer, or, if that doesn't work, in your user folder, so `C:/Users/<YOURUSERNAME>`. 
+   -  Go to the [release section](https://github.com/QualitativeDataRepository/dvcurator-python//releases/), find the most recent release, and under "Assets" download "dvcurator_win.exe" by right-clicking on the file --> Save Link As.
+   - Place the file in your `apps-su` folder created above and test that it runs -- you may have to click past a warning message
+   - For your convenience, create a shortcut: Right-click on the .exe file --> Show more options --> Create shortcut and place that shortcut on your desktop.
 
 # Running dvcurator-python
 
@@ -141,7 +150,8 @@ into the repository root brings your tokens and folder across.
 Releases are driven by tags. Pushing a tag starting with `v` triggers
 `.github/workflows/build.yml`, which rewrites `dvcurator/version.py` from the tag, builds
 the Windows executable with pyinstaller, and opens a **draft** release with the .exe
-attached. Only Windows is built -- `mac.spec` exists but no workflow uses it.
+attached. Only Windows is built. `mac.spec` is left over from a macOS build that CI stopped
+producing in 2022; no workflow uses it, and Macs run from source instead.
 
 Use `release.py`, which checks the repository over and creates the tag:
 
